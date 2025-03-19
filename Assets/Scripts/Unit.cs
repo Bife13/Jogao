@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using Random = UnityEngine.Random;
 
 public enum UnitType
 {
@@ -15,21 +17,23 @@ public class Unit : MonoBehaviour
 	private UnitData unitData;
 
 	[Header("Runtime Stats")] public string unitName { get; private set; }
-
 	protected int maxHP;
 	public int currentHP;
 	protected int baseDefense;
-	protected int dodge;
+	public int dodge { get; private set; }
 	protected int accuracy;
-
 	public int speed { get; private set; }
-
 	protected int minDamage;
 	protected int maxDamage;
 	protected int critChance;
 	public UnitType unitType { get; private set; }
 
+	[Header("UI Stuff")]
 	public Image healthBar;
+
+	[Header("Ability")]
+	protected List<Ability> _abilities = new List<Ability>();
+
 
 	public void Awake()
 	{
@@ -52,15 +56,21 @@ public class Unit : MonoBehaviour
 		maxDamage = unitData.maxDamage;
 		critChance = unitData.critChance;
 		unitType = unitData.unitType;
+		_abilities = unitData.abilities;
 	}
 
 	public void TakeDamage(int damage)
 	{
+		
 		float reducedDamage = damage - damage * (baseDefense / 100);
+		Debug.Log(reducedDamage + "DANO REDUZIDO");
+		Debug.Log($"{unitName} took {reducedDamage} damage!");
 		int finalDamage = Mathf.Max(0, Mathf.RoundToInt(reducedDamage));
 		currentHP -= finalDamage;
 		if (currentHP < 0)
+		{
 			currentHP = 0;
+		}
 
 		DOTween.To(() => healthBar.fillAmount, x => healthBar.fillAmount = x, (float)currentHP / maxHP, 0.5f);
 		Debug.Log($"{unitName} took {finalDamage} damage! Remaining HP: {currentHP}");
@@ -77,5 +87,32 @@ public class Unit : MonoBehaviour
 	public bool isAlive()
 	{
 		return currentHP > 0;
+	}
+
+	protected bool PerformAccuracyDodgeCheck(int abilityAccuracy, Unit target)
+	{
+		float accuracyRoll = Random.Range(0f, 100f);
+		float dodgeThreshold = target.dodge;
+		if (accuracyRoll <= abilityAccuracy + accuracy - dodgeThreshold)
+		{
+			return true; // Hit
+		}
+
+		return false; // Miss
+	}
+
+	protected bool PerformCriticalHitCheck(int finalCritChance)
+	{
+		float critRoll = Random.Range(0f, 100f);
+
+		if (critRoll <= finalCritChance)
+			return true; //CRIT
+
+		return false; //NORMAL HIT
+	}
+
+	public List<Ability> GetAbilities()
+	{
+		return _abilities;
 	}
 }

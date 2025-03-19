@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "NewUnitData", menuName = "Game/Unit Data")]
@@ -14,4 +15,6 @@ public class UnitData : ScriptableObject
 	public int maxDamage;
 	public int critChance;
 	public UnitType unitType;
+
+	public List<Ability> abilities;
 }

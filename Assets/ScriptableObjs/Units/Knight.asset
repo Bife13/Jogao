@@ -10,15 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 27abfccb2da32eb4e93ac60b17a4cf69, type: 3}
-  m_Name: Enemy
+  m_Name: Knight
   m_EditorClassIdentifier: 
-  unitName: Enemy
+  unitName: Knight
   maxHP: 30
   baseDefense: 10
   dodge: 5
   accuracy: 5
-  speed: 1
+  speed: 3
   minDamage: 5
   maxDamage: 10
   critChance: 5
-  unitType: 1
+  unitType: 0
+  abilities:
+  - {fileID: 11400000, guid: b3504e798bd29384893277fbcf08f273, type: 2}

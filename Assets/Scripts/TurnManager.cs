@@ -30,14 +30,28 @@ public class TurnManager : MonoBehaviour
 	[SerializeField]
 	private List<Unit> allUnits = new List<Unit>();
 
-	[SerializeField]
+
 	private List<Unit> playerUnits = new List<Unit>();
+	private List<Unit> enemyUnits = new List<Unit>();
+
+	[SerializeField]
+	private GameObject skillPanel;
+
+	[SerializeField]
+	private List<ButtonHandler> _buttonHandlers = new List<ButtonHandler>();
+
 
 	private List<Unit> turnOrder = new List<Unit>();
 
 	private int currentUnitIndex = 0;
 
-	private bool isPlayerTurnActive = false;
+	// private bool isPlayerTurnActive = false;
+
+	public int roundCounter = 1;
+
+	public bool combatEnded = false;
+
+	private Unit currentUnit;
 
 	private void Awake()
 	{
@@ -59,11 +73,17 @@ public class TurnManager : MonoBehaviour
 
 	void StartCombat()
 	{
-		NewRound();
+		OrganizeUnits();
+		CalculateInitiative();
 		StartCoroutine(HandleTurnLoop());
 	}
 
-	void NewRound()
+	private void Update()
+	{
+		CheckEndRound();
+	}
+
+	void CalculateInitiative()
 	{
 		int randomMax = allUnits.Count;
 
@@ -94,15 +114,16 @@ public class TurnManager : MonoBehaviour
 	{
 		yield return new WaitForSeconds(1f);
 
-		while (true)
+		while (!combatEnded)
 		{
-			// if (turnOrder.Count(u => u.isAlive) == 0)
-			// {
-			// 	Debug.Log("Combat Ended!");
-			// 	yield break;
-			// }
+			if (CheckEndRound())
+			{
+				Debug.Log("Combat Ended!");
+				combatEnded = true;
+				yield break;
+			}
 
-			Unit currentUnit = turnOrder[currentUnitIndex];
+			currentUnit = turnOrder[currentUnitIndex];
 			if (currentUnit.isAlive())
 			{
 				Debug.Log($"It's {currentUnit.unitName}'s turn!");
@@ -110,6 +131,7 @@ public class TurnManager : MonoBehaviour
 				switch (currentUnit.unitType)
 				{
 					case UnitType.PLAYER:
+						HandlePanel(true);
 						yield return StartCoroutine(PlayerTurn((PlayerUnit)currentUnit));
 						break;
 					case UnitType.ENEMY:
@@ -120,7 +142,13 @@ public class TurnManager : MonoBehaviour
 
 			currentUnitIndex++;
 			if (currentUnitIndex >= turnOrder.Count)
+			{
 				currentUnitIndex = 0;
+				roundCounter++;
+				Debug.Log("NEW TURN");
+				yield return new WaitForSeconds(2f);
+				CalculateInitiative();
+			}
 
 			yield return new WaitForSeconds(1f);
 		}
@@ -128,16 +156,24 @@ public class TurnManager : MonoBehaviour
 
 	IEnumerator PlayerTurn(PlayerUnit playerUnit)
 	{
-		Debug.Log($"{turnOrder[currentUnitIndex].unitName} is choosing an action...");
+		Debug.Log($"{currentUnit.unitName} is choosing an action...");
 
-		isPlayerTurnActive = true;
+		TargetSelectionUI.Instance.isSelecting = true;
 
-		while (isPlayerTurnActive)
+		while (TargetSelectionUI.Instance.isSelecting)
 		{
 			yield return null;
 		}
 
+		HandlePanel(false);
+
 		yield return new WaitForSeconds(1.0f); // Simulate the attack animation/delay
+	}
+
+	public PlayerUnit GetCurrentPlayerUnit()
+	{
+		// However you track the active unit in turn order
+		return currentUnit as PlayerUnit;
 	}
 
 	IEnumerator EnemyTurn(EnemyUnit enemyUnit)
@@ -149,7 +185,7 @@ public class TurnManager : MonoBehaviour
 
 	public void OnPlayerActionChosen(string action)
 	{
-		isPlayerTurnActive = false;
+		// isPlayerTurnActive = false;
 
 		// Based on the player's action choice, you can handle the action here
 		if (action == "Attack")
@@ -166,6 +202,97 @@ public class TurnManager : MonoBehaviour
 		{
 			Debug.Log("Player chose to use an item!");
 			// Perform item usage logic here
+		}
+		else if (action == "Miss")
+		{
+			Debug.Log("Player missed!");
+			// Perform item usage logic here
+		}
+	}
+
+
+	public void OrganizeUnits()
+	{
+		foreach (Unit unit in allUnits)
+		{
+			switch (unit.unitType)
+			{
+				case UnitType.PLAYER:
+					playerUnits.Add(unit);
+					break;
+				case UnitType.ENEMY:
+					enemyUnits.Add(unit);
+					break;
+			}
+		}
+	}
+
+	public bool CheckEndRound()
+	{
+		int alivePlayers = playerUnits.Count(u => u.isAlive());
+		int aliveEnemies = enemyUnits.Count(u => u.isAlive());
+
+		if (alivePlayers <= 0 || aliveEnemies <= 0)
+		{
+			combatEnded = true;
+			Debug.Log("Combat Ended!");
+			StopAllCoroutines();
+			return true;
+		}
+
+		return false;
+	}
+
+	public List<Unit> GetValidTargets(Ability ability)
+	{
+		List<Unit> validTargets = new List<Unit>();
+
+		switch (ability.targetType)
+		{
+			case AbilityTargetType.Enemy:
+				validTargets = enemyUnits.FindAll(u => u.isAlive());
+				break;
+			case AbilityTargetType.Ally:
+				validTargets = playerUnits.FindAll(u => u.isAlive());
+				break;
+
+			case AbilityTargetType.AllEnemies:
+				validTargets = enemyUnits.FindAll(u => u.isAlive());
+				break;
+			case AbilityTargetType.AllAllies:
+				validTargets = playerUnits.FindAll(u => u.isAlive());
+				break;
+			case AbilityTargetType.Self:
+				validTargets.Add(currentUnit);
+				break;
+
+			default:
+				Debug.LogWarning("Unknown AbilityTargetType!");
+				break;
+		}
+
+		return validTargets;
+	}
+
+	public void HandlePanel(bool change)
+	{
+		List<Ability> playerAbilities = currentUnit.GetAbilities();
+		if (change)
+		{
+			skillPanel.SetActive(true);
+			for (int i = 0; i < playerAbilities.Count; i++)
+			{
+				_buttonHandlers[i].assignedAbility = playerAbilities[i];
+			}
+		}
+		else
+		{
+			foreach (ButtonHandler buttonHandler in _buttonHandlers)
+			{
+				buttonHandler.assignedAbility = null;
+			}
+
+			skillPanel.SetActive(false);
 		}
 	}
 }
