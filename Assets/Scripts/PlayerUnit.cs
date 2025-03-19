@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -22,6 +23,7 @@ public class PlayerUnit : Unit
 					damage = (1.5f * maxDamage);
 
 				damage += damage * ability.minPower;
+				AttackAnimation(1);
 				if (PerformAccuracyDodgeCheck(ability.accuracy, target))
 				{
 					target.TakeDamage(Mathf.RoundToInt(damage));

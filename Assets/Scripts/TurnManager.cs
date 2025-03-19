@@ -145,6 +145,10 @@ public class TurnManager : MonoBehaviour
 			{
 				currentUnitIndex = 0;
 				roundCounter++;
+				foreach (EnemyUnit unit in enemyUnits)
+				{
+					unit.DecideNextIntent();
+				}
 				Debug.Log("NEW TURN");
 				yield return new WaitForSeconds(2f);
 				CalculateInitiative();
@@ -178,8 +182,7 @@ public class TurnManager : MonoBehaviour
 
 	IEnumerator EnemyTurn(EnemyUnit enemyUnit)
 	{
-		Unit target = playerUnits[Random.Range(0, playerUnits.Count)];
-		enemyUnit.PerformIntent(target);
+		enemyUnit.PerformIntent();
 		yield return new WaitForSeconds(1.0f); // Simulate the attack animation/delay
 	}
 
@@ -261,6 +264,37 @@ public class TurnManager : MonoBehaviour
 				break;
 			case AbilityTargetType.AllAllies:
 				validTargets = playerUnits.FindAll(u => u.isAlive());
+				break;
+			case AbilityTargetType.Self:
+				validTargets.Add(currentUnit);
+				break;
+
+			default:
+				Debug.LogWarning("Unknown AbilityTargetType!");
+				break;
+		}
+
+		return validTargets;
+	}
+	
+	public List<Unit> GetValidTargetsForEnemy(Ability ability)
+	{
+		List<Unit> validTargets = new List<Unit>();
+
+		switch (ability.targetType)
+		{
+			case AbilityTargetType.Enemy:
+				validTargets = playerUnits.FindAll(u => u.isAlive());
+				break;
+			case AbilityTargetType.Ally:
+				validTargets = enemyUnits.FindAll(u => u.isAlive());
+				break;
+
+			case AbilityTargetType.AllEnemies:
+				validTargets = playerUnits.FindAll(u => u.isAlive());
+				break;
+			case AbilityTargetType.AllAllies:
+				validTargets = enemyUnits.FindAll(u => u.isAlive());
 				break;
 			case AbilityTargetType.Self:
 				validTargets.Add(currentUnit);

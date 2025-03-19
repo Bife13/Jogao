@@ -1,7 +1,15 @@
+using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class EnemyUnit : Unit
 {
+	private Ability nextAbility;
+
+	[SerializeField]
+	private Image intentImage;
+
 	void Start()
 	{
 		DecideNextIntent();
@@ -9,9 +17,8 @@ public class EnemyUnit : Unit
 
 	public void DecideNextIntent()
 	{
-		// int damage = Random.Range(minDamage, maxDamage);
-		// target.TakeDamage(damage);
-		// Debug.Log($"{unitName} attacks {target.unitName} for {damage} damage!");
+		nextAbility = _abilities[Random.Range(0, _abilities.Count)];
+		intentImage.sprite = nextAbility.icon;
 	}
 
 	public void UseAbility(Ability ability, Unit target)
@@ -28,6 +35,7 @@ public class EnemyUnit : Unit
 			case AbilityEffectType.Damage:
 				float damage = Random.Range(minDamage, maxDamage + 1);
 				damage += damage * ability.minPower;
+				AttackAnimation(-1);
 				if (PerformAccuracyDodgeCheck(ability.accuracy, target))
 				{
 					if (PerformCriticalHitCheck(critChance))
@@ -102,8 +110,9 @@ public class EnemyUnit : Unit
 		return true;
 	}
 
-	public void PerformIntent(Unit target)
+	public void PerformIntent()
 	{
-		UseAbility(_abilities[0], target);
+		List<Unit> targets = TurnManager.Instance.GetValidTargetsForEnemy(nextAbility);
+		UseAbility(nextAbility, targets[Random.Range(0, targets.Count)]);
 	}
 }

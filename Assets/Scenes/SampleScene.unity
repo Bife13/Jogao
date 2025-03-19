@@ -3144,6 +3144,10 @@ PrefabInstance:
       value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 536303212317359378, guid: bac2decdbe5b859428afc9d26eb31ca6, type: 3}
+      propertyPath: unitData
+      value: 
+      objectReference: {fileID: 11400000, guid: 39e62ed579e15734390ceb1d25f21947, type: 2}
+    - target: {fileID: 536303212317359378, guid: bac2decdbe5b859428afc9d26eb31ca6, type: 3}
       propertyPath: _abilities.Array.size
       value: 1
       objectReference: {fileID: 0}

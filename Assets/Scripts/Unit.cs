@@ -115,4 +115,13 @@ public class Unit : MonoBehaviour
 	{
 		return _abilities;
 	}
+	
+	public void AttackAnimation(float direction)
+	{
+		Vector3 originalPosition = transform.position;
+		transform.DOMoveX(transform.position.x + 0.85f * direction, 0.25f).OnComplete(() =>
+		{
+			transform.DOMoveX(originalPosition.x, 0.25f);
+		});
+	}
 }

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Enemy
   m_EditorClassIdentifier: 
   unitName: Enemy
-  maxHP: 10
+  maxHP: 25
   baseDefense: 10
   dodge: 5
   accuracy: 5
