@@ -1,60 +1,69 @@
+using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 public class PlayerUnit : Unit
 {
-	public void UseAbility(Ability ability, Unit target)
+	public void UseAbility(Ability ability, List<Unit> targets)
 	{
-		Debug.Log($"{gameObject.name} uses {ability.abilityName} on {target.unitName}!");
-		if (!isTargetValid(ability, target))
+		foreach (Unit target in targets)
 		{
-			Debug.LogWarning($"Invalid target for ability {ability.abilityName}");
-			return;
+			Debug.Log($"{gameObject.name} uses {ability.abilityName} on {target.unitName}!");
+			if (!isTargetValid(ability, target))
+			{
+				Debug.LogWarning($"Invalid target for ability {ability.abilityName}");
+				return;
+			}
+
+			Debug.Log(ability.effectType);
+			switch (ability.effectType)
+			{
+				case AbilityEffectType.Damage:
+					float damage = Random.Range(minDamage, maxDamage + 1);
+
+					if (PerformCriticalHitCheck((int)GetTotalModifiedStat(StatType.Crit, critChance)))
+						damage = (1.5f * maxDamage);
+
+					damage += GetTotalModifiedStat(StatType.Attack, damage);
+					damage += damage * ability.minPower;
+					AttackAnimation(1);
+					if (PerformAccuracyDodgeCheck(ability.accuracy, target))
+					{
+						target.TakeDamage(Mathf.CeilToInt(damage), DamageType.Direct);
+						CheckAndApplyEffects(ability, target);
+						GameManager.Instance.OnPlayerActionChosen("Attack");
+					}
+					else
+					{
+						GameManager.Instance.OnPlayerActionChosen("Miss");
+					}
+
+					break;
+				case AbilityEffectType.Heal:
+					float healAmount = Random.Range(ability.minPower, ability.maxPower);
+					if (PerformCriticalHitCheck((int)GetTotalModifiedStat(StatType.Crit, 15)))
+						healAmount *= 2;
+					target.Heal(Mathf.CeilToInt(healAmount));
+					CheckAndApplyEffects(ability, target);
+					break;
+				case AbilityEffectType.Buff:
+					CheckAndApplyEffects(ability, target);
+					break;
+				case AbilityEffectType.Debuff:
+					CheckAndApplyEffects(ability, target);
+					break;
+			}
+
+			// if (ability.statusEffect != null)
+			// {
+			// 	int roll = Random.Range(0, 100);
+			// 	if (roll < ability.statusEffectChance)
+			// 		target.applyStatusEffect(ability.statusEffect);
+			// }
+
+			// DO VFX AND SHIT
 		}
-
-		Debug.Log(ability.effectType);
-		switch (ability.effectType)
-		{
-			case AbilityEffectType.Damage:
-				float damage = Random.Range(minDamage, maxDamage + 1);
-
-				if (PerformCriticalHitCheck(critChance))
-					damage = (1.5f * maxDamage);
-
-				damage += damage * ability.minPower;
-				AttackAnimation(1);
-				if (PerformAccuracyDodgeCheck(ability.accuracy, target))
-				{
-					target.TakeDamage(Mathf.RoundToInt(damage));
-					TurnManager.Instance.OnPlayerActionChosen("Attack");
-				}
-				else
-				{
-					TurnManager.Instance.OnPlayerActionChosen("Miss");
-				}
-
-				break;
-			case AbilityEffectType.Heal:
-				float healAmount = Random.Range(ability.minPower, ability.maxPower);
-				if (PerformCriticalHitCheck(15))
-					healAmount *= 2;
-				target.Heal(Mathf.RoundToInt(healAmount));
-				break;
-			case AbilityEffectType.Buff:
-				break;
-			case AbilityEffectType.Debuff:
-				break;
-		}
-
-		// if (ability.statusEffect != null)
-		// {
-		// 	int roll = Random.Range(0, 100);
-		// 	if (roll < ability.statusEffectChance)
-		// 		target.applyStatusEffect(ability.statusEffect);
-		// }
-
-		// DO VFX AND SHIT
 	}
 
 	private bool isTargetValid(Ability ability, Unit target)
@@ -86,17 +95,17 @@ public class PlayerUnit : Unit
 					return false;
 				break;
 			case AbilityTargetType.AllEnemies:
+				if (target.unitType != UnitType.ENEMY)
+					return false;
+				break;
 			case AbilityTargetType.AllAllies:
-				return false;
+				if (target.unitType != UnitType.PLAYER)
+					return false;
+				break;
 			default:
 				return false;
 		}
 
 		return true;
-	}
-
-	public void PerformAbility1(Unit target)
-	{
-		UseAbility(_abilities[0], target);
 	}
 }

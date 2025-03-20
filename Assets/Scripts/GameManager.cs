@@ -5,21 +5,21 @@ using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class TurnManager : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
-	private static TurnManager _instance;
+	private static GameManager _instance;
 
-	public static TurnManager Instance
+	public static GameManager Instance
 	{
 		get
 		{
 			if (_instance == null)
 			{
-				_instance = FindFirstObjectByType<TurnManager>();
+				_instance = FindFirstObjectByType<GameManager>();
 				if (_instance == null)
 				{
 					GameObject singletonObject = new GameObject("CombatManager");
-					_instance = singletonObject.AddComponent<TurnManager>();
+					_instance = singletonObject.AddComponent<GameManager>();
 				}
 			}
 
@@ -52,6 +52,7 @@ public class TurnManager : MonoBehaviour
 	public bool combatEnded = false;
 
 	private Unit currentUnit;
+
 
 	private void Awake()
 	{
@@ -92,11 +93,11 @@ public class TurnManager : MonoBehaviour
 		foreach (Unit unit in allUnits)
 		{
 			int randomRoll = Random.Range(1, randomMax + 1);
-			int initiative = unit.speed + randomRoll;
+			int initiative = unit.ModifiedSpeed + randomRoll;
 
 			unitInitiatives.Add((unit, initiative));
 
-			Debug.Log($"{unit.unitName} has speed {unit.speed} + roll {randomRoll} = initiative {initiative}");
+			Debug.Log($"{unit.unitName} has speed {unit.ModifiedSpeed} + roll {randomRoll} = initiative {initiative}");
 		}
 
 		unitInitiatives.Sort((a, b) => b.initiativeRoll.CompareTo(a.initiativeRoll));
@@ -127,6 +128,9 @@ public class TurnManager : MonoBehaviour
 			if (currentUnit.isAlive())
 			{
 				Debug.Log($"It's {currentUnit.unitName}'s turn!");
+				currentUnit.ProcessEffectsPerTurn(EffectTiming.StartTurn);
+
+				yield return new WaitForSeconds(0.5f);
 
 				switch (currentUnit.unitType)
 				{
@@ -140,6 +144,8 @@ public class TurnManager : MonoBehaviour
 				}
 			}
 
+			currentUnit.ProcessEffectsPerTurn(EffectTiming.EndTurn);
+
 			currentUnitIndex++;
 			if (currentUnitIndex >= turnOrder.Count)
 			{
@@ -149,6 +155,7 @@ public class TurnManager : MonoBehaviour
 				{
 					unit.DecideNextIntent();
 				}
+
 				Debug.Log("NEW TURN");
 				yield return new WaitForSeconds(2f);
 				CalculateInitiative();
@@ -258,7 +265,6 @@ public class TurnManager : MonoBehaviour
 			case AbilityTargetType.Ally:
 				validTargets = playerUnits.FindAll(u => u.isAlive());
 				break;
-
 			case AbilityTargetType.AllEnemies:
 				validTargets = enemyUnits.FindAll(u => u.isAlive());
 				break;
@@ -276,7 +282,7 @@ public class TurnManager : MonoBehaviour
 
 		return validTargets;
 	}
-	
+
 	public List<Unit> GetValidTargetsForEnemy(Ability ability)
 	{
 		List<Unit> validTargets = new List<Unit>();
@@ -285,11 +291,24 @@ public class TurnManager : MonoBehaviour
 		{
 			case AbilityTargetType.Enemy:
 				validTargets = playerUnits.FindAll(u => u.isAlive());
+				if (validTargets.Count > 0)
+				{
+					Unit randomTarget = validTargets[Random.Range(0, validTargets.Count)];
+					validTargets.Clear();
+					validTargets.Add(randomTarget);
+				}
+
 				break;
 			case AbilityTargetType.Ally:
 				validTargets = enemyUnits.FindAll(u => u.isAlive());
-				break;
+				if (validTargets.Count > 0)
+				{
+					Unit randomTarget = validTargets[Random.Range(0, validTargets.Count)];
+					validTargets.Clear();
+					validTargets.Add(randomTarget);
+				}
 
+				break;
 			case AbilityTargetType.AllEnemies:
 				validTargets = playerUnits.FindAll(u => u.isAlive());
 				break;

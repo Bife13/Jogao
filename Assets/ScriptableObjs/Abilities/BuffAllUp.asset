@@ -10,18 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 562d7febfae63174cb24c3c9bdd1c991, type: 3}
-  m_Name: HEal
+  m_Name: BuffAllUp
   m_EditorClassIdentifier: 
-  abilityName: Heal
+  abilityName: 
   description: 
-  icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  targetType: 1
-  effectType: 1
+  icon: {fileID: 0}
+  targetType: 4
+  effectType: 2
   isPercentage: 0
-  minPower: 5
-  maxPower: 10
+  minPower: 0
+  maxPower: 0
   cost: 0
   cooldown: 0
-  accuracy: 100
-  effects: []
-  statusEffectChances: 
+  accuracy: 0
+  effects:
+  - {fileID: 11400000, guid: ac45d78edeceea844bcbf7fdeaccb787, type: 2}
+  statusEffectChances: 64000000

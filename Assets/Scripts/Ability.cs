@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum AbilityTargetType
@@ -14,7 +15,7 @@ public enum AbilityEffectType
 	Damage,
 	Heal,
 	Buff,
-	Debuff, 
+	Debuff,
 	StatusEffect
 }
 
@@ -31,16 +32,19 @@ public class Ability : ScriptableObject
 	public AbilityTargetType targetType;
 	public AbilityEffectType effectType;
 
-	public bool isPercentage = true; 
-	public int minPower; // for damage its % of damage, for healing its either a flat value or %hp, for defense its %of defense, for buff its %of buff
+	public bool isPercentage = true;
+
+	public int
+		minPower; // for damage its % of damage, for healing its either a flat value or %hp, for defense its %of defense, for buff its %of buff
+
 	public int maxPower;
 	public int cost; // might not use this
 	public int cooldown;
 	public int accuracy; // % to hit
-	
+
 	// VER dos paineis de attack??
 
 	// FOR LATER DOING STATUS EFFECTS
-	// public StatusEffectsSO statusEffect;
-	// public int statusEffectChance;
+	public List<Effect> effects;
+	public List<int> statusEffectChances;
 }

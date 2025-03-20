@@ -18,10 +18,11 @@ MonoBehaviour:
   dodge: 5
   accuracy: 5
   speed: 3
-  minDamage: 5
+  minDamage: 10
   maxDamage: 10
   critChance: 5
   unitType: 0
   abilities:
-  - {fileID: 11400000, guid: b3504e798bd29384893277fbcf08f273, type: 2}
-  - {fileID: 11400000, guid: f9c4c2add2fc81e4dacbaf8690159ce2, type: 2}
+  - {fileID: 11400000, guid: f9ef8e279d65ab24a9395b082e22701d, type: 2}
+  - {fileID: 11400000, guid: 519fb346b9e41cb449758fdb8e65a6b9, type: 2}
+  - {fileID: 11400000, guid: 91bfc32ed62e4bd4f858c078ddec4da9, type: 2}

@@ -23,7 +23,7 @@ public class TargetSelectionUI : MonoBehaviour
 		currentAbility = ability;
 
 		// Define your targeting logic based on ability type
-		validTargets = TurnManager.Instance.GetValidTargets(ability);
+		validTargets = GameManager.Instance.GetValidTargets(ability);
 
 		Debug.Log($"Select target(s) for: {ability.abilityName}");
 
@@ -36,6 +36,7 @@ public class TargetSelectionUI : MonoBehaviour
 
 	public void OnUnitClicked(Unit unit)
 	{
+		Debug.Log("Contagem: " + validTargets.Count);
 		if (!isSelecting || !validTargets.Contains(unit))
 		{
 			Debug.Log("Invalid target selection.");
@@ -45,8 +46,21 @@ public class TargetSelectionUI : MonoBehaviour
 		Debug.Log($"Target {unit.unitName} selected!");
 
 		// Apply the ability now that the target is chosen
-		PlayerUnit actingPlayer = TurnManager.Instance.GetCurrentPlayerUnit();
-		actingPlayer.UseAbility(currentAbility, unit);
+		PlayerUnit actingPlayer = GameManager.Instance.GetCurrentPlayerUnit();
+		switch (currentAbility.targetType)
+		{
+			case AbilityTargetType.Ally:
+			case AbilityTargetType.Enemy:
+			case AbilityTargetType.Self:
+				List<Unit> targets = new List<Unit>();
+				targets.Add(unit);
+				actingPlayer.UseAbility(currentAbility, targets);
+				break;
+			case AbilityTargetType.AllAllies:
+			case AbilityTargetType.AllEnemies:
+				actingPlayer.UseAbility(currentAbility, validTargets);
+				break;
+		}
 
 		EndTargetSelection();
 	}

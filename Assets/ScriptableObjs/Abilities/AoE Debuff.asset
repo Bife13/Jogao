@@ -10,18 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 562d7febfae63174cb24c3c9bdd1c991, type: 3}
-  m_Name: HEal
+  m_Name: AoE Debuff
   m_EditorClassIdentifier: 
-  abilityName: Heal
+  abilityName: Slash
   description: 
-  icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  targetType: 1
-  effectType: 1
-  isPercentage: 0
-  minPower: 5
-  maxPower: 10
+  icon: {fileID: 10911, guid: 0000000000000000f000000000000000, type: 0}
+  targetType: 3
+  effectType: 3
+  isPercentage: 1
+  minPower: 0
+  maxPower: 0
   cost: 0
   cooldown: 0
-  accuracy: 100
-  effects: []
-  statusEffectChances: 
+  accuracy: 85
+  effects:
+  - {fileID: 11400000, guid: 1f8a8927a7ec550489e2e1c80863e733, type: 2}
+  statusEffectChances: 64000000
