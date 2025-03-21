@@ -10,19 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 562d7febfae63174cb24c3c9bdd1c991, type: 3}
-  m_Name: Slash + Bleed
+  m_Name: Hit
   m_EditorClassIdentifier: 
-  abilityName: Slash
+  abilityName: 
   description: 
-  icon: {fileID: 10911, guid: 0000000000000000f000000000000000, type: 0}
+  icon: {fileID: 0}
   targetType: 0
   effectType: 0
   isPercentage: 1
   minPower: 0
   maxPower: 0
   cost: 0
-  cooldown: 2
-  accuracy: 85
-  effects:
-  - {fileID: 11400000, guid: a201e92a63fd3624880655a2b567791f, type: 2}
-  statusEffectChances: 64000000
+  cooldown: 0
+  accuracy: 100
+  canCleanse: 0
+  cleanseAmount: 1
+  effectTypeToCleanse: 0
+  statusTypeToCleanse: 0
+  effects: []
+  statusEffectChances: 

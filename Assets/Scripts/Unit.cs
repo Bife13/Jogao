@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using TMPro;
 using Random = UnityEngine.Random;
 
 public enum UnitType
@@ -15,6 +16,13 @@ public enum DamageType
 {
 	Direct,
 	DoT
+}
+
+public enum StanceType
+{
+	Neutral = 0,
+	Offensive = 1,
+	Defensive = 2
 }
 
 public class Unit : MonoBehaviour
@@ -47,7 +55,28 @@ public class Unit : MonoBehaviour
 
 	private Dictionary<Effect, EffectIconUI> activeIcons = new Dictionary<Effect, EffectIconUI>();
 
+	protected Dictionary<Ability, int> abilityCooldowns = new Dictionary<Ability, int>();
+
+	public GameObject highlightEffect;
+
+	[SerializeField]
+	private GameObject floatingTextPrefab;
+
+	[SerializeField]
+	private Transform unitCanvas;
+
 	public int ModifiedSpeed => (int)(GetTotalModifiedStat(StatType.Speed, speed));
+
+	[Header("Stance Variables")]
+	public StanceType currentStance = StanceType.Neutral;
+
+	public StanceType previewStance = StanceType.Neutral;
+
+
+	public int stanceBonus = 20;
+
+	public int stanceReduction = 10;
+	public bool hasComittedStance = false;
 
 	public void Awake()
 	{
@@ -79,7 +108,9 @@ public class Unit : MonoBehaviour
 		switch (damageType)
 		{
 			case DamageType.Direct:
-				float reducedDamage = damage * (GetTotalModifiedStat(StatType.Defense, baseDefense) / 100f);
+				float reducedDamage = damage *
+				                      (GetTotalModifiedStat(StatType.Defense, CalculateStanceDefense(baseDefense)) /
+				                       100f);
 				finalDamage = Mathf.Max(0, damage - Mathf.CeilToInt(reducedDamage));
 				currentHP -= finalDamage;
 				if (currentHP < 0)
@@ -88,6 +119,7 @@ public class Unit : MonoBehaviour
 				}
 
 				Debug.Log($"{unitName} took {finalDamage} damage! Remaining HP: {currentHP}");
+				ShowFloatingText(finalDamage.ToString(), Color.red);
 				break;
 			case DamageType.DoT:
 				finalDamage = damage;
@@ -98,6 +130,7 @@ public class Unit : MonoBehaviour
 				}
 
 				Debug.Log($"{unitName} took {finalDamage} DoT damage! Remaining HP: {currentHP}");
+				ShowFloatingText(finalDamage.ToString(), Color.yellow);
 				break;
 		}
 
@@ -109,6 +142,8 @@ public class Unit : MonoBehaviour
 		currentHP += amount;
 		if (currentHP > unitData.maxHP)
 			currentHP = unitData.maxHP;
+
+		ShowFloatingText(amount.ToString(), Color.blue);
 		DOTween.To(() => healthBar.fillAmount, x => healthBar.fillAmount = x, (float)currentHP / maxHP, 0.5f);
 	}
 
@@ -259,6 +294,22 @@ public class Unit : MonoBehaviour
 		return _abilities;
 	}
 
+	public void StartTurn()
+	{
+		List<Ability> keys = new List<Ability>(abilityCooldowns.Keys);
+		foreach (var ability in keys)
+		{
+			abilityCooldowns[ability]--;
+			if (abilityCooldowns[ability] <= 0)
+				abilityCooldowns.Remove(ability);
+		}
+	}
+
+	public bool CanUseAbility(Ability ability)
+	{
+		return !abilityCooldowns.ContainsKey(ability);
+	}
+
 	public void AttackAnimation(float direction)
 	{
 		Vector3 originalPosition = transform.position;
@@ -300,5 +351,97 @@ public class Unit : MonoBehaviour
 				activeIcons.Add(activeEffect.effect, iconUI);
 			}
 		}
+	}
+
+	public void SetHighlight(bool isOn)
+	{
+		highlightEffect.SetActive(isOn);
+	}
+
+	public void Cleanse(int amount, EffectType abilityEffectTypeToCleanse, StatusType abilityStatusTypeToCleanse)
+	{
+		int removed = 0;
+		if (activeEffects.Count > 0)
+			for (int i = activeEffects.Count - 1; i >= 0; i--)
+			{
+				if (activeEffects[i].effect.effectType == abilityEffectTypeToCleanse)
+				{
+					switch (abilityEffectTypeToCleanse)
+					{
+						case EffectType.Buff:
+						case EffectType.Debuff:
+							Debug.Log($"{unitName} had {activeEffects[i].effect.name} cleansed!");
+							activeEffects.RemoveAt(i);
+							RefreshStatusIcons();
+							removed++;
+							break;
+						case EffectType.Status:
+							if (activeEffects[i].effect.statusEffect == abilityStatusTypeToCleanse)
+							{
+								Debug.Log($"{unitName} had {activeEffects[i].effect.name} cleansed!");
+								activeEffects.RemoveAt(i);
+								RefreshStatusIcons();
+								removed++;
+							}
+
+							break;
+					}
+
+					if (removed >= amount)
+					{
+						RefreshStatusIcons();
+						break;
+					}
+				}
+			}
+
+		RefreshStatusIcons();
+	}
+
+	public float CalculateStanceDamage(float damage)
+	{
+		float modifier = 1f;
+		switch (currentStance)
+		{
+			case StanceType.Offensive:
+				modifier += (stanceBonus / 100f); // + Bonus % damage
+				break;
+			case StanceType.Defensive:
+				modifier -= (stanceReduction / 100f); // - Bonus % damage
+				break;
+		}
+
+		return damage * modifier;
+	}
+
+	public float CalculateStanceDefense(int defense)
+	{
+		float finalDefense = defense;
+		switch (currentStance)
+		{
+			case StanceType.Offensive:
+				finalDefense -= stanceReduction; // - Bonus defense
+				break;
+			case StanceType.Defensive:
+				finalDefense += stanceBonus; // + Bonus  defense
+				break;
+		}
+
+		Debug.Log("MODIFIED: " + finalDefense);
+
+		return finalDefense;
+	}
+
+	public void ShowFloatingText(string message, Color color)
+	{
+		GameObject textObj = Instantiate(floatingTextPrefab, unitCanvas);
+
+		// Set the position near the unit in world space
+		Vector3 worldPosition = transform.position + Vector3.up * 2f;
+
+		// Convert the world position to local position on the canvas (if needed)
+		textObj.transform.position = worldPosition;
+
+		textObj.GetComponent<FloatingText>().Show(message, color);
 	}
 }

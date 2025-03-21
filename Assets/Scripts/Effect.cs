@@ -34,6 +34,7 @@ public enum StatusType
 	Bleed,
 	Poison,
 	Burn,
+	None,
 }
 
 public enum EffectTiming

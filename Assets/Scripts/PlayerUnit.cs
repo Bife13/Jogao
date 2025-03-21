@@ -7,27 +7,32 @@ public class PlayerUnit : Unit
 {
 	public void UseAbility(Ability ability, List<Unit> targets)
 	{
+		CommitStance();
+		
 		foreach (Unit target in targets)
 		{
-			Debug.Log($"{gameObject.name} uses {ability.abilityName} on {target.unitName}!");
 			if (!isTargetValid(ability, target))
 			{
 				Debug.LogWarning($"Invalid target for ability {ability.abilityName}");
-				return;
 			}
+
+			Debug.Log($"{gameObject.name} uses {ability.abilityName} on {target.unitName}!");
 
 			Debug.Log(ability.effectType);
 			switch (ability.effectType)
 			{
 				case AbilityEffectType.Damage:
+					AttackAnimation(1);
+
 					float damage = Random.Range(minDamage, maxDamage + 1);
 
 					if (PerformCriticalHitCheck((int)GetTotalModifiedStat(StatType.Crit, critChance)))
 						damage = (1.5f * maxDamage);
 
-					damage += GetTotalModifiedStat(StatType.Attack, damage);
-					damage += damage * ability.minPower;
-					AttackAnimation(1);
+					damage = CalculateStanceDamage(damage) +
+					         GetTotalModifiedStat(StatType.Attack, damage) +
+					         damage * ability.minPower;
+
 					if (PerformAccuracyDodgeCheck(ability.accuracy, target))
 					{
 						target.TakeDamage(Mathf.CeilToInt(damage), DamageType.Direct);
@@ -55,6 +60,15 @@ public class PlayerUnit : Unit
 					break;
 			}
 
+			if (ability.canCleanse)
+			{
+				int amount = ability.cleanseAmount <= 0 ? int.MaxValue : ability.cleanseAmount;
+				target.Cleanse(amount, ability.effectTypeToCleanse, ability.statusTypeToCleanse);
+				Debug.Log($"{target.unitName} is cleansed of {amount} debuffs!");
+			}
+
+			abilityCooldowns[ability] = ability.cooldown;
+
 			// if (ability.statusEffect != null)
 			// {
 			// 	int roll = Random.Range(0, 100);
@@ -66,7 +80,7 @@ public class PlayerUnit : Unit
 		}
 	}
 
-	private bool isTargetValid(Ability ability, Unit target)
+	public bool isTargetValid(Ability ability, Unit target)
 	{
 		if (target == null)
 		{
@@ -107,5 +121,21 @@ public class PlayerUnit : Unit
 		}
 
 		return true;
+	}
+
+	public void CommitStance()
+	{
+		if (hasComittedStance)
+		{
+			Debug.Log("You've already committed to a stance!");
+			return;
+		}
+
+		if (previewStance != StanceType.Neutral)
+		{
+			currentStance = previewStance;
+			hasComittedStance = true;
+			Debug.Log($"Stance committed: {currentStance}");
+		}
 	}
 }

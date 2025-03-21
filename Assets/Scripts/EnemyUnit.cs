@@ -35,14 +35,16 @@ public class EnemyUnit : Unit
 			switch (ability.effectType)
 			{
 				case AbilityEffectType.Damage:
+					AttackAnimation(1);
+
 					float damage = Random.Range(minDamage, maxDamage + 1);
 
 					if (PerformCriticalHitCheck((int)GetTotalModifiedStat(StatType.Crit, critChance)))
 						damage = (1.5f * maxDamage);
 
-					damage += GetTotalModifiedStat(StatType.Attack, damage);
-					damage += damage * ability.minPower;
-					AttackAnimation(1);
+					damage += GetTotalModifiedStat(StatType.Attack, damage) +
+					          damage * ability.minPower;
+
 					if (PerformAccuracyDodgeCheck(ability.accuracy, target))
 					{
 						target.TakeDamage(Mathf.CeilToInt(damage), DamageType.Direct);

@@ -42,6 +42,11 @@ public class Ability : ScriptableObject
 	public int cooldown;
 	public int accuracy; // % to hit
 
+	[Tooltip("For Cleanse Abilities")]
+	public bool canCleanse;
+	public int cleanseAmount = 1;
+	public EffectType effectTypeToCleanse;
+	public StatusType statusTypeToCleanse;
 	// VER dos paineis de attack??
 
 	// FOR LATER DOING STATUS EFFECTS

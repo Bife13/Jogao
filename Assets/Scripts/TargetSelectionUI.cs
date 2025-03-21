@@ -36,7 +36,6 @@ public class TargetSelectionUI : MonoBehaviour
 
 	public void OnUnitClicked(Unit unit)
 	{
-		Debug.Log("Contagem: " + validTargets.Count);
 		if (!isSelecting || !validTargets.Contains(unit))
 		{
 			Debug.Log("Invalid target selection.");
@@ -54,15 +53,45 @@ public class TargetSelectionUI : MonoBehaviour
 			case AbilityTargetType.Self:
 				List<Unit> targets = new List<Unit>();
 				targets.Add(unit);
-				actingPlayer.UseAbility(currentAbility, targets);
+				if (!actingPlayer.CanUseAbility(currentAbility))
+				{
+					Debug.LogWarning($"{currentAbility.abilityName} is in cooldown");
+				}
+				else if (!actingPlayer.isTargetValid(currentAbility, targets[0]))
+				{
+					Debug.LogWarning($"Invalid target for ability {currentAbility.abilityName}");
+				}
+				else
+				{
+					actingPlayer.UseAbility(currentAbility, targets);
+					EndTargetSelection();
+				}
+
 				break;
 			case AbilityTargetType.AllAllies:
 			case AbilityTargetType.AllEnemies:
-				actingPlayer.UseAbility(currentAbility, validTargets);
+				if (!actingPlayer.CanUseAbility(currentAbility))
+				{
+					Debug.LogWarning($"{currentAbility.abilityName} is in cooldown");
+				}
+
+				bool correctTargets = false;
+				foreach (Unit target in validTargets)
+				{
+					if (actingPlayer.isTargetValid(currentAbility, target))
+						correctTargets = true;
+				}
+
+				if (correctTargets)
+				{
+					actingPlayer.UseAbility(currentAbility, validTargets);
+					EndTargetSelection();
+				}
+				else
+					Debug.LogWarning($"Invalid targets for ability {currentAbility.abilityName}");
+
 				break;
 		}
-
-		EndTargetSelection();
 	}
 
 	public void EndTargetSelection()

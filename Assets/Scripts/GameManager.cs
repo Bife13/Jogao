@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -52,6 +53,8 @@ public class GameManager : MonoBehaviour
 	public bool combatEnded = false;
 
 	private Unit currentUnit;
+
+	private Dictionary<Ability, int> abilityCooldowns = new Dictionary<Ability, int>();
 
 
 	private void Awake()
@@ -128,6 +131,12 @@ public class GameManager : MonoBehaviour
 			if (currentUnit.isAlive())
 			{
 				Debug.Log($"It's {currentUnit.unitName}'s turn!");
+				foreach (Unit unit in allUnits)
+				{
+					unit.SetHighlight(false);
+				}
+
+				currentUnit.SetHighlight(true);
 				currentUnit.ProcessEffectsPerTurn(EffectTiming.StartTurn);
 
 				yield return new WaitForSeconds(0.5f);
@@ -169,6 +178,8 @@ public class GameManager : MonoBehaviour
 	{
 		Debug.Log($"{currentUnit.unitName} is choosing an action...");
 
+		playerUnit.StartTurn();
+
 		TargetSelectionUI.Instance.isSelecting = true;
 
 		while (TargetSelectionUI.Instance.isSelecting)
@@ -177,7 +188,7 @@ public class GameManager : MonoBehaviour
 		}
 
 		HandlePanel(false);
-
+		currentUnit.SetHighlight(false);
 		yield return new WaitForSeconds(1.0f); // Simulate the attack animation/delay
 	}
 
@@ -190,6 +201,7 @@ public class GameManager : MonoBehaviour
 	IEnumerator EnemyTurn(EnemyUnit enemyUnit)
 	{
 		enemyUnit.PerformIntent();
+		currentUnit.SetHighlight(false);
 		yield return new WaitForSeconds(1.0f); // Simulate the attack animation/delay
 	}
 
@@ -229,6 +241,7 @@ public class GameManager : MonoBehaviour
 			{
 				case UnitType.PLAYER:
 					playerUnits.Add(unit);
+					unit.hasComittedStance = false;
 					break;
 				case UnitType.ENEMY:
 					enemyUnits.Add(unit);
@@ -347,5 +360,19 @@ public class GameManager : MonoBehaviour
 
 			skillPanel.SetActive(false);
 		}
+	}
+
+	public void TrySwitchStance()
+	{
+		if (currentUnit.hasComittedStance)
+		{
+			Debug.Log("Stance already committed. Cannot preview/change anymore.");
+			return;
+		}
+
+		int stanceCount = Enum.GetValues(typeof(StanceType)).Length;
+		currentUnit.previewStance = (StanceType)(((int)currentUnit.previewStance + 1) % stanceCount);
+
+		Debug.Log($"{currentUnit.unitName} switched to {currentUnit.previewStance} stance!");
 	}
 }

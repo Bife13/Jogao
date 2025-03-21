@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitName: Book
   maxHP: 50
-  baseDefense: 10
+  baseDefense: 0
   dodge: 5
   accuracy: 5
   speed: 1
@@ -23,4 +23,4 @@ MonoBehaviour:
   critChance: 0
   unitType: 1
   abilities:
-  - {fileID: 11400000, guid: 891bf719f8f150a4e9eb7b64d34cb5c8, type: 2}
+  - {fileID: 11400000, guid: 17221c9dfd88ce141b5d173b9f7d9b9c, type: 2}
