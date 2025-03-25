@@ -17,11 +17,12 @@ public class EnemyUnit : Unit
 
 	public void DecideNextIntent()
 	{
+		intentImage.enabled = true;
 		nextAbility = _abilities[Random.Range(0, _abilities.Count)];
 		intentImage.sprite = nextAbility.icon;
 	}
 
-	public void UseAbility(Ability ability, List<Unit> targets)
+	public override void UseAbility(Ability ability, List<Unit> targets)
 	{
 		foreach (Unit target in targets)
 		{
@@ -32,10 +33,30 @@ public class EnemyUnit : Unit
 				return;
 			}
 
+			if (activeCoating != null)
+			{
+				coatingDuration--;
+				RefreshCoatingUI(true);
+				Debug.Log($"{unitName}'s {activeCoating.coatingName}  has: " + coatingDuration);
+
+				if (coatingDuration <= 0)
+				{
+					Debug.Log($"{unitName}'s {activeCoating.coatingName} coating has worn off.");
+					activeCoating = null;
+					RefreshCoatingUI(false);
+				}
+			}
+
+			if (ability.canCoat)
+			{
+				ApplyWeaponCoating(ability.coating);
+				RefreshCoatingUI(true);
+			}
+
 			switch (ability.effectType)
 			{
 				case AbilityEffectType.Damage:
-					AttackAnimation(1);
+					AttackAnimation(-1);
 
 					float damage = Random.Range(minDamage, maxDamage + 1);
 
@@ -45,9 +66,15 @@ public class EnemyUnit : Unit
 					damage += GetTotalModifiedStat(StatType.Attack, damage) +
 					          damage * ability.minPower;
 
+					if (activeCoating != null)
+					{
+						damage += activeCoating.bonusDamage;
+						target.ApplyEffect(activeCoating.effect);
+					}
+
 					if (PerformAccuracyDodgeCheck(ability.accuracy, target))
 					{
-						target.TakeDamage(Mathf.CeilToInt(damage), DamageType.Direct);
+						target.TakeDirectDamage(Mathf.CeilToInt(damage), DamageType.Direct, this);
 						CheckAndApplyEffects(ability, target);
 					}
 					else
@@ -68,9 +95,20 @@ public class EnemyUnit : Unit
 					CheckAndApplyEffects(ability, target);
 					break;
 				case AbilityEffectType.Debuff:
-					CheckAndApplyEffects(ability, target);
+					if (PerformAccuracyDodgeCheck(ability.accuracy, target))
+						CheckAndApplyEffects(ability, target);
 					break;
 			}
+
+			if (ability.canCleanse)
+			{
+				int amount = ability.cleanseAmount <= 0 ? int.MaxValue : ability.cleanseAmount;
+				target.Cleanse(amount, ability.effectTypeToCleanse, ability.statusTypeToCleanse);
+				Debug.Log($"{target.unitName} is cleansed of {amount} debuffs!");
+			}
+
+			abilityCooldowns[ability] = ability.cooldown;
+			intentImage.enabled = false;
 
 			// if (ability.statusEffect != null)
 			// {

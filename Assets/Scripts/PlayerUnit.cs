@@ -5,10 +5,10 @@ using UnityEngine.Rendering;
 
 public class PlayerUnit : Unit
 {
-	public void UseAbility(Ability ability, List<Unit> targets)
+	public override void UseAbility(Ability ability, List<Unit> targets)
 	{
 		CommitStance();
-		
+
 		foreach (Unit target in targets)
 		{
 			if (!isTargetValid(ability, target))
@@ -18,7 +18,26 @@ public class PlayerUnit : Unit
 
 			Debug.Log($"{gameObject.name} uses {ability.abilityName} on {target.unitName}!");
 
-			Debug.Log(ability.effectType);
+			if (activeCoating != null)
+			{
+				coatingDuration--;
+				RefreshCoatingUI(true);
+				Debug.Log($"{unitName}'s {activeCoating.coatingName}  has: " + coatingDuration);
+
+				if (coatingDuration <= 0)
+				{
+					Debug.Log($"{unitName}'s {activeCoating.coatingName} coating has worn off.");
+					activeCoating = null;
+					RefreshCoatingUI(false);
+				}
+			}
+
+			if (ability.canCoat)
+			{
+				ApplyWeaponCoating(ability.coating);
+				RefreshCoatingUI(true);
+			}
+
 			switch (ability.effectType)
 			{
 				case AbilityEffectType.Damage:
@@ -33,9 +52,15 @@ public class PlayerUnit : Unit
 					         GetTotalModifiedStat(StatType.Attack, damage) +
 					         damage * ability.minPower;
 
+					if (activeCoating != null)
+					{
+						damage += activeCoating.bonusDamage;
+						target.ApplyEffect(activeCoating.effect);
+					}
+
 					if (PerformAccuracyDodgeCheck(ability.accuracy, target))
 					{
-						target.TakeDamage(Mathf.CeilToInt(damage), DamageType.Direct);
+						target.TakeDirectDamage(Mathf.CeilToInt(damage), DamageType.Direct, this);
 						CheckAndApplyEffects(ability, target);
 						GameManager.Instance.OnPlayerActionChosen("Attack");
 					}
@@ -56,7 +81,8 @@ public class PlayerUnit : Unit
 					CheckAndApplyEffects(ability, target);
 					break;
 				case AbilityEffectType.Debuff:
-					CheckAndApplyEffects(ability, target);
+					if (PerformAccuracyDodgeCheck(ability.accuracy, target))
+						CheckAndApplyEffects(ability, target);
 					break;
 			}
 
@@ -68,6 +94,7 @@ public class PlayerUnit : Unit
 			}
 
 			abilityCooldowns[ability] = ability.cooldown;
+
 
 			// if (ability.statusEffect != null)
 			// {

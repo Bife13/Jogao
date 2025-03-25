@@ -22,4 +22,12 @@ MonoBehaviour:
   maxPower: 0
   cost: 0
   cooldown: 0
-  accuracy: 85
+  accuracy: 100
+  canCleanse: 0
+  cleanseAmount: 1
+  effectTypeToCleanse: 0
+  statusTypeToCleanse: 0
+  canCoat: 0
+  coating: {fileID: 0}
+  effects: []
+  statusEffectChances: 

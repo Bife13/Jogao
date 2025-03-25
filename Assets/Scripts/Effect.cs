@@ -17,9 +17,15 @@ public class Effect : ScriptableObject
 
 	[Header("ONLY MATTERS IF IT HAS A STATUS EFFECT")]
 	public bool isStatusEffect;
+
 	public StatusType statusEffect;
+
 	[FormerlySerializedAs("statusDamageTiming")]
 	public int statusDamagePerTurn;
+
+	[Header("Only matters if it has counterattack")]
+	public bool grantsCounter;
+	public Ability counterAbility;
 }
 
 public enum EffectType

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public enum AbilityTargetType
 {
@@ -44,12 +45,18 @@ public class Ability : ScriptableObject
 
 	[Tooltip("For Cleanse Abilities")]
 	public bool canCleanse;
+
 	public int cleanseAmount = 1;
 	public EffectType effectTypeToCleanse;
-	public StatusType statusTypeToCleanse;
-	// VER dos paineis de attack??
 
-	// FOR LATER DOING STATUS EFFECTS
+	public StatusType statusTypeToCleanse;
+
+	[Tooltip("For Coating Abilities")]
+	public bool canCoat;
+
+	public WeaponCoating coating;
+
+	[Tooltip("For Effects")]
 	public List<Effect> effects;
-	public List<int> statusEffectChances;
+	public List<int> effectChances;
 }

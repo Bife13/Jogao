@@ -23,6 +23,12 @@ MonoBehaviour:
   cost: 0
   cooldown: 0
   accuracy: 0
+  canCleanse: 0
+  cleanseAmount: 1
+  effectTypeToCleanse: 0
+  statusTypeToCleanse: 0
+  canCoat: 0
+  coating: {fileID: 0}
   effects:
-  - {fileID: 11400000, guid: ac45d78edeceea844bcbf7fdeaccb787, type: 2}
+  - {fileID: 11400000, guid: 4e067d364378f9448b2c68810d57b719, type: 2}
   statusEffectChances: 64000000

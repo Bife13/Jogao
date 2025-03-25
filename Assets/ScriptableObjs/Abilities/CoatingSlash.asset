@@ -10,24 +10,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 562d7febfae63174cb24c3c9bdd1c991, type: 3}
-  m_Name: Hit
+  m_Name: CoatingSlash
   m_EditorClassIdentifier: 
-  abilityName: 
+  abilityName: Coating Slash
   description: 
-  icon: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  icon: {fileID: 0}
   targetType: 0
   effectType: 0
-  isPercentage: 1
+  isPercentage: 0
   minPower: 0
   maxPower: 0
   cost: 0
-  cooldown: 0
+  cooldown: 2
   accuracy: 100
   canCleanse: 0
   cleanseAmount: 1
   effectTypeToCleanse: 0
   statusTypeToCleanse: 0
-  canCoat: 0
-  coating: {fileID: 0}
+  canCoat: 1
+  coating: {fileID: 11400000, guid: ab0ac43eb174c384782a6ab1e70110e3, type: 2}
   effects: []
   statusEffectChances: 
