@@ -132,7 +132,7 @@ public class Unit : MonoBehaviour
 
 		DOTween.To(() => healthBar.fillAmount, x => healthBar.fillAmount = x, (float)currentHP / maxHP, 0.5f);
 	}
-	// TODO REVER AQUI A LOGICA DO DANOS / CONFIRMAR AS FUNCOES
+
 	public void TakeDirectDamage(int damage, DamageType damageType, Unit originTarget)
 	{
 		int finalDamage = 0;
@@ -232,6 +232,12 @@ public class Unit : MonoBehaviour
 			}
 
 			activeEffects.Add(new ActiveEffect(effect));
+			if (effect.isCoatingBuff)
+			{
+				coatingDuration--;
+				if (activeCoating != null)
+					ApplyWeaponCoating(effect.weaponCoating);
+			}
 			RefreshStatusIcons();
 		}
 	}
@@ -242,9 +248,26 @@ public class Unit : MonoBehaviour
 			for (int i = 0; i < ability.effects.Count; i++)
 			{
 				float effectRoll = Random.Range(0f, 100f);
-				if (ability.effects[i] != null && effectRoll <= ability.effectChances[0])
+				if (ability.effects[i] != null && effectRoll <= ability.effectChances[i])
 					target.ApplyEffect(ability.effects[i]);
 			}
+	}
+
+	public bool CheckForActiveEffects(Unit target, List<Effect> effects)
+	{
+		if (target.activeEffects.Count > 0)
+		{
+			foreach (var effect in effects)
+			{
+				ActiveEffect existing = target.activeEffects.Find(e => e.effect == effect);
+				if (existing == null)
+					return false;
+			}
+
+			return true;
+		}
+
+		return false;
 	}
 
 	public void ProcessEffectsPerTurn(EffectTiming effectTiming)
@@ -312,10 +335,14 @@ public class Unit : MonoBehaviour
 		{
 			case StatType.Speed:
 			case StatType.Accuracy:
-			case StatType.Crit:
-			case StatType.Dodge:
 			case StatType.Defense:
 				resultValue += modifier;
+				break;
+			case StatType.Crit:
+			case StatType.Dodge:
+				resultValue += modifier;
+				if (resultValue < 0)
+					resultValue = 0;
 				break;
 			case StatType.Attack:
 				modifier /= 100;
@@ -450,13 +477,35 @@ public class Unit : MonoBehaviour
 
 	public bool HasCounterBuff()
 	{
-		foreach (var effect in activeEffects)
+		foreach (var activeEffect in activeEffects)
 		{
-			if (effect.grantsCounter)
+			if (activeEffect.grantsCounter)
 				return true;
 		}
 
 		return false;
+	}
+
+	public bool HasCoatingBuff()
+	{
+		foreach (var activeEffect in activeEffects)
+		{
+			if (activeEffect.isCoatingBuff)
+				return true;
+		}
+
+		return false;
+	}
+
+	public int CoatingBuffMultiplier()
+	{
+		foreach (var activeEffect in activeEffects)
+		{
+			if (activeEffect.isCoatingBuff)
+				return activeEffect.effect.amount;
+		}
+
+		return 1;
 	}
 
 	public ActiveEffect GetCounterBuff()

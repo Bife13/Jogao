@@ -33,7 +33,7 @@ public class EnemyUnit : Unit
 				return;
 			}
 
-			if (activeCoating != null)
+			if (activeCoating != null && ability.isWeaponAttack)
 			{
 				coatingDuration--;
 				RefreshCoatingUI(true);
@@ -53,7 +53,7 @@ public class EnemyUnit : Unit
 				RefreshCoatingUI(true);
 			}
 
-			switch (ability.effectType)
+			switch (ability.abilityEffectType)
 			{
 				case AbilityEffectType.Damage:
 					AttackAnimation(-1);
@@ -63,12 +63,24 @@ public class EnemyUnit : Unit
 					if (PerformCriticalHitCheck((int)GetTotalModifiedStat(StatType.Crit, critChance)))
 						damage = (1.5f * maxDamage);
 
-					damage += GetTotalModifiedStat(StatType.Attack, damage) +
-					          damage * ability.minPower;
+					float baseDamage = damage;
+
+					damage += GetTotalModifiedStat(StatType.Attack, baseDamage);
+					damage += baseDamage * ability.basePower;
+
+					if (target.CheckForActiveEffects(target, ability.boostingEffects))
+						damage += baseDamage * (ability.statusBoost / 100f);
+
 
 					if (activeCoating != null)
 					{
-						damage += activeCoating.bonusDamage;
+						int coatDamage = activeCoating.bonusDamage;
+						if (HasCoatingBuff())
+						{
+							coatDamage *= CoatingBuffMultiplier();
+						}
+
+						damage += coatDamage;
 						target.ApplyEffect(activeCoating.effect);
 					}
 
@@ -85,7 +97,7 @@ public class EnemyUnit : Unit
 
 					break;
 				case AbilityEffectType.Heal:
-					float healAmount = Random.Range(ability.minPower, ability.maxPower);
+					float healAmount = Random.Range(ability.basePower, ability.maxPower);
 					if (PerformCriticalHitCheck((int)GetTotalModifiedStat(StatType.Crit, 15)))
 						healAmount *= 2;
 					target.Heal(Mathf.CeilToInt(healAmount));
@@ -97,6 +109,9 @@ public class EnemyUnit : Unit
 				case AbilityEffectType.Debuff:
 					if (PerformAccuracyDodgeCheck(ability.accuracy, target))
 						CheckAndApplyEffects(ability, target);
+					break;
+				case AbilityEffectType.StatusEffect:
+					CheckAndApplyEffects(ability, target);
 					break;
 			}
 

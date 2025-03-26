@@ -5,7 +5,8 @@ public class ActiveEffect
 	public Effect effect;
 	public int remainingDuration;
 	
-	public bool grantsCounter => effect.grantsCounter; // New property!
+	public bool grantsCounter => effect.grantsCounter;
+	public bool isCoatingBuff => effect.isCoatingBuff; // New property!
 
 	public ActiveEffect(Effect data)
 	{

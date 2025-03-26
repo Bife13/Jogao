@@ -15,19 +15,20 @@ MonoBehaviour:
   abilityName: Debuff All
   description: 
   icon: {fileID: 0}
-  targetType: 4
-  effectType: 3
-  isPercentage: 0
-  minPower: 0
+  targetType: 3
+  effectType: 4
+  basePower: 0
   maxPower: 0
-  cost: 0
   cooldown: 0
-  accuracy: 0
+  accuracy: 100
+  statusBoost: 0
+  boostingEffects: []
+  effects:
+  - {fileID: 11400000, guid: 894ab77b90b23e34e9e9fa5540385e8d, type: 2}
+  effectChances: 64000000
   canCleanse: 0
   cleanseAmount: 1
   effectTypeToCleanse: 0
   statusTypeToCleanse: 0
-  effects:
-  - {fileID: 11400000, guid: a201e92a63fd3624880655a2b567791f, type: 2}
-  - {fileID: 11400000, guid: ada87844587413e45a5b9268fc013240, type: 2}
-  statusEffectChances: 6400000064000000
+  canCoat: 0
+  coating: {fileID: 0}

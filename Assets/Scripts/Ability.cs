@@ -31,17 +31,23 @@ public class Ability : ScriptableObject
 	public Sprite icon;
 
 	public AbilityTargetType targetType;
-	public AbilityEffectType effectType;
-
-	public bool isPercentage = true;
+	public AbilityEffectType abilityEffectType;
 
 	public int
-		minPower; // for damage its % of damage, for healing its either a flat value or %hp, for defense its %of defense, for buff its %of buff
+		basePower; // for damage its % of damage, for healing its either a flat value or %hp, for defense its %of defense, for buff its %of buff
 
 	public int maxPower;
-	public int cost; // might not use this
 	public int cooldown;
 	public int accuracy; // % to hit
+	public bool isWeaponAttack;
+	
+	public int statusBoost;
+	public List<Effect> boostingEffects;
+
+	[Tooltip("For Effects")]
+	public List<Effect> effects;
+
+	public List<int> effectChances;
 
 	[Tooltip("For Cleanse Abilities")]
 	public bool canCleanse;
@@ -55,8 +61,4 @@ public class Ability : ScriptableObject
 	public bool canCoat;
 
 	public WeaponCoating coating;
-
-	[Tooltip("For Effects")]
-	public List<Effect> effects;
-	public List<int> effectChances;
 }

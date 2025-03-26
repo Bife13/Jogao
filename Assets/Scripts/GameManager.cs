@@ -259,7 +259,7 @@ public class GameManager : MonoBehaviour
 		{
 			combatEnded = true;
 			Debug.Log("Combat Ended!");
-			StopAllCoroutines();
+			StopCoroutine(HandleTurnLoop());
 			return true;
 		}
 

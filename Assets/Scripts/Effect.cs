@@ -26,6 +26,12 @@ public class Effect : ScriptableObject
 	[Header("Only matters if it has counterattack")]
 	public bool grantsCounter;
 	public Ability counterAbility;
+	
+	[Header("Only matters if it has coating buff")]
+	public bool isCoatingBuff;
+
+	public WeaponCoating weaponCoating;
+
 }
 
 public enum EffectType
