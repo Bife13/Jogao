@@ -65,11 +65,17 @@ public class EnemyUnit : Unit
 
 					float baseDamage = damage;
 
-					damage += GetTotalModifiedStat(StatType.Attack, baseDamage);
+					damage += (GetTotalModifiedStat(StatType.Attack, baseDamage) - baseDamage);
 					damage += baseDamage * ability.basePower;
 
 					if (target.CheckForActiveEffects(target, ability.boostingEffects))
 						damage += baseDamage * (ability.statusBoost / 100f);
+
+					if (target.HasShockedDebuff())
+					{
+						damage += baseDamage * (shockAmount / 100f);
+						target.ProcessEffectsPerTurn(EffectTiming.OnHit, 500);
+					}
 
 
 					if (activeCoating != null)

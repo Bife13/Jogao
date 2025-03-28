@@ -16,18 +16,20 @@ MonoBehaviour:
   description: 
   icon: {fileID: 0}
   targetType: 3
-  effectType: 4
+  abilityEffectType: 4
   basePower: 0
   maxPower: 0
   cooldown: 0
   accuracy: 100
+  isWeaponAttack: 0
   statusBoost: 0
   boostingEffects: []
   effects:
-  - {fileID: 11400000, guid: 894ab77b90b23e34e9e9fa5540385e8d, type: 2}
-  effectChances: 64000000
+  - {fileID: 11400000, guid: 1f766d9edbe67d54ea1d99c7a7dc7c95, type: 2}
+  - {fileID: 11400000, guid: 818daa9afb634eb498da1a575afd4697, type: 2}
+  effectChances: 6400000064000000
   canCleanse: 0
-  cleanseAmount: 1
+  cleanseAmount: 0
   effectTypeToCleanse: 0
   statusTypeToCleanse: 0
   canCoat: 0

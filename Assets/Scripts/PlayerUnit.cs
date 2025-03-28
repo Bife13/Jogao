@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Rendering;
+using Random = UnityEngine.Random;
 
 public class PlayerUnit : Unit
 {
@@ -49,13 +51,18 @@ public class PlayerUnit : Unit
 						damage = (1.5f * maxDamage);
 
 					float baseDamage = damage;
-
-					damage += CalculateStanceDamage(baseDamage);
-					damage += GetTotalModifiedStat(StatType.Attack, baseDamage);
+					damage += CalculateStanceBonusDamage(baseDamage);
+					damage += (GetTotalModifiedStat(StatType.Attack, baseDamage) - baseDamage);
 					damage += baseDamage * ability.basePower;
 
 					if (target.CheckForActiveEffects(target, ability.boostingEffects))
 						damage += baseDamage * (ability.statusBoost / 100f);
+
+					if (target.HasShockedDebuff())
+					{
+						damage += baseDamage * (shockAmount / 100f);
+						target.ProcessEffectsPerTurn(EffectTiming.OnHit,500);
+					}
 
 					if (activeCoating != null)
 					{

@@ -76,13 +76,16 @@ public class Unit : MonoBehaviour
 
 
 	public int stanceBonus = 20;
-
+	public int shockAmount = 25;
+	
 	public int stanceReduction = 10;
 	public bool hasComittedStance = false;
 
 	public WeaponCoating activeCoating = null;
 	public int coatingDuration = 0;
 	public EffectIconUI coatingIcon;
+	
+	
 
 	public void Awake()
 	{
@@ -145,7 +148,7 @@ public class Unit : MonoBehaviour
 				finalDamage = Mathf.Max(0, damage - Mathf.CeilToInt(reducedDamage));
 				currentHP -= finalDamage;
 				Debug.Log($"{unitName} took {finalDamage} damage! Remaining HP: {currentHP}");
-				ShowFloatingText(finalDamage.ToString(), Color.red);
+				ShowFloatingText(finalDamage.ToString(), Color.black);
 				if (currentHP < 0)
 				{
 					currentHP = 0;
@@ -231,13 +234,14 @@ public class Unit : MonoBehaviour
 				return;
 			}
 
-			activeEffects.Add(new ActiveEffect(effect));
+			activeEffects.Add(new ActiveEffect(effect, GameManager.Instance.turnCounter));
 			if (effect.isCoatingBuff)
 			{
 				coatingDuration--;
 				if (activeCoating != null)
 					ApplyWeaponCoating(effect.weaponCoating);
 			}
+
 			RefreshStatusIcons();
 		}
 	}
@@ -270,7 +274,7 @@ public class Unit : MonoBehaviour
 		return false;
 	}
 
-	public void ProcessEffectsPerTurn(EffectTiming effectTiming)
+	public void ProcessEffectsPerTurn(EffectTiming effectTiming, int currentTurn)
 	{
 		if (activeEffects.Count > 0)
 		{
@@ -304,7 +308,7 @@ public class Unit : MonoBehaviour
 						}
 					}
 
-					appliedEffect.TickEffect();
+					appliedEffect.TickEffect(currentTurn);
 					RefreshStatusIcons();
 
 					if (appliedEffect.IsExpired())
@@ -345,6 +349,7 @@ public class Unit : MonoBehaviour
 					resultValue = 0;
 				break;
 			case StatType.Attack:
+				modifier += 100;
 				modifier /= 100;
 				resultValue *= modifier;
 				break;
@@ -497,6 +502,28 @@ public class Unit : MonoBehaviour
 		return false;
 	}
 
+	public bool HasShockedDebuff()
+	{
+		foreach (var activeEffect in activeEffects)
+		{
+			if (activeEffect.effect.statusEffect == StatusType.Shock)
+				return true;
+		}
+
+		return false;
+	}
+	
+	public bool HasStunDebuff()
+	{
+		foreach (var activeEffect in activeEffects)
+		{
+			if (activeEffect.effect.statusEffect == StatusType.Stun)
+				return true;
+		}
+
+		return false;
+	}
+
 	public int CoatingBuffMultiplier()
 	{
 		foreach (var activeEffect in activeEffects)
@@ -513,9 +540,9 @@ public class Unit : MonoBehaviour
 		return activeEffects.FirstOrDefault(e => e.grantsCounter);
 	}
 
-	public float CalculateStanceDamage(float damage)
+	public float CalculateStanceBonusDamage(float damage)
 	{
-		float modifier = 1f;
+		float modifier = 0f;
 		switch (currentStance)
 		{
 			case StanceType.Offensive:
@@ -541,8 +568,6 @@ public class Unit : MonoBehaviour
 				finalDefense += stanceBonus; // + Bonus  defense
 				break;
 		}
-
-		Debug.Log("MODIFIED: " + finalDefense);
 
 		return finalDefense;
 	}

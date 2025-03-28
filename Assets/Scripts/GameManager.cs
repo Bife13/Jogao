@@ -49,6 +49,7 @@ public class GameManager : MonoBehaviour
 	// private bool isPlayerTurnActive = false;
 
 	public int roundCounter = 1;
+	public int turnCounter = 0;
 
 	public bool combatEnded = false;
 
@@ -136,8 +137,9 @@ public class GameManager : MonoBehaviour
 					unit.SetHighlight(false);
 				}
 
+				turnCounter++;
 				currentUnit.SetHighlight(true);
-				currentUnit.ProcessEffectsPerTurn(EffectTiming.StartTurn);
+				currentUnit.ProcessEffectsPerTurn(EffectTiming.StartTurn, turnCounter);
 
 				yield return new WaitForSeconds(0.5f);
 
@@ -153,7 +155,7 @@ public class GameManager : MonoBehaviour
 				}
 			}
 
-			currentUnit.ProcessEffectsPerTurn(EffectTiming.EndTurn);
+			currentUnit.ProcessEffectsPerTurn(EffectTiming.EndTurn, turnCounter);
 
 			currentUnitIndex++;
 			if (currentUnitIndex >= turnOrder.Count)
@@ -176,19 +178,28 @@ public class GameManager : MonoBehaviour
 
 	IEnumerator PlayerTurn(PlayerUnit playerUnit)
 	{
-		Debug.Log($"{currentUnit.unitName} is choosing an action...");
-
-		playerUnit.StartTurn();
-
-		TargetSelectionUI.Instance.isSelecting = true;
-
-		while (TargetSelectionUI.Instance.isSelecting)
+		if (!playerUnit.HasStunDebuff())
 		{
-			yield return null;
+			Debug.Log($"{currentUnit.unitName} is choosing an action...");
+
+			playerUnit.StartTurn();
+
+			TargetSelectionUI.Instance.isSelecting = true;
+
+			while (TargetSelectionUI.Instance.isSelecting)
+			{
+				yield return null;
+			}
+
+			HandlePanel(false);
+			currentUnit.SetHighlight(false);
+		}
+		else
+		{
+			playerUnit.ProcessEffectsPerTurn(EffectTiming.SkipAction, turnCounter);
+			Debug.Log($"{currentUnit.unitName} is stunned");
 		}
 
-		HandlePanel(false);
-		currentUnit.SetHighlight(false);
 		yield return new WaitForSeconds(1.0f); // Simulate the attack animation/delay
 	}
 
@@ -200,8 +211,17 @@ public class GameManager : MonoBehaviour
 
 	IEnumerator EnemyTurn(EnemyUnit enemyUnit)
 	{
-		enemyUnit.PerformIntent();
-		currentUnit.SetHighlight(false);
+		if (!enemyUnit.HasStunDebuff())
+		{
+			enemyUnit.PerformIntent();
+			currentUnit.SetHighlight(false);
+		}
+		else
+		{
+			enemyUnit.ProcessEffectsPerTurn(EffectTiming.SkipAction, turnCounter);
+			Debug.Log($"{enemyUnit.unitName} is stunned");
+		}
+
 		yield return new WaitForSeconds(1.0f); // Simulate the attack animation/delay
 	}
 
@@ -348,14 +368,14 @@ public class GameManager : MonoBehaviour
 			skillPanel.SetActive(true);
 			for (int i = 0; i < playerAbilities.Count; i++)
 			{
-				_buttonHandlers[i].assignedAbility = playerAbilities[i];
+				_buttonHandlers[i].SetAbility(playerAbilities[i]);
 			}
 		}
 		else
 		{
 			foreach (ButtonHandler buttonHandler in _buttonHandlers)
 			{
-				buttonHandler.assignedAbility = null;
+				buttonHandler.ResetAbility();
 			}
 
 			skillPanel.SetActive(false);

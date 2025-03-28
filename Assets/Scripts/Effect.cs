@@ -46,13 +46,17 @@ public enum StatusType
 	Bleed,
 	Poison,
 	Burn,
+	Stun,
+	Shock,
 	None,
 }
 
 public enum EffectTiming
 {
 	StartTurn,
-	EndTurn
+	EndTurn,
+	OnHit,
+	SkipAction
 }
 
 public enum StatType

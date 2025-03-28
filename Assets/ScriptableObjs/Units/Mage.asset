@@ -23,6 +23,5 @@ MonoBehaviour:
   critChance: 0
   unitType: 0
   abilities:
-  - {fileID: 11400000, guid: b3504e798bd29384893277fbcf08f273, type: 2}
   - {fileID: 11400000, guid: 62940a3db60097440ade74b844916274, type: 2}
-  - {fileID: 11400000, guid: f9ef8e279d65ab24a9395b082e22701d, type: 2}
+  - {fileID: 11400000, guid: b3504e798bd29384893277fbcf08f273, type: 2}
