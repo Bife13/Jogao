@@ -77,15 +77,14 @@ public class Unit : MonoBehaviour
 
 	public int stanceBonus = 20;
 	public int shockAmount = 25;
-	
+
 	public int stanceReduction = 10;
 	public bool hasComittedStance = false;
 
 	public WeaponCoating activeCoating = null;
 	public int coatingDuration = 0;
 	public EffectIconUI coatingIcon;
-	
-	
+
 
 	public void Awake()
 	{
@@ -152,6 +151,8 @@ public class Unit : MonoBehaviour
 				if (currentHP < 0)
 				{
 					currentHP = 0;
+					DOTween.To(() => healthBar.fillAmount, x => healthBar.fillAmount = x, (float)currentHP / maxHP,
+						0.5f);
 					return;
 				}
 
@@ -219,7 +220,7 @@ public class Unit : MonoBehaviour
 		{
 			Debug.Log($"{unitName} gains {effect.effectName}");
 
-			ActiveEffect existing = activeEffects.Find(e => e.effect == effect);
+			ActiveEffect existing = activeEffects.Find(e => e.effect.statusEffect == effect.statusEffect);
 			if (existing != null)
 			{
 				if (effect.isStackable)
@@ -235,11 +236,16 @@ public class Unit : MonoBehaviour
 			}
 
 			activeEffects.Add(new ActiveEffect(effect, GameManager.Instance.turnCounter));
+			
 			if (effect.isCoatingBuff)
 			{
+				Debug.Log("TEST1");
 				coatingDuration--;
-				if (activeCoating != null)
+				if (activeCoating == null)
+				{
 					ApplyWeaponCoating(effect.weaponCoating);
+					Debug.Log("Applied Coating");
+				}
 			}
 
 			RefreshStatusIcons();
@@ -263,7 +269,7 @@ public class Unit : MonoBehaviour
 		{
 			foreach (var effect in effects)
 			{
-				ActiveEffect existing = target.activeEffects.Find(e => e.effect == effect);
+				ActiveEffect existing = target.activeEffects.Find(e => e.effect.statusEffect == effect.statusEffect);
 				if (existing == null)
 					return false;
 			}
@@ -361,6 +367,15 @@ public class Unit : MonoBehaviour
 	public List<Ability> GetAbilities()
 	{
 		return _abilities;
+	}
+
+	public void SwapAbilities(int firstIndex, int secondIndex)
+	{
+		// Ability firstAbility = _abilities[firstIndex];
+		// _abilities[firstIndex] = _abilities[secondIndex];
+		// _abilities[secondIndex] = firstAbility;
+
+		(_abilities[firstIndex], _abilities[secondIndex]) = (_abilities[secondIndex], _abilities[firstIndex]);
 	}
 
 	public void StartTurn()
@@ -478,6 +493,7 @@ public class Unit : MonoBehaviour
 		activeCoating = coating;
 		coatingDuration = activeCoating.coatDuration;
 		Debug.Log($"{unitName} applied {coating.coatingName} coating to their weapon!");
+		RefreshCoatingUI(true);
 	}
 
 	public bool HasCounterBuff()
@@ -512,7 +528,7 @@ public class Unit : MonoBehaviour
 
 		return false;
 	}
-	
+
 	public bool HasStunDebuff()
 	{
 		foreach (var activeEffect in activeEffects)

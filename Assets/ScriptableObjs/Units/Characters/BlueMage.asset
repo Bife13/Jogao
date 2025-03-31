@@ -10,18 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 27abfccb2da32eb4e93ac60b17a4cf69, type: 3}
-  m_Name: Mage
+  m_Name: BlueMage
   m_EditorClassIdentifier: 
-  unitName: Mage
-  maxHP: 30
-  baseDefense: 10
-  dodge: 5
-  accuracy: 5
-  speed: 10
-  minDamage: 10
-  maxDamage: 10
+  unitName: 
+  maxHP: 0
+  baseDefense: 0
+  dodge: 0
+  accuracy: 0
+  speed: 0
+  minDamage: 0
+  maxDamage: 0
   critChance: 0
   unitType: 0
-  abilities:
-  - {fileID: 11400000, guid: 62940a3db60097440ade74b844916274, type: 2}
-  - {fileID: 11400000, guid: b3504e798bd29384893277fbcf08f273, type: 2}
+  abilities: []

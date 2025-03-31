@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using NUnit.Framework;
 using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -48,15 +49,22 @@ public class GameManager : MonoBehaviour
 
 	// private bool isPlayerTurnActive = false;
 
-	public int roundCounter = 1;
+	public int roundCounter = 0;
 	public int turnCounter = 0;
 
+	public bool combatStarted = false;
 	public bool combatEnded = false;
 
 	private Unit currentUnit;
 
 	private Dictionary<Ability, int> abilityCooldowns = new Dictionary<Ability, int>();
 
+	[SerializeField]
+	private List<Wave> _waves;
+
+	public Transform waveSpawningLocation;
+	public float unitSpacing = 2.5f;
+	public float yOffset = 0.25f;
 
 	private void Awake()
 	{
@@ -78,10 +86,12 @@ public class GameManager : MonoBehaviour
 
 	void StartCombat()
 	{
+		SpawnEnemies(_waves[roundCounter].waveUnits.Count);
 		OrganizeUnits();
 		CalculateInitiative();
 		StartCoroutine(HandleTurnLoop());
 	}
+
 
 	private void Update()
 	{
@@ -252,6 +262,24 @@ public class GameManager : MonoBehaviour
 		}
 	}
 
+	private void SpawnEnemies(int count)
+	{
+		Vector2 center = waveSpawningLocation.position;
+		float startX = center.x - (unitSpacing * (count - 1) / 2);
+
+		for (int i = 0; i < count; i++)
+		{
+			float x = startX + (i * unitSpacing);
+			int randomSign = (Random.value < 0.5f) ? -1 : 1;
+			float y = center.y + (i * yOffset * randomSign);
+
+			Vector2 spawnPos = new Vector2(x, y);
+
+			GameObject newEnemy = Instantiate(_waves[roundCounter].waveUnits[i], spawnPos, Quaternion.identity);
+			allUnits.Add(newEnemy.GetComponent<Unit>());
+		}
+	}
+
 
 	public void OrganizeUnits()
 	{
@@ -275,11 +303,11 @@ public class GameManager : MonoBehaviour
 		int alivePlayers = playerUnits.Count(u => u.isAlive());
 		int aliveEnemies = enemyUnits.Count(u => u.isAlive());
 
-		if (alivePlayers <= 0 || aliveEnemies <= 0)
+		if ((alivePlayers <= 0 || aliveEnemies <= 0) && combatStarted)
 		{
 			combatEnded = true;
 			Debug.Log("Combat Ended!");
-			StopCoroutine(HandleTurnLoop());
+			StopAllCoroutines();
 			return true;
 		}
 
@@ -312,6 +340,9 @@ public class GameManager : MonoBehaviour
 				Debug.LogWarning("Unknown AbilityTargetType!");
 				break;
 		}
+
+		if (ability.selfDamage)
+			validTargets.Add(currentUnit);
 
 		return validTargets;
 	}
@@ -357,6 +388,10 @@ public class GameManager : MonoBehaviour
 				break;
 		}
 
+
+		if (ability.selfDamage)
+			validTargets.Add(currentUnit);
+
 		return validTargets;
 	}
 
@@ -366,7 +401,9 @@ public class GameManager : MonoBehaviour
 		if (change)
 		{
 			skillPanel.SetActive(true);
-			for (int i = 0; i < playerAbilities.Count; i++)
+
+			int count = Math.Min(_buttonHandlers.Count, playerAbilities.Count);
+			for (int i = 0; i < count; i++)
 			{
 				_buttonHandlers[i].SetAbility(playerAbilities[i]);
 			}

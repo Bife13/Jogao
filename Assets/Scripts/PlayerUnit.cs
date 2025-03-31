@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -37,7 +38,6 @@ public class PlayerUnit : Unit
 			if (ability.canCoat)
 			{
 				ApplyWeaponCoating(ability.coating);
-				RefreshCoatingUI(true);
 			}
 
 			switch (ability.abilityEffectType)
@@ -47,13 +47,18 @@ public class PlayerUnit : Unit
 
 					float damage = Random.Range(minDamage, maxDamage + 1);
 
-					if (PerformCriticalHitCheck((int)GetTotalModifiedStat(StatType.Crit, critChance)))
+					if (PerformCriticalHitCheck((int)GetTotalModifiedStat(StatType.Crit,
+						    critChance + ability.bonusCritical)))
+					{
 						damage = (1.5f * maxDamage);
+						Debug.Log($"{target.unitName} hit a Critical Strike");
+					}
 
 					float baseDamage = damage;
 					damage += CalculateStanceBonusDamage(baseDamage);
 					damage += (GetTotalModifiedStat(StatType.Attack, baseDamage) - baseDamage);
-					damage += baseDamage * ability.basePower;
+
+					damage += baseDamage * (ability.basePower / 100f);
 
 					if (target.CheckForActiveEffects(target, ability.boostingEffects))
 						damage += baseDamage * (ability.statusBoost / 100f);
@@ -61,24 +66,25 @@ public class PlayerUnit : Unit
 					if (target.HasShockedDebuff())
 					{
 						damage += baseDamage * (shockAmount / 100f);
-						target.ProcessEffectsPerTurn(EffectTiming.OnHit,500);
-					}
-
-					if (activeCoating != null)
-					{
-						int coatDamage = activeCoating.bonusDamage;
-						if (HasCoatingBuff())
-						{
-							coatDamage *= CoatingBuffMultiplier();
-						}
-
-						damage += coatDamage;
-						target.ApplyEffect(activeCoating.effect);
+						target.ProcessEffectsPerTurn(EffectTiming.OnHit, 500);
 					}
 
 					if (PerformAccuracyDodgeCheck(ability.accuracy, target))
 					{
+						if (activeCoating != null && ability.isWeaponAttack)
+						{
+							int coatDamage = activeCoating.bonusDamage;
+							if (HasCoatingBuff())
+							{
+								coatDamage *= CoatingBuffMultiplier();
+							}
+
+							damage += coatDamage;
+							target.ApplyEffect(activeCoating.effect);
+						}
+
 						target.TakeDirectDamage(Mathf.CeilToInt(damage), DamageType.Direct, this);
+
 						CheckAndApplyEffects(ability, target);
 						GameManager.Instance.OnPlayerActionChosen("Attack");
 					}
@@ -90,7 +96,7 @@ public class PlayerUnit : Unit
 					break;
 				case AbilityEffectType.Heal:
 					float healAmount = Random.Range(ability.basePower, ability.maxPower);
-					if (PerformCriticalHitCheck((int)GetTotalModifiedStat(StatType.Crit, 15)))
+					if (PerformCriticalHitCheck((int)GetTotalModifiedStat(StatType.Crit, 15 + ability.bonusCritical)))
 						healAmount *= 2;
 					target.Heal(Mathf.CeilToInt(healAmount));
 					CheckAndApplyEffects(ability, target);
@@ -114,17 +120,15 @@ public class PlayerUnit : Unit
 				Debug.Log($"{target.unitName} is cleansed of {amount} debuffs!");
 			}
 
+
 			abilityCooldowns[ability] = ability.cooldown;
-
-
-			// if (ability.statusEffect != null)
-			// {
-			// 	int roll = Random.Range(0, 100);
-			// 	if (roll < ability.statusEffectChance)
-			// 		target.applyStatusEffect(ability.statusEffect);
-			// }
-
-			// DO VFX AND SHIT
+			if (ability.abilityIndexes.Any())
+			{
+				foreach (var index in ability.abilityIndexes)
+				{
+					SwapAbilities(index, 4 + index);
+				}
+			}
 		}
 	}
 

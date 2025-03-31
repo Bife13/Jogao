@@ -15,23 +15,25 @@ public class Effect : ScriptableObject
 
 	public Sprite effectIcon;
 
-	[Header("ONLY MATTERS IF IT HAS A STATUS EFFECT")]
+	[Header("Status Effects")]
 	public bool isStatusEffect;
 
+	[ShowIf("isStatusEffect")]
 	public StatusType statusEffect;
 
-	[FormerlySerializedAs("statusDamageTiming")]
+	[ShowIf("isStatusEffect")]
 	public int statusDamagePerTurn;
 
-	[Header("Only matters if it has counterattack")]
+	[Header("Counterattack")]
 	public bool grantsCounter;
+
+	[ShowIf("grantsCounter")]
 	public Ability counterAbility;
-	
-	[Header("Only matters if it has coating buff")]
+
+	[Header("Coating")]
 	public bool isCoatingBuff;
-
+	[ShowIf("isCoatingBuff")]
 	public WeaponCoating weaponCoating;
-
 }
 
 public enum EffectType
@@ -67,5 +69,6 @@ public enum StatType
 	Speed,
 	Dodge,
 	Crit,
-	Accuracy
+	Accuracy,
+	None
 }

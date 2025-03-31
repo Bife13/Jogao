@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27abfccb2da32eb4e93ac60b17a4cf69, type: 3}
+  m_Name: MimicR
+  m_EditorClassIdentifier: 
+  unitName: Mimic Ranged
+  maxHP: 15
+  speed: 6
+  baseDefense: 0
+  minDamage: 4
+  maxDamage: 7
+  critChance: 5
+  accuracy: 5
+  dodge: 5
+  unitType: 1
+  abilities:
+  - {fileID: 11400000, guid: a290b40090247324fa1d71d82b1aa6a0, type: 2}
+  - {fileID: 11400000, guid: 692e99e27f4634b4e979be7d34c6ea06, type: 2}

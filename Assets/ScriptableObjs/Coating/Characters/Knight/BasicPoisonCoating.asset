@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b5f3821df157fd4782691262d3f2f65, type: 3}
+  m_Name: BasicPoisonCoating
+  m_EditorClassIdentifier: 
+  coatingName: Basic Poison Coating
+  effect: {fileID: 11400000, guid: b931a9bb80a81764d977e73d091adc42, type: 2}
+  bonusDamage: 5
+  coatDuration: 3
+  coatingSprite: {fileID: 21300000, guid: 157627ab1b4bec94498e28c4714c2ba6, type: 3}

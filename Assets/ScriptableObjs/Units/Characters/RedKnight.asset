@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27abfccb2da32eb4e93ac60b17a4cf69, type: 3}
+  m_Name: RedKnight
+  m_EditorClassIdentifier: 
+  unitName: Red Knight
+  maxHP: 35
+  speed: 3
+  baseDefense: 15
+  minDamage: 5
+  maxDamage: 8
+  critChance: 3
+  accuracy: 5
+  dodge: 5
+  unitType: 0
+  abilities:
+  - {fileID: 11400000, guid: 663668f3f33910b4eab5f587a051d357, type: 2}
+  - {fileID: 11400000, guid: 2901b0cac4ec5fd49a5886ee96a7abad, type: 2}
+  - {fileID: 11400000, guid: 047291b494ee3c54fbae4b7cd574055b, type: 2}
+  - {fileID: 11400000, guid: c0a194246ca57c7448e9731cd47eb4c1, type: 2}
+  - {fileID: 11400000, guid: aada3a80406fbde4d91e80a768aa1987, type: 2}

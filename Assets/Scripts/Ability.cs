@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -17,7 +18,7 @@ public enum AbilityEffectType
 	Heal,
 	Buff,
 	Debuff,
-	StatusEffect
+	StatusEffect,
 }
 
 [CreateAssetMenu(fileName = "NewAbility", menuName = "Game/Abilities/Ability")]
@@ -39,26 +40,53 @@ public class Ability : ScriptableObject
 	public int maxPower;
 	public int cooldown;
 	public int accuracy; // % to hit
+	public int bonusCritical;
 	public bool isWeaponAttack;
-	
+
+	[Header("Status Boosts")]
+	public bool isStatusBoosted;
+
+	[ShowIf("isStatusBoosted")]
 	public int statusBoost;
+
+	[ShowIf("isStatusBoosted")]
 	public List<Effect> boostingEffects;
 
-	[Tooltip("For Effects")]
+	[Header("Effects")]
+	public bool hasEffects;
+
+	[ShowIf("hasEffects")]
 	public List<Effect> effects;
 
+	[ShowIf("hasEffects")]
 	public List<int> effectChances;
 
-	[Tooltip("For Cleanse Abilities")]
+	[Header("Cleanse")]
 	public bool canCleanse;
 
+	[ShowIf("canCleanse")]
 	public int cleanseAmount = 1;
+
+	[ShowIf("canCleanse")]
 	public EffectType effectTypeToCleanse;
 
+	[ShowIf("canCleanse")]
 	public StatusType statusTypeToCleanse;
 
-	[Tooltip("For Coating Abilities")]
+	[Header("Coating")]
 	public bool canCoat;
 
+	[ShowIf("canCoat")]
 	public WeaponCoating coating;
+
+
+	[Header("Swapping")]
+	public bool canSwap;
+
+	[ShowIf("canSwap")]
+	public List<int> abilityIndexes;
+	
+	[Header("Self Damage")]
+	public bool selfDamage;
+	
 }
