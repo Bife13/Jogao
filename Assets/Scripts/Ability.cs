@@ -91,5 +91,6 @@ public class Ability : ScriptableObject
 	
 	[Header("Hits Self")]
 	public bool hitsSelf;
+	public bool debuffSelf;
 	
 }

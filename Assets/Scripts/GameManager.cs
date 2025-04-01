@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
 	}
 
 	[SerializeField]
-	private List<Unit> allUnits = new List<Unit>();
+	public List<Unit> allUnits = new List<Unit>();
 
 
 	private List<Unit> playerUnits = new List<Unit>();
@@ -84,16 +84,21 @@ public class GameManager : MonoBehaviour
 
 	void StartCombat()
 	{
-		SpawnEnemies(_waves[roundCounter].waveUnits.Count);
-		OrganizeUnits();
-		CalculateInitiative();
-		StartCoroutine(HandleTurnLoop());
+		if (roundCounter < _waves.Count)
+		{
+			SpawnEnemies();
+			OrganizeUnits();
+			CalculateInitiative();
+			StartCoroutine(HandleTurnLoop());
+		}
+		else
+			Debug.Log("No more rounds!");
 	}
 
 
 	private void Update()
 	{
-		CheckEndRound();
+		// CheckEndRound();
 	}
 
 	void CalculateInitiative()
@@ -130,11 +135,7 @@ public class GameManager : MonoBehaviour
 		while (!combatEnded)
 		{
 			if (CheckEndRound())
-			{
-				Debug.Log("Combat Ended!");
-				combatEnded = true;
-				yield break;
-			}
+				break;
 
 			currentUnit = turnOrder[currentUnitIndex];
 			if (currentUnit.isAlive())
@@ -169,13 +170,15 @@ public class GameManager : MonoBehaviour
 			if (currentUnitIndex >= turnOrder.Count)
 			{
 				currentUnitIndex = 0;
-				roundCounter++;
+				if (CheckEndRound())
+					break;
 				foreach (EnemyUnit unit in enemyUnits)
 				{
 					unit.DecideNextIntent();
 				}
 
 				Debug.Log("NEW TURN");
+
 				yield return new WaitForSeconds(2f);
 				CalculateInitiative();
 			}
@@ -233,35 +236,36 @@ public class GameManager : MonoBehaviour
 		yield return new WaitForSeconds(1.0f); // Simulate the attack animation/delay
 	}
 
-	public void OnPlayerActionChosen(string action)
+	public void ActionChosen(string action)
 	{
 		// isPlayerTurnActive = false;
 
 		// Based on the player's action choice, you can handle the action here
 		if (action == "Attack")
 		{
-			Debug.Log("Player chose to attack!");
+			Debug.Log("Unit chose to attack!");
 			// Perform attack logic here, like damage calculation, etc.
 		}
 		else if (action == "Defend")
 		{
-			Debug.Log("Player chose to defend!");
+			Debug.Log("Unit chose to defend!");
 			// Perform defense logic here
 		}
 		else if (action == "Use Item")
 		{
-			Debug.Log("Player chose to use an item!");
+			Debug.Log("Unit chose to use an item!");
 			// Perform item usage logic here
 		}
 		else if (action == "Miss")
 		{
-			Debug.Log("Player missed!");
+			Debug.Log("Unit missed!");
 			// Perform item usage logic here
 		}
 	}
 
-	private void SpawnEnemies(int count)
+	private void SpawnEnemies()
 	{
+		int count = _waves[roundCounter].waveUnits.Count;
 		Vector2 center = waveSpawningLocation.position;
 		float startX = center.x - (unitSpacing * (count - 1) / 2);
 
@@ -304,12 +308,20 @@ public class GameManager : MonoBehaviour
 		if ((alivePlayers <= 0 || aliveEnemies <= 0) && combatStarted)
 		{
 			combatEnded = true;
-			Debug.Log("Combat Ended!");
+			roundCounter++;
+			HandlePanel(false);
 			StopAllCoroutines();
+			ShowEndFightScreen(aliveEnemies == 0 ? "Player" : "Enemies");
 			return true;
 		}
 
 		return false;
+	}
+
+	public void ShowEndFightScreen(string winner)
+	{
+		Debug.Log(winner);
+		StartCombat();
 	}
 
 	public List<Unit> GetValidTargets(Ability ability)

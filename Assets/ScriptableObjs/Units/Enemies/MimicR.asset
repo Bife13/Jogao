@@ -23,4 +23,5 @@ MonoBehaviour:
   dodge: 5
   unitType: 1
   abilities:
+  - {fileID: 11400000, guid: a290b40090247324fa1d71d82b1aa6a0, type: 2}
   - {fileID: 11400000, guid: 692e99e27f4634b4e979be7d34c6ea06, type: 2}

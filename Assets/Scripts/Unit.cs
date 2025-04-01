@@ -112,6 +112,250 @@ public class Unit : MonoBehaviour
 
 	public virtual void UseAbility(Ability ability, List<Unit> targets)
 	{
+		BeforeAbility();
+
+		bool hit = false;
+
+		foreach (Unit target in targets)
+		{
+			Debug.Log($"{gameObject.name} uses {ability.abilityName} on {target.unitName}!");
+			if (!isTargetValid(ability, target))
+			{
+				Debug.LogWarning($"Invalid target for ability {ability.abilityName}");
+				return;
+			}
+
+			HandleWeaponCoating(ability);
+
+			switch (ability.abilityEffectType)
+			{
+				case AbilityEffectType.Damage:
+					PerformAttackAnimation();
+
+					float damage = CalculateDamage(ability, target);
+					hit = ApplyDamageOrMiss(ability, target, damage);
+					break;
+
+				case AbilityEffectType.Heal:
+					ApplyHealing(ability, target);
+					break;
+				case AbilityEffectType.Buff:
+				case AbilityEffectType.Debuff:
+				case AbilityEffectType.StatusEffect:
+					hit = PerformEffectApplication(ability, target);
+					break;
+			}
+
+			if (ability.canCleanse)
+			{
+				CleanseTarget(target, ability);
+			}
+		}
+
+		ApplyAbilityCooldown(ability);
+		AfterAbilityUse(ability, hit);
+	}
+
+	protected virtual void BeforeAbility()
+	{
+		CommitStance();
+	}
+
+	protected virtual void PerformAttackAnimation()
+	{
+	}
+
+	protected virtual void AfterAbilityUse(Ability ability, bool hit)
+	{
+		if (ability.debuffSelf && hit)
+		{
+			CheckAndApplyEffects(ability, this);
+		}
+	}
+
+	protected virtual void HandleWeaponCoating(Ability ability)
+	{
+		if (activeCoating != null && ability.isWeaponAttack)
+		{
+			coatingDuration--;
+			RefreshCoatingUI(true);
+			Debug.Log($"{unitName}'s {activeCoating.coatingName}  has: " + coatingDuration);
+
+			if (coatingDuration <= 0)
+			{
+				Debug.Log($"{unitName}'s {activeCoating.coatingName} coating has worn off.");
+				activeCoating = null;
+				RefreshCoatingUI(false);
+			}
+		}
+
+		if (ability.canCoat)
+		{
+			ApplyWeaponCoating(ability.coating);
+			RefreshCoatingUI(true);
+		}
+	}
+
+	protected virtual float CalculateDamage(Ability ability, Unit target)
+	{
+		float damage = Random.Range(minDamage, maxDamage + 1);
+
+		if (PerformCriticalHitCheck((int)GetTotalModifiedStat(StatType.Crit,
+			    critChance + ability.bonusCritical)))
+		{
+			damage = (1.5f * maxDamage);
+			Debug.Log($"{target.unitName} hit a Critical Strike");
+		}
+
+		float baseDamage = damage;
+
+		damage += CalculateStanceBonusDamage(baseDamage);
+		damage += (GetTotalModifiedStat(StatType.Attack, baseDamage) - baseDamage);
+		damage += baseDamage * (ability.basePower / 100f);
+
+		if (target.CheckForActiveEffects(target, ability.boostingEffects))
+			damage += baseDamage * (ability.statusBoost / 100f);
+
+		if (target.HasShockedDebuff())
+		{
+			damage += baseDamage * (shockAmount / 100f);
+			target.ProcessEffectsPerTurn(EffectTiming.OnHit, 500);
+		}
+
+		return damage;
+	}
+
+	protected virtual bool ApplyDamageOrMiss(Ability ability, Unit target, float damage)
+	{
+		if (PerformAccuracyDodgeCheck(ability.accuracy, target) || target == this)
+		{
+			if (activeCoating != null && ability.isWeaponAttack)
+			{
+				int coatDamage = activeCoating.bonusDamage;
+				if (HasCoatingBuff())
+				{
+					coatDamage *= CoatingBuffMultiplier();
+				}
+
+				damage += coatDamage;
+				target.ApplyEffect(activeCoating.effect);
+			}
+
+			target.TakeDirectDamage(Mathf.CeilToInt(damage), DamageType.Direct, this);
+			CheckAndApplyEffects(ability, target);
+			return true;
+		}
+
+		GameManager.Instance.ActionChosen("Miss");
+		return false;
+	}
+
+	protected virtual void ApplyHealing(Ability ability, Unit target)
+	{
+		float healAmount = Random.Range(ability.basePower, ability.maxPower);
+		if (PerformCriticalHitCheck((int)GetTotalModifiedStat(StatType.Crit, 15 + ability.bonusCritical)))
+			healAmount *= 2;
+
+		target.Heal(Mathf.CeilToInt(healAmount));
+		CheckAndApplyEffects(ability, target);
+	}
+
+	protected virtual bool PerformEffectApplication(Ability ability, Unit target)
+	{
+		if (ability.abilityEffectType == AbilityEffectType.Debuff && target != this)
+		{
+			if (!PerformAccuracyDodgeCheck(ability.accuracy, target))
+				return false;
+		}
+
+		CheckAndApplyEffects(ability, target);
+		return true;
+	}
+
+	protected virtual void CleanseTarget(Unit target, Ability ability)
+	{
+		int amount = ability.cleanseAmount <= 0 ? int.MaxValue : ability.cleanseAmount;
+		target.Cleanse(amount, ability.effectTypeToCleanse, ability.statusTypeToCleanse);
+		Debug.Log($"{target.unitName} is cleansed of {amount} debuffs!");
+	}
+
+	protected virtual void ApplyAbilityCooldown(Ability ability)
+	{
+		abilityCooldowns[ability] = ability.cooldown;
+	}
+
+	public bool isTargetValid(Ability ability, Unit target)
+	{
+		if (target == null)
+		{
+			Debug.LogWarning("No target selected!");
+			return false;
+		}
+
+		if (!target.isAlive())
+		{
+			Debug.LogWarning($"{target.unitName} is already dead!");
+			return false;
+		}
+
+		if (this is PlayerUnit)
+			switch (ability.targetType)
+			{
+				case AbilityTargetType.Enemy:
+					if (target.unitType != UnitType.ENEMY)
+						return false;
+					break;
+				case AbilityTargetType.Ally:
+					if (target.unitType != UnitType.PLAYER)
+						return false;
+					break;
+				case AbilityTargetType.Self:
+					if (target != this.GetComponent<Unit>())
+						return false;
+					break;
+				case AbilityTargetType.AllEnemies:
+					if (target.unitType != UnitType.ENEMY)
+						if (!ability.hitsSelf)
+							return false;
+					break;
+				case AbilityTargetType.AllAllies:
+					if (target.unitType != UnitType.PLAYER)
+						return false;
+					break;
+				default:
+					return false;
+			}
+		else if (this is EnemyUnit)
+		{
+			switch (ability.targetType)
+			{
+				case AbilityTargetType.Enemy:
+					if (target.unitType != UnitType.PLAYER)
+						return false;
+					break;
+				case AbilityTargetType.Ally:
+					if (target.unitType != UnitType.ENEMY)
+						return false;
+					break;
+				case AbilityTargetType.Self:
+					if (target != this.GetComponent<Unit>())
+						return false;
+					break;
+				case AbilityTargetType.AllEnemies:
+					if (target.unitType != UnitType.PLAYER)
+						if (!ability.hitsSelf)
+							return false;
+					break;
+				case AbilityTargetType.AllAllies:
+					if (target.unitType != UnitType.ENEMY)
+						return false;
+					break;
+				default:
+					return false;
+			}
+		}
+
+		return true;
 	}
 
 	public void TakeDoTDamage(int damage, DamageType damageType)
@@ -122,7 +366,7 @@ public class Unit : MonoBehaviour
 			case DamageType.DoT:
 				finalDamage = damage;
 				currentHP -= finalDamage;
-				if (currentHP < 0)
+				if (!isAlive())
 				{
 					currentHP = 0;
 				}
@@ -133,7 +377,9 @@ public class Unit : MonoBehaviour
 		}
 
 		DOTween.To(() => healthBar.fillAmount, x => healthBar.fillAmount = x, (float)currentHP / maxHP, 0.5f);
+		CheckDeath();
 	}
+
 
 	public void TakeDirectDamage(int damage, DamageType damageType, Unit originTarget)
 	{
@@ -148,15 +394,12 @@ public class Unit : MonoBehaviour
 				currentHP -= finalDamage;
 				Debug.Log($"{unitName} took {finalDamage} damage! Remaining HP: {currentHP}");
 				ShowFloatingText(finalDamage.ToString(), Color.black);
-				if (currentHP < 0)
+				if (!isAlive())
 				{
 					currentHP = 0;
-					DOTween.To(() => healthBar.fillAmount, x => healthBar.fillAmount = x, (float)currentHP / maxHP,
-						0.5f);
-					return;
 				}
 
-				if (HasCounterBuff())
+				if (HasCounterBuff() && isAlive())
 				{
 					StartCoroutine(ExecuteCounterAttack(originTarget));
 				}
@@ -165,6 +408,16 @@ public class Unit : MonoBehaviour
 		}
 
 		DOTween.To(() => healthBar.fillAmount, x => healthBar.fillAmount = x, (float)currentHP / maxHP, 0.5f);
+		CheckDeath();
+	}
+
+	protected virtual void CheckDeath()
+	{
+		if (!isAlive())
+		{
+			Destroy(gameObject, 1f);
+			GameManager.Instance.allUnits.Remove(this);
+		}
 	}
 
 	IEnumerator ExecuteCounterAttack(Unit originTarget)
@@ -299,7 +552,6 @@ public class Unit : MonoBehaviour
 
 				if (appliedEffect.effect.effectTiming == effectTiming)
 				{
-					Debug.Log("TEST effect: " + appliedEffect.effect.statusEffect);
 					switch (appliedEffect.effect.statusEffect)
 					{
 						case StatusType.Poison:
@@ -379,10 +631,6 @@ public class Unit : MonoBehaviour
 
 	public void SwapAbilities(int firstIndex, int secondIndex)
 	{
-		// Ability firstAbility = _abilities[firstIndex];
-		// _abilities[firstIndex] = _abilities[secondIndex];
-		// _abilities[secondIndex] = firstAbility;
-
 		(_abilities[firstIndex], _abilities[secondIndex]) = (_abilities[secondIndex], _abilities[firstIndex]);
 	}
 
@@ -394,6 +642,22 @@ public class Unit : MonoBehaviour
 			abilityCooldowns[ability]--;
 			if (abilityCooldowns[ability] <= 0)
 				abilityCooldowns.Remove(ability);
+		}
+	}
+
+	public void CommitStance()
+	{
+		if (hasComittedStance)
+		{
+			Debug.Log("You've already committed to a stance!");
+			return;
+		}
+
+		if (previewStance != StanceType.Neutral)
+		{
+			currentStance = previewStance;
+			hasComittedStance = true;
+			Debug.Log($"Stance committed: {currentStance}");
 		}
 	}
 
