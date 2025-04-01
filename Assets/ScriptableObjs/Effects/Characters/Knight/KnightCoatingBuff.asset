@@ -21,7 +21,7 @@ MonoBehaviour:
   isStackable: 1
   effectIcon: {fileID: 21300000, guid: 157627ab1b4bec94498e28c4714c2ba6, type: 3}
   isStatusEffect: 0
-  statusEffect: 1
+  statusEffect: 5
   statusDamagePerTurn: 0
   grantsCounter: 0
   counterAbility: {fileID: 0}

@@ -29,6 +29,7 @@ MonoBehaviour:
   boostingEffects:
   - {fileID: 11400000, guid: b931a9bb80a81764d977e73d091adc42, type: 2}
   hasEffects: 0
+  applyAllEffects: 0
   effects: []
   effectChances: 
   canCleanse: 0
@@ -39,3 +40,4 @@ MonoBehaviour:
   coating: {fileID: 0}
   canSwap: 0
   abilityIndexes: 
+  selfDamage: 0

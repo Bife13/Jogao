@@ -28,6 +28,7 @@ MonoBehaviour:
   statusBoost: 0
   boostingEffects: []
   hasEffects: 1
+  applyAllEffects: 1
   effects:
   - {fileID: 11400000, guid: 911df7f41540e054086476386d862a5c, type: 2}
   - {fileID: 11400000, guid: 2a7c373d0b03df94ca7af0e8dcd02f2e, type: 2}

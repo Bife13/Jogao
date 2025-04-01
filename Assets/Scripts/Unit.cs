@@ -57,7 +57,7 @@ public class Unit : MonoBehaviour
 
 	private Dictionary<Effect, EffectIconUI> activeIcons = new Dictionary<Effect, EffectIconUI>();
 
-	protected Dictionary<Ability, int> abilityCooldowns = new Dictionary<Ability, int>();
+	public Dictionary<Ability, int> abilityCooldowns = new Dictionary<Ability, int>();
 
 	public GameObject highlightEffect;
 
@@ -230,13 +230,14 @@ public class Unit : MonoBehaviour
 					return;
 				}
 
-				existing.remainingDuration = effect.turnDuration; // Refresh duration
+				if (existing.remainingDuration < effect.turnDuration)
+					existing.remainingDuration = effect.turnDuration; // Refresh duration
 				RefreshStatusIcons();
 				return;
 			}
 
 			activeEffects.Add(new ActiveEffect(effect, GameManager.Instance.turnCounter));
-			
+
 			if (effect.isCoatingBuff)
 			{
 				Debug.Log("TEST1");
@@ -255,11 +256,19 @@ public class Unit : MonoBehaviour
 	public void CheckAndApplyEffects(Ability ability, Unit target)
 	{
 		if (ability.effects.Count > 0)
-			for (int i = 0; i < ability.effects.Count; i++)
+			if (ability.applyAllEffects)
+				for (int i = 0; i < ability.effects.Count; i++)
+				{
+					float effectRoll = Random.Range(0f, 100f);
+					if (ability.effects[i] != null && effectRoll <= ability.effectChances[i])
+						target.ApplyEffect(ability.effects[i]);
+				}
+			else
 			{
+				int randomIndex = Random.Range(0, ability.effects.Count);
 				float effectRoll = Random.Range(0f, 100f);
-				if (ability.effects[i] != null && effectRoll <= ability.effectChances[i])
-					target.ApplyEffect(ability.effects[i]);
+				if (ability.effects[randomIndex] != null && effectRoll <= ability.effectChances[randomIndex])
+					target.ApplyEffect(ability.effects[randomIndex]);
 			}
 	}
 
@@ -290,29 +299,28 @@ public class Unit : MonoBehaviour
 
 				if (appliedEffect.effect.effectTiming == effectTiming)
 				{
-					if (appliedEffect.effect && appliedEffect.effect.statusDamagePerTurn > 0)
+					Debug.Log("TEST effect: " + appliedEffect.effect.statusEffect);
+					switch (appliedEffect.effect.statusEffect)
 					{
-						switch (appliedEffect.effect.statusEffect)
-						{
-							case StatusType.Poison:
-								TakeDoTDamage(appliedEffect.remainingDuration, DamageType.DoT);
-								Debug.Log(
-									$"{unitName} takes {appliedEffect.remainingDuration} damage from {appliedEffect.effect.effectName}");
-								break;
-							case StatusType.Bleed:
-								TakeDoTDamage(appliedEffect.remainingDuration, DamageType.DoT);
-								Debug.Log(
-									$"{unitName} takes {appliedEffect.remainingDuration} damage from {appliedEffect.effect.effectName}");
-								break;
-							case StatusType.Burn:
-								TakeDoTDamage(
-									Mathf.CeilToInt(maxHP * (appliedEffect.effect.statusDamagePerTurn / 100f)),
-									DamageType.DoT);
-								Debug.Log(
-									$"{unitName} takes {Mathf.CeilToInt(maxHP * (appliedEffect.effect.statusDamagePerTurn / 100f))} damage from {appliedEffect.effect.effectName}");
-								break;
-						}
+						case StatusType.Poison:
+							TakeDoTDamage(appliedEffect.remainingDuration, DamageType.DoT);
+							Debug.Log(
+								$"{unitName} takes {appliedEffect.remainingDuration} damage from {appliedEffect.effect.effectName}");
+							break;
+						case StatusType.Bleed:
+							TakeDoTDamage(appliedEffect.remainingDuration, DamageType.DoT);
+							Debug.Log(
+								$"{unitName} takes {appliedEffect.remainingDuration} damage from {appliedEffect.effect.effectName}");
+							break;
+						case StatusType.Burn:
+							TakeDoTDamage(
+								Mathf.CeilToInt(maxHP * (appliedEffect.effect.statusDamagePerTurn / 100f)),
+								DamageType.DoT);
+							Debug.Log(
+								$"{unitName} takes {Mathf.CeilToInt(maxHP * (appliedEffect.effect.statusDamagePerTurn / 100f))} damage from {appliedEffect.effect.effectName}");
+							break;
 					}
+
 
 					appliedEffect.TickEffect(currentTurn);
 					RefreshStatusIcons();

@@ -12,14 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27abfccb2da32eb4e93ac60b17a4cf69, type: 3}
   m_Name: BlueMage
   m_EditorClassIdentifier: 
-  unitName: 
-  maxHP: 0
-  baseDefense: 0
-  dodge: 0
-  accuracy: 0
-  speed: 0
-  minDamage: 0
-  maxDamage: 0
-  critChance: 0
+  unitName: Blue Mage
+  maxHP: 25
+  speed: 5
+  baseDefense: 10
+  minDamage: 4
+  maxDamage: 12
+  critChance: 6
+  accuracy: 5
+  dodge: 5
   unitType: 0
-  abilities: []
+  abilities:
+  - {fileID: 11400000, guid: 244e03fdfbec73f4ab31985335d8e3b1, type: 2}
+  - {fileID: 11400000, guid: 1d2bcbbdab325cd42b09b79a890330c6, type: 2}
+  - {fileID: 11400000, guid: 87c14a25e40c86c459a255f92bc298c6, type: 2}
+  - {fileID: 11400000, guid: ca44cc39feb4a504ca64d02e665adab8, type: 2}
+  - {fileID: 11400000, guid: 715f57b67a994404491a893369bc7dd6, type: 2}
+  - {fileID: 11400000, guid: e3acf84ce1a80d7419017de9b4ff7ba9, type: 2}
+  - {fileID: 11400000, guid: a40e68003ffcdc347bd5381cc343b4b5, type: 2}

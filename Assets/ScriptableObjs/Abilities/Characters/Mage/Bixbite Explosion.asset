@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 562d7febfae63174cb24c3c9bdd1c991, type: 3}
+  m_Name: Bixbite Explosion
+  m_EditorClassIdentifier: 
+  abilityName: Bixbite Explosion
+  description: Uses the energy of the Bixbite that creates an explosion damaging
+    all enemies and applying Burn for 4 turns
+  icon: {fileID: 21300000, guid: f5bef9c792fcf0945b91a80ae2008772, type: 3}
+  targetType: 3
+  abilityEffectType: 0
+  basePower: -15
+  maxPower: 0
+  cooldown: 3
+  accuracy: 85
+  bonusCritical: 0
+  isWeaponAttack: 0
+  isStatusBoosted: 0
+  statusBoost: 0
+  boostingEffects: []
+  hasEffects: 1
+  applyAllEffects: 1
+  effects:
+  - {fileID: 11400000, guid: 9886734eba2907046843a33c9165b538, type: 2}
+  effectChances: 64000000
+  canCleanse: 0
+  cleanseAmount: 1
+  effectTypeToCleanse: 0
+  statusTypeToCleanse: 0
+  canCoat: 0
+  coating: {fileID: 0}
+  canSwap: 0
+  abilityIndexes: 
+  hitsSelf: 0

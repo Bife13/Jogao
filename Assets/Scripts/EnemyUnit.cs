@@ -53,6 +53,7 @@ public class EnemyUnit : Unit
 				RefreshCoatingUI(true);
 			}
 
+
 			switch (ability.abilityEffectType)
 			{
 				case AbilityEffectType.Damage:
@@ -91,16 +92,25 @@ public class EnemyUnit : Unit
 						target.ApplyEffect(activeCoating.effect);
 					}
 
-					if (PerformAccuracyDodgeCheck(ability.accuracy, target))
+					if (target != this)
+					{
+						if (PerformAccuracyDodgeCheck(ability.accuracy, target))
+						{
+							target.TakeDirectDamage(Mathf.CeilToInt(damage), DamageType.Direct, this);
+							CheckAndApplyEffects(ability, target);
+						}
+						else
+						{
+							Debug.Log("ERROU");
+							// DO MISS LOGIC HERE EVENTUALLY
+						}
+					}
+					else
 					{
 						target.TakeDirectDamage(Mathf.CeilToInt(damage), DamageType.Direct, this);
 						CheckAndApplyEffects(ability, target);
 					}
-					else
-					{
-						Debug.Log("ERROU");
-						// DO MISS LOGIC HERE EVENTUALLY
-					}
+
 
 					break;
 				case AbilityEffectType.Heal:
@@ -114,8 +124,16 @@ public class EnemyUnit : Unit
 					CheckAndApplyEffects(ability, target);
 					break;
 				case AbilityEffectType.Debuff:
-					if (PerformAccuracyDodgeCheck(ability.accuracy, target))
+					if (target != this)
+					{
+						if (PerformAccuracyDodgeCheck(ability.accuracy, target))
+							CheckAndApplyEffects(ability, target);
+					}
+					else
+					{
 						CheckAndApplyEffects(ability, target);
+					}
+
 					break;
 				case AbilityEffectType.StatusEffect:
 					CheckAndApplyEffects(ability, target);
@@ -165,7 +183,7 @@ public class EnemyUnit : Unit
 			case AbilityTargetType.AllEnemies:
 				if (target.unitType != UnitType.PLAYER)
 				{
-					if (!ability.selfDamage)
+					if (!ability.hitsSelf)
 						return false;
 				}
 

@@ -56,16 +56,17 @@ public class TargetSelectionUI : MonoBehaviour
 				if (!actingPlayer.CanUseAbility(currentAbility))
 				{
 					Debug.LogWarning($"{currentAbility.abilityName} is in cooldown");
+					break;
 				}
-				else if (!actingPlayer.isTargetValid(currentAbility, targets[0]))
+
+				if (!actingPlayer.isTargetValid(currentAbility, targets[0]))
 				{
 					Debug.LogWarning($"Invalid target for ability {currentAbility.abilityName}");
+					break;
 				}
-				else
-				{
-					actingPlayer.UseAbility(currentAbility, targets);
-					EndTargetSelection();
-				}
+
+				actingPlayer.UseAbility(currentAbility, targets);
+				EndTargetSelection();
 
 				break;
 			case AbilityTargetType.AllAllies:
@@ -73,6 +74,7 @@ public class TargetSelectionUI : MonoBehaviour
 				if (!actingPlayer.CanUseAbility(currentAbility))
 				{
 					Debug.LogWarning($"{currentAbility.abilityName} is in cooldown");
+					break;
 				}
 
 				bool correctTargets = false;

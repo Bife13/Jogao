@@ -7,22 +7,32 @@ public class ButtonHandler : MonoBehaviour
 {
 	public Button button;
 	public TMP_Text text;
+	public TMP_Text cooldownTime;
 	public Ability assignedAbility;
 	public Image image;
 
 	private void Awake()
 	{
 		button = GetComponent<Button>();
-		text = GetComponentInChildren<TMP_Text>();
 		image = GetComponent<Image>();
 		button.onClick.AddListener(OnAbilityButtonClicked);
 	}
 
-	public void SetAbility(Ability newAbility)
+	public void SetAbility(Ability newAbility, int cooldown)
 	{
 		assignedAbility = newAbility;
 		text.text = assignedAbility.abilityName;
 		image.sprite = assignedAbility.icon;
+		if (cooldown == 0)
+		{
+			cooldownTime.text = "";
+			button.interactable = true;
+		}
+		else
+		{
+			cooldownTime.text = cooldown.ToString();
+			button.interactable = false;
+		}
 	}
 
 	public void ResetAbility()

@@ -56,6 +56,9 @@ public class Ability : ScriptableObject
 	public bool hasEffects;
 
 	[ShowIf("hasEffects")]
+	public bool applyAllEffects;
+
+	[ShowIf("hasEffects")]
 	public List<Effect> effects;
 
 	[ShowIf("hasEffects")]
@@ -86,7 +89,7 @@ public class Ability : ScriptableObject
 	[ShowIf("canSwap")]
 	public List<int> abilityIndexes;
 	
-	[Header("Self Damage")]
-	public bool selfDamage;
+	[Header("Hits Self")]
+	public bool hitsSelf;
 	
 }

@@ -57,8 +57,6 @@ public class GameManager : MonoBehaviour
 
 	private Unit currentUnit;
 
-	private Dictionary<Ability, int> abilityCooldowns = new Dictionary<Ability, int>();
-
 	[SerializeField]
 	private List<Wave> _waves;
 
@@ -341,7 +339,7 @@ public class GameManager : MonoBehaviour
 				break;
 		}
 
-		if (ability.selfDamage)
+		if (ability.hitsSelf)
 			validTargets.Add(currentUnit);
 
 		return validTargets;
@@ -389,7 +387,7 @@ public class GameManager : MonoBehaviour
 		}
 
 
-		if (ability.selfDamage)
+		if (ability.hitsSelf)
 			validTargets.Add(currentUnit);
 
 		return validTargets;
@@ -398,6 +396,8 @@ public class GameManager : MonoBehaviour
 	public void HandlePanel(bool change)
 	{
 		List<Ability> playerAbilities = currentUnit.GetAbilities();
+		Dictionary<Ability, int> cooldowns = currentUnit.abilityCooldowns;
+
 		if (change)
 		{
 			skillPanel.SetActive(true);
@@ -405,7 +405,10 @@ public class GameManager : MonoBehaviour
 			int count = Math.Min(_buttonHandlers.Count, playerAbilities.Count);
 			for (int i = 0; i < count; i++)
 			{
-				_buttonHandlers[i].SetAbility(playerAbilities[i]);
+				if (cooldowns.ContainsKey(playerAbilities[i]))
+					_buttonHandlers[i].SetAbility(playerAbilities[i], cooldowns[playerAbilities[i]]);
+				else
+					_buttonHandlers[i].SetAbility(playerAbilities[i], 0);
 			}
 		}
 		else

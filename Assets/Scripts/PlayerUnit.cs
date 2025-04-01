@@ -69,7 +69,33 @@ public class PlayerUnit : Unit
 						target.ProcessEffectsPerTurn(EffectTiming.OnHit, 500);
 					}
 
-					if (PerformAccuracyDodgeCheck(ability.accuracy, target))
+					if (target != this)
+					{
+						if (PerformAccuracyDodgeCheck(ability.accuracy, target))
+						{
+							if (activeCoating != null && ability.isWeaponAttack)
+							{
+								int coatDamage = activeCoating.bonusDamage;
+								if (HasCoatingBuff())
+								{
+									coatDamage *= CoatingBuffMultiplier();
+								}
+
+								damage += coatDamage;
+								target.ApplyEffect(activeCoating.effect);
+							}
+
+							target.TakeDirectDamage(Mathf.CeilToInt(damage), DamageType.Direct, this);
+
+							CheckAndApplyEffects(ability, target);
+							GameManager.Instance.OnPlayerActionChosen("Attack");
+						}
+						else
+						{
+							GameManager.Instance.OnPlayerActionChosen("Miss");
+						}
+					}
+					else
 					{
 						if (activeCoating != null && ability.isWeaponAttack)
 						{
@@ -88,10 +114,6 @@ public class PlayerUnit : Unit
 						CheckAndApplyEffects(ability, target);
 						GameManager.Instance.OnPlayerActionChosen("Attack");
 					}
-					else
-					{
-						GameManager.Instance.OnPlayerActionChosen("Miss");
-					}
 
 					break;
 				case AbilityEffectType.Heal:
@@ -105,8 +127,16 @@ public class PlayerUnit : Unit
 					CheckAndApplyEffects(ability, target);
 					break;
 				case AbilityEffectType.Debuff:
-					if (PerformAccuracyDodgeCheck(ability.accuracy, target))
+					if (target != this)
+					{
+						if (PerformAccuracyDodgeCheck(ability.accuracy, target))
+							CheckAndApplyEffects(ability, target);
+					}
+					else
+					{
 						CheckAndApplyEffects(ability, target);
+					}
+
 					break;
 				case AbilityEffectType.StatusEffect:
 					CheckAndApplyEffects(ability, target);
@@ -162,7 +192,8 @@ public class PlayerUnit : Unit
 				break;
 			case AbilityTargetType.AllEnemies:
 				if (target.unitType != UnitType.ENEMY)
-					return false;
+					if (!ability.hitsSelf)
+						return false;
 				break;
 			case AbilityTargetType.AllAllies:
 				if (target.unitType != UnitType.PLAYER)

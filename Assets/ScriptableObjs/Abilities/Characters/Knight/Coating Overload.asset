@@ -28,6 +28,7 @@ MonoBehaviour:
   statusBoost: 0
   boostingEffects: []
   hasEffects: 1
+  applyAllEffects: 1
   effects:
   - {fileID: 11400000, guid: faef7c3b81e53ea438d37df20933b3b9, type: 2}
   effectChances: 64000000
@@ -39,3 +40,4 @@ MonoBehaviour:
   coating: {fileID: 0}
   canSwap: 0
   abilityIndexes: 
+  selfDamage: 0

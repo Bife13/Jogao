@@ -12,14 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27abfccb2da32eb4e93ac60b17a4cf69, type: 3}
   m_Name: MimicM
   m_EditorClassIdentifier: 
-  unitName: 
-  maxHP: 0
+  unitName: Mimic Melee
+  maxHP: 18
+  speed: 6
   baseDefense: 0
-  dodge: 0
-  accuracy: 0
-  speed: 0
-  minDamage: 0
-  maxDamage: 0
-  critChance: 0
+  minDamage: 2
+  maxDamage: 5
+  critChance: 5
+  accuracy: 5
+  dodge: 10
   unitType: 1
-  abilities: []
+  abilities:
+  - {fileID: 11400000, guid: 8d6d5c296bdc3c9479740c1de23d1915, type: 2}
+  - {fileID: 11400000, guid: e1af39116717b3a4589a10f337f37349, type: 2}
