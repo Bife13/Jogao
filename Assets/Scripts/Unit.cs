@@ -62,6 +62,12 @@ public class Unit : MonoBehaviour
 	public GameObject highlightEffect;
 
 	[SerializeField]
+	private GameObject displayObject;
+
+	[SerializeField]
+	private GameObject unitSprite;
+
+	[SerializeField]
 	private GameObject floatingTextPrefab;
 
 	[SerializeField]
@@ -84,7 +90,7 @@ public class Unit : MonoBehaviour
 	public WeaponCoating activeCoating = null;
 	public int coatingDuration = 0;
 	public EffectIconUI coatingIcon;
-
+	private Vector3 worldPositionForFloatingText;
 
 	public void Awake()
 	{
@@ -92,6 +98,14 @@ public class Unit : MonoBehaviour
 			LoadFromData();
 		else
 			Debug.LogWarning($"{gameObject.name} has no UnitData assigned");
+
+		DOTween.Init();
+		transform.DOMove(transform.position, 0.1f).SetAutoKill(true);
+	}
+
+	public virtual void Start()
+	{
+		worldPositionForFloatingText = unitSprite.transform.position + Vector3.up * 2f;
 	}
 
 	private void LoadFromData()
@@ -114,6 +128,8 @@ public class Unit : MonoBehaviour
 	{
 		BeforeAbility();
 
+		PerformAttackAnimation();
+
 		bool hit = false;
 
 		foreach (Unit target in targets)
@@ -130,7 +146,6 @@ public class Unit : MonoBehaviour
 			switch (ability.abilityEffectType)
 			{
 				case AbilityEffectType.Damage:
-					PerformAttackAnimation();
 
 					float damage = CalculateDamage(ability, target);
 					hit = ApplyDamageOrMiss(ability, target, damage);
@@ -149,6 +164,14 @@ public class Unit : MonoBehaviour
 			if (ability.canCleanse)
 			{
 				CleanseTarget(target, ability);
+			}
+
+			if (ability.canSwap)
+			{
+				foreach (int index in ability.abilityIndexes)
+				{
+					SwapAbilities(index, 4 + index);
+				}
 			}
 		}
 
@@ -372,7 +395,7 @@ public class Unit : MonoBehaviour
 				}
 
 				Debug.Log($"{unitName} took {finalDamage} DoT damage! Remaining HP: {currentHP}");
-				ShowFloatingText(finalDamage.ToString(), Color.yellow);
+				ShowFloatingText(finalDamage.ToString(), Color.black);
 				break;
 		}
 
@@ -415,8 +438,10 @@ public class Unit : MonoBehaviour
 	{
 		if (!isAlive())
 		{
-			Destroy(gameObject, 1f);
-			GameManager.Instance.allUnits.Remove(this);
+			displayObject.SetActive(false);
+			unitSprite.SetActive(false);
+			Destroy(gameObject, 2f);
+			GameManager.Instance.RemoveUnit(this);
 		}
 	}
 
@@ -436,7 +461,7 @@ public class Unit : MonoBehaviour
 		if (currentHP > unitData.maxHP)
 			currentHP = unitData.maxHP;
 
-		ShowFloatingText(amount.ToString(), Color.blue);
+		ShowFloatingText(amount.ToString(), Color.black);
 		DOTween.To(() => healthBar.fillAmount, x => healthBar.fillAmount = x, (float)currentHP / maxHP, 0.5f);
 	}
 
@@ -668,11 +693,13 @@ public class Unit : MonoBehaviour
 
 	public void AttackAnimation(float direction)
 	{
-		Vector3 originalPosition = transform.position;
-		transform.DOMoveX(transform.position.x + 0.85f * direction, 0.25f).OnComplete(() =>
-		{
-			transform.DOMoveX(originalPosition.x, 0.25f);
-		});
+		Vector3 originalPosition = unitSprite.transform.position;
+		DOVirtual.DelayedCall(0.1f,
+			() =>
+			{
+				unitSprite.transform.DOMoveX(unitSprite.transform.position.x + 0.85f * direction, 0.25f)
+					.OnComplete(() => { unitSprite.transform.DOMoveX(originalPosition.x, 0.25f); });
+			});
 	}
 
 	public void RefreshStatusIcons()
@@ -712,7 +739,8 @@ public class Unit : MonoBehaviour
 	public void RefreshCoatingUI(bool isActive)
 	{
 		coatingIcon.gameObject.SetActive(isActive);
-		coatingIcon.Setup(activeCoating.coatingSprite, coatingDuration);
+		if (activeCoating)
+			coatingIcon.Setup(activeCoating.coatingSprite, coatingDuration);
 	}
 
 	public void SetHighlight(bool isOn)
@@ -865,7 +893,7 @@ public class Unit : MonoBehaviour
 		GameObject textObj = Instantiate(floatingTextPrefab, unitCanvas);
 
 		// Set the position near the unit in world space
-		Vector3 worldPosition = transform.position + Vector3.up * 2f;
+		Vector3 worldPosition = worldPositionForFloatingText;
 
 		// Convert the world position to local position on the canvas (if needed)
 		textObj.transform.position = worldPosition;

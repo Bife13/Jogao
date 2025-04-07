@@ -12,6 +12,6 @@ public class FloatingText : MonoBehaviour
 		text.color = color;
 
 		transform.DOMoveY(transform.position.y + 1f, 1f).SetEase(Ease.OutQuad);
-		text.DOFade(0f, 1f).OnComplete(() => Destroy(gameObject));
+		text.DOFade(0f, 1.5f).OnComplete(() => Destroy(gameObject));
 	}
 }

@@ -12,14 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27abfccb2da32eb4e93ac60b17a4cf69, type: 3}
   m_Name: RatKnight
   m_EditorClassIdentifier: 
-  unitName: 
-  maxHP: 0
-  baseDefense: 0
+  unitName: Rat Knight
+  maxHP: 60
+  speed: 4
+  baseDefense: 30
+  minDamage: 3
+  maxDamage: 9
+  critChance: 5
+  accuracy: 5
   dodge: 0
-  accuracy: 0
-  speed: 0
-  minDamage: 0
-  maxDamage: 0
-  critChance: 0
   unitType: 1
-  abilities: []
+  abilities:
+  - {fileID: 11400000, guid: fbfd3081ebb8f6742b7c78d03aa40bc3, type: 2}
+  - {fileID: 11400000, guid: 5474bfa57a14d6a46b4c8a7eb897975c, type: 2}
+  - {fileID: 11400000, guid: 0e75591f1b47e554eab1ade7d4a6bafe, type: 2}
+  - {fileID: 11400000, guid: c31479f05fd3aa0409d4226a49467ded, type: 2}

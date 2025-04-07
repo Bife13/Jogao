@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using DG.Tweening;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,9 +10,10 @@ public class EnemyUnit : Unit
 
 	[SerializeField]
 	private Image intentImage;
-
-	void Start()
+	
+	public override void Start()
 	{
+		base.Start();
 		DecideNextIntent();
 	}
 

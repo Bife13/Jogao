@@ -41,3 +41,4 @@ MonoBehaviour:
   canSwap: 0
   abilityIndexes: 
   hitsSelf: 0
+  debuffSelf: 1

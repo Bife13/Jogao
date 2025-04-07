@@ -33,8 +33,8 @@ public class GameManager : MonoBehaviour
 	public List<Unit> allUnits = new List<Unit>();
 
 
-	private List<Unit> playerUnits = new List<Unit>();
-	private List<Unit> enemyUnits = new List<Unit>();
+	public List<Unit> playerUnits = new List<Unit>();
+	public List<Unit> enemyUnits = new List<Unit>();
 
 	[SerializeField]
 	private GameObject skillPanel;
@@ -45,7 +45,7 @@ public class GameManager : MonoBehaviour
 
 	private List<Unit> turnOrder = new List<Unit>();
 
-	private int currentUnitIndex = 0;
+	public int currentUnitIndex = 0;
 
 	// private bool isPlayerTurnActive = false;
 
@@ -79,13 +79,15 @@ public class GameManager : MonoBehaviour
 
 	private void Start()
 	{
-		StartCombat();
+		StartCoroutine(StartCombat());
 	}
 
-	void StartCombat()
+	IEnumerator StartCombat()
 	{
+		yield return new WaitForSeconds(1f);
 		if (roundCounter < _waves.Count)
 		{
+			combatEnded = false;
 			SpawnEnemies();
 			OrganizeUnits();
 			CalculateInitiative();
@@ -130,7 +132,7 @@ public class GameManager : MonoBehaviour
 
 	IEnumerator HandleTurnLoop()
 	{
-		yield return new WaitForSeconds(1f);
+		yield return new WaitForSeconds(2f);
 
 		while (!combatEnded)
 		{
@@ -150,7 +152,7 @@ public class GameManager : MonoBehaviour
 				currentUnit.SetHighlight(true);
 				currentUnit.ProcessEffectsPerTurn(EffectTiming.StartTurn, turnCounter);
 
-				yield return new WaitForSeconds(0.5f);
+				yield return new WaitForSeconds(1f);
 
 				switch (currentUnit.unitType)
 				{
@@ -201,15 +203,15 @@ public class GameManager : MonoBehaviour
 			{
 				yield return null;
 			}
-
-			HandlePanel(false);
-			currentUnit.SetHighlight(false);
 		}
 		else
 		{
 			playerUnit.ProcessEffectsPerTurn(EffectTiming.SkipAction, turnCounter);
 			Debug.Log($"{currentUnit.unitName} is stunned");
 		}
+
+		HandlePanel(false);
+		currentUnit.SetHighlight(false);
 
 		yield return new WaitForSeconds(1.0f); // Simulate the attack animation/delay
 	}
@@ -222,6 +224,7 @@ public class GameManager : MonoBehaviour
 
 	IEnumerator EnemyTurn(EnemyUnit enemyUnit)
 	{
+		yield return new WaitForSeconds(1.0f);
 		if (!enemyUnit.HasStunDebuff())
 		{
 			enemyUnit.PerformIntent();
@@ -309,19 +312,38 @@ public class GameManager : MonoBehaviour
 		{
 			combatEnded = true;
 			roundCounter++;
+			currentUnitIndex = 0;
 			HandlePanel(false);
 			StopAllCoroutines();
-			ShowEndFightScreen(aliveEnemies == 0 ? "Player" : "Enemies");
+			ResetCombat();
+			StartCoroutine(ShowEndFightScreen(aliveEnemies == 0 ? "Player" : "Enemies"));
 			return true;
 		}
 
 		return false;
 	}
 
-	public void ShowEndFightScreen(string winner)
+	public void ResetCombat()
+	{
+		foreach (Unit unit in playerUnits)
+		{
+			unit.Heal(100);
+			unit.activeEffects.Clear();
+			unit.abilityCooldowns.Clear();
+			unit.RefreshStatusIcons();
+			unit.RefreshCoatingUI(false);
+		}
+
+		playerUnits.Clear();
+		enemyUnits.Clear();
+	}
+
+	IEnumerator ShowEndFightScreen(string winner)
 	{
 		Debug.Log(winner);
-		StartCombat();
+		yield return new WaitForSeconds(3f);
+		if (winner == "Player")
+			StartCoroutine(StartCombat());
 	}
 
 	public List<Unit> GetValidTargets(Ability ability)
@@ -431,6 +453,21 @@ public class GameManager : MonoBehaviour
 			}
 
 			skillPanel.SetActive(false);
+		}
+	}
+
+	public void RemoveUnit(Unit unit)
+	{
+		switch (unit)
+		{
+			case PlayerUnit:
+				allUnits.Remove(unit);
+				playerUnits.Remove(unit);
+				break;
+			case EnemyUnit:
+				allUnits.Remove(unit);
+				enemyUnits.Remove(unit);
+				break;
 		}
 	}
 

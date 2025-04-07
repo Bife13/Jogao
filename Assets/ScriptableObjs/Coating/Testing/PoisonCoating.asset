@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b5f3821df157fd4782691262d3f2f65, type: 3}
   m_Name: PoisonCoating
   m_EditorClassIdentifier: 
-  coatingName: Poison Coating
-  effect: {fileID: 11400000, guid: 894ab77b90b23e34e9e9fa5540385e8d, type: 2}
+  coatingName: Rat Knight Poison Coating
+  effect: {fileID: 11400000, guid: f666fedb0a561dd4eac3f64818a7edd9, type: 2}
   bonusDamage: 5
   coatDuration: 3
-  coatingSprite: {fileID: 0}
+  coatingSprite: {fileID: 21300000, guid: 157627ab1b4bec94498e28c4714c2ba6, type: 3}
