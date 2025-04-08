@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -38,6 +39,9 @@ public class GameManager : MonoBehaviour
 
 	[SerializeField]
 	private GameObject skillPanel;
+
+	[SerializeField]
+	private List<TMP_Text> statsTexts;
 
 	[SerializeField]
 	private List<ButtonHandler> _buttonHandlers = new List<ButtonHandler>();
@@ -444,6 +448,8 @@ public class GameManager : MonoBehaviour
 				else
 					_buttonHandlers[i].SetAbility(playerAbilities[i], 0);
 			}
+
+			UpdateStats();
 		}
 		else
 		{
@@ -454,6 +460,18 @@ public class GameManager : MonoBehaviour
 
 			skillPanel.SetActive(false);
 		}
+	}
+
+	public void UpdateStats()
+	{
+		statsTexts[0].text = currentUnit.GetTotalModifiedStat(StatType.Health).ToString();
+		statsTexts[1].text = currentUnit.GetTotalModifiedAttackStat()[0] + "-" +
+		                     currentUnit.GetTotalModifiedAttackStat()[1];
+		statsTexts[2].text = currentUnit.GetTotalModifiedStat(StatType.Defense).ToString();
+		statsTexts[3].text = currentUnit.GetTotalModifiedStat(StatType.Speed).ToString();
+		statsTexts[4].text = currentUnit.GetTotalModifiedStat(StatType.Crit).ToString();
+		statsTexts[5].text = currentUnit.GetTotalModifiedStat(StatType.Accuracy).ToString();
+		statsTexts[6].text = currentUnit.GetTotalModifiedStat(StatType.Dodge).ToString();
 	}
 
 	public void RemoveUnit(Unit unit)

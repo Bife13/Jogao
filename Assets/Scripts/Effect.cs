@@ -36,39 +36,3 @@ public class Effect : ScriptableObject
 	public WeaponCoating weaponCoating;
 }
 
-public enum EffectType
-{
-	Buff,
-	Debuff,
-	Status
-}
-
-public enum StatusType
-{
-	Bleed,
-	Poison,
-	Burn,
-	Stun,
-	Shock,
-	None,
-}
-
-public enum EffectTiming
-{
-	StartTurn,
-	EndTurn,
-	OnHit,
-	SkipAction
-}
-
-public enum StatType
-{
-	Health,
-	Attack,
-	Defense,
-	Speed,
-	Dodge,
-	Crit,
-	Accuracy,
-	None
-}

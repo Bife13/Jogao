@@ -3,23 +3,9 @@ using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public enum AbilityTargetType
-{
-	Enemy,
-	Ally,
-	Self,
-	AllEnemies,
-	AllAllies
-}
 
-public enum AbilityEffectType
-{
-	Damage,
-	Heal,
-	Buff,
-	Debuff,
-	StatusEffect,
-}
+
+
 
 [CreateAssetMenu(fileName = "NewAbility", menuName = "Game/Abilities/Ability")]
 public class Ability : ScriptableObject

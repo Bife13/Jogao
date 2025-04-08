@@ -8,24 +8,6 @@ using DG.Tweening;
 using TMPro;
 using Random = UnityEngine.Random;
 
-public enum UnitType
-{
-	PLAYER,
-	ENEMY
-}
-
-public enum DamageType
-{
-	Direct,
-	DoT
-}
-
-public enum StanceType
-{
-	Neutral = 0,
-	Offensive = 1,
-	Defensive = 2
-}
 
 public class Unit : MonoBehaviour
 {
@@ -73,7 +55,7 @@ public class Unit : MonoBehaviour
 	[SerializeField]
 	private Transform unitCanvas;
 
-	public int ModifiedSpeed => (int)(GetTotalModifiedStat(StatType.Speed, speed));
+	public int ModifiedSpeed => (int)(GetTotalModifiedStat(StatType.Speed));
 
 	[Header("Stance Variables")]
 	public StanceType currentStance = StanceType.Neutral;
@@ -86,6 +68,9 @@ public class Unit : MonoBehaviour
 
 	public int stanceReduction = 10;
 	public bool hasComittedStance = false;
+
+	[Header("Items")]
+	public List<Item> items = new List<Item>();
 
 	public WeaponCoating activeCoating = null;
 	public int coatingDuration = 0;
@@ -221,20 +206,16 @@ public class Unit : MonoBehaviour
 
 	protected virtual float CalculateDamage(Ability ability, Unit target)
 	{
-		float damage = Random.Range(minDamage, maxDamage + 1);
+		float damage = Random.Range(GetTotalModifiedAttackStat()[0], GetTotalModifiedAttackStat()[1]);
 
-		if (PerformCriticalHitCheck((int)GetTotalModifiedStat(StatType.Crit,
-			    critChance + ability.bonusCritical)))
+		if (PerformCriticalHitCheck((int)GetTotalModifiedStat(StatType.Crit) + ability.bonusCritical))
 		{
-			damage = (1.5f * maxDamage);
+			damage = (1.5f * GetTotalModifiedAttackStat()[1]);
 			Debug.Log($"{target.unitName} hit a Critical Strike");
 		}
 
 		float baseDamage = damage;
-
-		damage += CalculateStanceBonusDamage(baseDamage);
-		damage += (GetTotalModifiedStat(StatType.Attack, baseDamage) - baseDamage);
-		damage += baseDamage * (ability.basePower / 100f);
+		damage += damage * (ability.basePower / 100f);
 
 		if (target.CheckForActiveEffects(target, ability.boostingEffects))
 			damage += baseDamage * (ability.statusBoost / 100f);
@@ -276,7 +257,7 @@ public class Unit : MonoBehaviour
 	protected virtual void ApplyHealing(Ability ability, Unit target)
 	{
 		float healAmount = Random.Range(ability.basePower, ability.maxPower);
-		if (PerformCriticalHitCheck((int)GetTotalModifiedStat(StatType.Crit, 15 + ability.bonusCritical)))
+		if (PerformCriticalHitCheck(15 + ability.bonusCritical))
 			healAmount *= 2;
 
 		target.Heal(Mathf.CeilToInt(healAmount));
@@ -411,7 +392,7 @@ public class Unit : MonoBehaviour
 		{
 			case DamageType.Direct:
 				float reducedDamage = damage *
-				                      (GetTotalModifiedStat(StatType.Defense, CalculateStanceDefense(baseDefense)) /
+				                      (GetTotalModifiedStat(StatType.Defense) /
 				                       100f);
 				finalDamage = Mathf.Max(0, damage - Mathf.CeilToInt(reducedDamage));
 				currentHP -= finalDamage;
@@ -473,8 +454,8 @@ public class Unit : MonoBehaviour
 	protected bool PerformAccuracyDodgeCheck(int abilityAccuracy, Unit target)
 	{
 		float accuracyRoll = Random.Range(0f, 100f);
-		float dodgeThreshold = target.GetTotalModifiedStat(StatType.Dodge, target.dodge);
-		float currentAccuracy = GetTotalModifiedStat(StatType.Accuracy, accuracy);
+		float dodgeThreshold = target.GetTotalModifiedStat(StatType.Dodge);
+		float currentAccuracy = GetTotalModifiedStat(StatType.Accuracy);
 		if (accuracyRoll <= abilityAccuracy + currentAccuracy - dodgeThreshold)
 		{
 			return true; // Hit
@@ -614,9 +595,26 @@ public class Unit : MonoBehaviour
 	}
 
 	//TODO CHECK THIS LOGIC HERE FOR NEGATIVE STUFF 
-	public float GetTotalModifiedStat(StatType statType, float initialValue)
+	public float GetTotalModifiedStat(StatType statType)
 	{
-		float resultValue = initialValue;
+		float modifier = CalculateModifier(statType);
+		float finalValue = CalculateStatValue(statType, modifier);
+		return finalValue;
+	}
+
+	public List<int> GetTotalModifiedAttackStat()
+	{
+		List<int> finalValues = new List<int>();
+		float modifier = CalculateModifier(StatType.Attack);
+		modifier += CalculateStanceBonusAttackAmount() + 100;
+		modifier /= 100;
+		finalValues.Add(Mathf.CeilToInt(minDamage * modifier));
+		finalValues.Add(Mathf.CeilToInt(maxDamage * modifier));
+		return finalValues;
+	}
+
+	public float CalculateModifier(StatType statType)
+	{
 		float modifier = 0;
 		foreach (var activeEffect in activeEffects)
 		{
@@ -626,23 +624,47 @@ public class Unit : MonoBehaviour
 			}
 		}
 
+		foreach (Item item in items)
+		{
+			foreach (ItemEffect itemEffect in item.itemEffects)
+			{
+				if (itemEffect.triggerType == TriggerType.Passive && itemEffect.affectedStatType == statType &&
+				    itemEffect.duration == 0)
+				{
+					modifier += itemEffect.value;
+				}
+			}
+		}
+
+		return modifier;
+	}
+
+	public float CalculateStatValue(StatType statType, float modifier)
+	{
+		float resultValue = 0;
 		switch (statType)
 		{
+			case StatType.Health:
+				resultValue = currentHP;
+				break;
 			case StatType.Speed:
+				resultValue = speed + modifier;
+				break;
 			case StatType.Accuracy:
+				resultValue = accuracy + modifier;
+				break;
 			case StatType.Defense:
-				resultValue += modifier;
+				resultValue = baseDefense + modifier + CalculateStanceBonusDefense();
 				break;
 			case StatType.Crit:
-			case StatType.Dodge:
-				resultValue += modifier;
+				resultValue = critChance + modifier;
 				if (resultValue < 0)
 					resultValue = 0;
 				break;
-			case StatType.Attack:
-				modifier += 100;
-				modifier /= 100;
-				resultValue *= modifier;
+			case StatType.Dodge:
+				resultValue = dodge + modifier;
+				if (resultValue < 0)
+					resultValue = 0;
 				break;
 		}
 
@@ -856,36 +878,36 @@ public class Unit : MonoBehaviour
 		return activeEffects.FirstOrDefault(e => e.grantsCounter);
 	}
 
-	public float CalculateStanceBonusDamage(float damage)
+	public float CalculateStanceBonusAttackAmount()
 	{
 		float modifier = 0f;
 		switch (currentStance)
 		{
 			case StanceType.Offensive:
-				modifier += (stanceBonus / 100f); // + Bonus % damage
+				modifier += stanceBonus; // + Bonus % damage
 				break;
 			case StanceType.Defensive:
-				modifier -= (stanceReduction / 100f); // - Bonus % damage
+				modifier -= stanceReduction; // - Bonus % damage
 				break;
 		}
 
-		return damage * modifier;
+		return modifier;
 	}
 
-	public float CalculateStanceDefense(int defense)
+	public float CalculateStanceBonusDefense()
 	{
-		float finalDefense = defense;
+		float finalBonusDefense = 0;
 		switch (currentStance)
 		{
 			case StanceType.Offensive:
-				finalDefense -= stanceReduction; // - Bonus defense
+				finalBonusDefense -= stanceReduction; // - Bonus defense
 				break;
 			case StanceType.Defensive:
-				finalDefense += stanceBonus; // + Bonus  defense
+				finalBonusDefense += stanceBonus; // + Bonus  defense
 				break;
 		}
 
-		return finalDefense;
+		return finalBonusDefense;
 	}
 
 	public void ShowFloatingText(string message, Color color)
