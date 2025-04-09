@@ -14,14 +14,12 @@ public class ButtonHandler : MonoBehaviour
 	private void Awake()
 	{
 		button = GetComponent<Button>();
-		image = GetComponent<Image>();
 		button.onClick.AddListener(OnAbilityButtonClicked);
 	}
 
 	public void SetAbility(Ability newAbility, int cooldown)
 	{
 		assignedAbility = newAbility;
-		text.text = assignedAbility.abilityName;
 		image.sprite = assignedAbility.icon;
 		if (cooldown == 0)
 		{
@@ -46,6 +44,7 @@ public class ButtonHandler : MonoBehaviour
 	{
 		if (assignedAbility != null)
 		{
+			text.text = assignedAbility.abilityName;
 			Debug.Log($"Clicked ability: {assignedAbility.abilityName}");
 			// Pass the selected ability to the TargetSelection system
 			TargetSelectionUI.Instance.StartTargetSelection(assignedAbility);

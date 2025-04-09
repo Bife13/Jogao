@@ -467,11 +467,11 @@ public class GameManager : MonoBehaviour
 		statsTexts[0].text = currentUnit.GetTotalModifiedStat(StatType.Health).ToString();
 		statsTexts[1].text = currentUnit.GetTotalModifiedAttackStat()[0] + "-" +
 		                     currentUnit.GetTotalModifiedAttackStat()[1];
-		statsTexts[2].text = currentUnit.GetTotalModifiedStat(StatType.Defense).ToString();
+		statsTexts[2].text = currentUnit.GetTotalModifiedStat(StatType.Defense) + " %";
 		statsTexts[3].text = currentUnit.GetTotalModifiedStat(StatType.Speed).ToString();
-		statsTexts[4].text = currentUnit.GetTotalModifiedStat(StatType.Crit).ToString();
-		statsTexts[5].text = currentUnit.GetTotalModifiedStat(StatType.Accuracy).ToString();
-		statsTexts[6].text = currentUnit.GetTotalModifiedStat(StatType.Dodge).ToString();
+		statsTexts[4].text = currentUnit.GetTotalModifiedStat(StatType.Crit) + " %";
+		statsTexts[5].text = currentUnit.GetTotalModifiedStat(StatType.Accuracy) + " %";
+		statsTexts[6].text = currentUnit.GetTotalModifiedStat(StatType.Dodge) + " %";
 	}
 
 	public void RemoveUnit(Unit unit)

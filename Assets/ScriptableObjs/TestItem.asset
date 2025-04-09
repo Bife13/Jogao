@@ -12,9 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d269fa4483a00f94bb16cc068e9a164b, type: 3}
   m_Name: TestItem
   m_EditorClassIdentifier: 
-  itemName: 
+  itemName: Test Item
   description: 
   itemSprite: {fileID: 0}
   type: 0
-  isUnique: 0
-  itemEffects: []
+  isUnique: 1
+  itemEffects:
+  - triggerType: 0
+    effectType: 0
+    affectedStatType: 2
+    statusType: 5
+    value: 10
+    percentValue: 0
+    duration: 0
+    coatingOverride: 
+    notes: 
