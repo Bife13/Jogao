@@ -10,7 +10,7 @@ public class EnemyUnit : Unit
 
 	[SerializeField]
 	private Image intentImage;
-	
+
 	public override void Start()
 	{
 		base.Start();
@@ -20,16 +20,16 @@ public class EnemyUnit : Unit
 	public void DecideNextIntent()
 	{
 		intentImage.enabled = true;
-		nextAbility = _abilities[Random.Range(0, _abilities.Count)];
+		nextAbility = unitAbilityManager._abilities[Random.Range(0, unitAbilityManager._abilities.Count)];
 		intentImage.sprite = nextAbility.icon;
 	}
 
-	protected override void PerformAttackAnimation()
+	public override void PerformAttackAnimation()
 	{
 		AttackAnimation(-1);
 	}
 
-	protected override void AfterAbilityUse(Ability ability, bool hit)
+	public override void AfterAbilityUse(Ability ability, bool hit)
 	{
 		base.AfterAbilityUse(ability, hit);
 		intentImage.enabled = false;
@@ -38,6 +38,6 @@ public class EnemyUnit : Unit
 	public void PerformIntent()
 	{
 		List<Unit> targets = GameManager.Instance.GetValidTargetsForEnemy(nextAbility);
-		UseAbility(nextAbility, targets);
+		unitAbilityManager.UseAbility(nextAbility, targets);
 	}
 }

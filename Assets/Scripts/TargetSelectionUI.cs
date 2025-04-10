@@ -53,25 +53,25 @@ public class TargetSelectionUI : MonoBehaviour
 			case AbilityTargetType.Self:
 				List<Unit> targets = new List<Unit>();
 				targets.Add(unit);
-				if (!actingPlayer.CanUseAbility(currentAbility))
+				if (!actingPlayer.unitAbilityManager.CanUseAbility(currentAbility))
 				{
 					Debug.LogWarning($"{currentAbility.abilityName} is in cooldown");
 					break;
 				}
 
-				if (!actingPlayer.isTargetValid(currentAbility, targets[0]))
+				if (!actingPlayer.unitAbilityManager.isTargetValid(currentAbility, targets[0]))
 				{
 					Debug.LogWarning($"Invalid target for ability {currentAbility.abilityName}");
 					break;
 				}
 
-				actingPlayer.UseAbility(currentAbility, targets);
+				actingPlayer.unitAbilityManager.UseAbility(currentAbility, targets);
 				EndTargetSelection();
 
 				break;
 			case AbilityTargetType.AllAllies:
 			case AbilityTargetType.AllEnemies:
-				if (!actingPlayer.CanUseAbility(currentAbility))
+				if (!actingPlayer.unitAbilityManager.CanUseAbility(currentAbility))
 				{
 					Debug.LogWarning($"{currentAbility.abilityName} is in cooldown");
 					break;
@@ -80,13 +80,13 @@ public class TargetSelectionUI : MonoBehaviour
 				bool correctTargets = false;
 				foreach (Unit target in validTargets)
 				{
-					if (actingPlayer.isTargetValid(currentAbility, target))
+					if (actingPlayer.unitAbilityManager.isTargetValid(currentAbility, target))
 						correctTargets = true;
 				}
 
 				if (correctTargets)
 				{
-					actingPlayer.UseAbility(currentAbility, validTargets);
+					actingPlayer.unitAbilityManager.UseAbility(currentAbility, validTargets);
 					EndTargetSelection();
 				}
 				else

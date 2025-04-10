@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d269fa4483a00f94bb16cc068e9a164b, type: 3}
-  m_Name: TestItem
+  m_Name: Passive Item
   m_EditorClassIdentifier: 
   itemName: Test Item
   description: 
@@ -19,7 +19,7 @@ MonoBehaviour:
   isUnique: 1
   itemEffects:
   - triggerType: 0
-    effectType: 0
+    effectType: 7
     affectedStatType: 2
     statusType: 5
     value: 10

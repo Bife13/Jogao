@@ -8,7 +8,7 @@ using Random = UnityEngine.Random;
 
 public class PlayerUnit : Unit
 {
-	protected override void PerformAttackAnimation()
+	public override void PerformAttackAnimation()
 	{
 		AttackAnimation(1);
 	}

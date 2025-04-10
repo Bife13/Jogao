@@ -18,12 +18,12 @@ MonoBehaviour:
   type: 0
   isUnique: 1
   itemEffects:
-  - triggerType: 0
-    effectType: 0
-    affectedStatType: 1
-    statusType: 5
-    value: 10
-    percentValue: 0
-    duration: 0
+  - triggerType: 1
+    effectType: 2
+    affectedStatType: 7
+    statusType: 2
+    value: 5
+    percentValue: 25
+    duration: 2
     coatingOverride: 
     notes: 

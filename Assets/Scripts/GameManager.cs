@@ -94,6 +94,7 @@ public class GameManager : MonoBehaviour
 			combatEnded = false;
 			SpawnEnemies();
 			OrganizeUnits();
+			yield return new WaitForSeconds(0.5f);
 			CalculateInitiative();
 			StartCoroutine(HandleTurnLoop());
 		}
@@ -116,11 +117,12 @@ public class GameManager : MonoBehaviour
 		foreach (Unit unit in allUnits)
 		{
 			int randomRoll = Random.Range(1, randomMax + 1);
-			int initiative = unit.ModifiedSpeed + randomRoll;
+			int initiative = (int)unit.unitStatCalculator.GetTotalModifiedStat(StatType.Speed) + randomRoll;
 
 			unitInitiatives.Add((unit, initiative));
 
-			Debug.Log($"{unit.unitName} has speed {unit.ModifiedSpeed} + roll {randomRoll} = initiative {initiative}");
+			Debug.Log(
+				$"{unit.unitName} has speed {(int)unit.unitStatCalculator.GetTotalModifiedStat(StatType.Speed)} + roll {randomRoll} = initiative {initiative}");
 		}
 
 		unitInitiatives.Sort((a, b) => b.initiativeRoll.CompareTo(a.initiativeRoll));
@@ -144,17 +146,17 @@ public class GameManager : MonoBehaviour
 				break;
 
 			currentUnit = turnOrder[currentUnitIndex];
-			if (currentUnit.isAlive())
+			if (currentUnit.unitHealth.isAlive())
 			{
 				Debug.Log($"It's {currentUnit.unitName}'s turn!");
 				foreach (Unit unit in allUnits)
 				{
-					unit.SetHighlight(false);
+					unit.unitUI.SetHighlight(false);
 				}
 
 				turnCounter++;
-				currentUnit.SetHighlight(true);
-				currentUnit.ProcessEffectsPerTurn(EffectTiming.StartTurn, turnCounter);
+				currentUnit.unitUI.SetHighlight(true);
+				currentUnit.unitEffects.ProcessEffectsPerTurn(EffectTiming.StartTurn, turnCounter);
 
 				yield return new WaitForSeconds(1f);
 
@@ -170,7 +172,7 @@ public class GameManager : MonoBehaviour
 				}
 			}
 
-			currentUnit.ProcessEffectsPerTurn(EffectTiming.EndTurn, turnCounter);
+			currentUnit.unitEffects.ProcessEffectsPerTurn(EffectTiming.EndTurn, turnCounter);
 
 			currentUnitIndex++;
 			if (currentUnitIndex >= turnOrder.Count)
@@ -195,11 +197,11 @@ public class GameManager : MonoBehaviour
 
 	IEnumerator PlayerTurn(PlayerUnit playerUnit)
 	{
-		if (!playerUnit.HasStunDebuff())
+		if (!playerUnit.unitEffects.HasStunDebuff())
 		{
 			Debug.Log($"{currentUnit.unitName} is choosing an action...");
 
-			playerUnit.StartTurn();
+			playerUnit.unitAbilityManager.StartTurn();
 
 			TargetSelectionUI.Instance.isSelecting = true;
 
@@ -210,12 +212,12 @@ public class GameManager : MonoBehaviour
 		}
 		else
 		{
-			playerUnit.ProcessEffectsPerTurn(EffectTiming.SkipAction, turnCounter);
+			playerUnit.unitEffects.ProcessEffectsPerTurn(EffectTiming.SkipAction, turnCounter);
 			Debug.Log($"{currentUnit.unitName} is stunned");
 		}
 
 		HandlePanel(false);
-		currentUnit.SetHighlight(false);
+		currentUnit.unitUI.SetHighlight(false);
 
 		yield return new WaitForSeconds(1.0f); // Simulate the attack animation/delay
 	}
@@ -229,14 +231,14 @@ public class GameManager : MonoBehaviour
 	IEnumerator EnemyTurn(EnemyUnit enemyUnit)
 	{
 		yield return new WaitForSeconds(1.0f);
-		if (!enemyUnit.HasStunDebuff())
+		if (!enemyUnit.unitEffects.HasStunDebuff())
 		{
 			enemyUnit.PerformIntent();
-			currentUnit.SetHighlight(false);
+			currentUnit.unitUI.SetHighlight(false);
 		}
 		else
 		{
-			enemyUnit.ProcessEffectsPerTurn(EffectTiming.SkipAction, turnCounter);
+			enemyUnit.unitEffects.ProcessEffectsPerTurn(EffectTiming.SkipAction, turnCounter);
 			Debug.Log($"{enemyUnit.unitName} is stunned");
 		}
 
@@ -298,7 +300,7 @@ public class GameManager : MonoBehaviour
 			{
 				case UnitType.PLAYER:
 					playerUnits.Add(unit);
-					unit.hasComittedStance = false;
+					unit.unitStance.hasComittedStance = false;
 					break;
 				case UnitType.ENEMY:
 					enemyUnits.Add(unit);
@@ -309,8 +311,8 @@ public class GameManager : MonoBehaviour
 
 	public bool CheckEndRound()
 	{
-		int alivePlayers = playerUnits.Count(u => u.isAlive());
-		int aliveEnemies = enemyUnits.Count(u => u.isAlive());
+		int alivePlayers = playerUnits.Count(u => u.unitHealth.isAlive());
+		int aliveEnemies = enemyUnits.Count(u => u.unitHealth.isAlive());
 
 		if ((alivePlayers <= 0 || aliveEnemies <= 0) && combatStarted)
 		{
@@ -331,11 +333,11 @@ public class GameManager : MonoBehaviour
 	{
 		foreach (Unit unit in playerUnits)
 		{
-			unit.Heal(100);
-			unit.activeEffects.Clear();
-			unit.abilityCooldowns.Clear();
-			unit.RefreshStatusIcons();
-			unit.RefreshCoatingUI(false);
+			unit.unitHealth.Heal(100);
+			unit.unitEffects.activeEffects.Clear();
+			unit.unitAbilityManager.abilityCooldowns.Clear();
+			unit.unitUI.RefreshStatusIcons();
+			unit.unitUI.RefreshCoatingUI(false);
 		}
 
 		playerUnits.Clear();
@@ -357,16 +359,16 @@ public class GameManager : MonoBehaviour
 		switch (ability.targetType)
 		{
 			case AbilityTargetType.Enemy:
-				validTargets = enemyUnits.FindAll(u => u.isAlive());
+				validTargets = enemyUnits.FindAll(u => u.unitHealth.isAlive());
 				break;
 			case AbilityTargetType.Ally:
-				validTargets = playerUnits.FindAll(u => u.isAlive());
+				validTargets = playerUnits.FindAll(u => u.unitHealth.isAlive());
 				break;
 			case AbilityTargetType.AllEnemies:
-				validTargets = enemyUnits.FindAll(u => u.isAlive());
+				validTargets = enemyUnits.FindAll(u => u.unitHealth.isAlive());
 				break;
 			case AbilityTargetType.AllAllies:
-				validTargets = playerUnits.FindAll(u => u.isAlive());
+				validTargets = playerUnits.FindAll(u => u.unitHealth.isAlive());
 				break;
 			case AbilityTargetType.Self:
 				validTargets.Add(currentUnit);
@@ -390,7 +392,7 @@ public class GameManager : MonoBehaviour
 		switch (ability.targetType)
 		{
 			case AbilityTargetType.Enemy:
-				validTargets = playerUnits.FindAll(u => u.isAlive());
+				validTargets = playerUnits.FindAll(u => u.unitHealth.isAlive());
 				if (validTargets.Count > 0)
 				{
 					Unit randomTarget = validTargets[Random.Range(0, validTargets.Count)];
@@ -400,7 +402,7 @@ public class GameManager : MonoBehaviour
 
 				break;
 			case AbilityTargetType.Ally:
-				validTargets = enemyUnits.FindAll(u => u.isAlive());
+				validTargets = enemyUnits.FindAll(u => u.unitHealth.isAlive());
 				if (validTargets.Count > 0)
 				{
 					Unit randomTarget = validTargets[Random.Range(0, validTargets.Count)];
@@ -410,10 +412,10 @@ public class GameManager : MonoBehaviour
 
 				break;
 			case AbilityTargetType.AllEnemies:
-				validTargets = playerUnits.FindAll(u => u.isAlive());
+				validTargets = playerUnits.FindAll(u => u.unitHealth.isAlive());
 				break;
 			case AbilityTargetType.AllAllies:
-				validTargets = enemyUnits.FindAll(u => u.isAlive());
+				validTargets = enemyUnits.FindAll(u => u.unitHealth.isAlive());
 				break;
 			case AbilityTargetType.Self:
 				validTargets.Add(currentUnit);
@@ -433,8 +435,8 @@ public class GameManager : MonoBehaviour
 
 	public void HandlePanel(bool change)
 	{
-		List<Ability> playerAbilities = currentUnit.GetAbilities();
-		Dictionary<Ability, int> cooldowns = currentUnit.abilityCooldowns;
+		List<Ability> playerAbilities = currentUnit.unitAbilityManager.GetAbilities();
+		Dictionary<Ability, int> cooldowns = currentUnit.unitAbilityManager.abilityCooldowns;
 
 		if (change)
 		{
@@ -464,14 +466,14 @@ public class GameManager : MonoBehaviour
 
 	public void UpdateStats()
 	{
-		statsTexts[0].text = currentUnit.GetTotalModifiedStat(StatType.Health).ToString();
-		statsTexts[1].text = currentUnit.GetTotalModifiedAttackStat()[0] + "-" +
-		                     currentUnit.GetTotalModifiedAttackStat()[1];
-		statsTexts[2].text = currentUnit.GetTotalModifiedStat(StatType.Defense) + " %";
-		statsTexts[3].text = currentUnit.GetTotalModifiedStat(StatType.Speed).ToString();
-		statsTexts[4].text = currentUnit.GetTotalModifiedStat(StatType.Crit) + " %";
-		statsTexts[5].text = currentUnit.GetTotalModifiedStat(StatType.Accuracy) + " %";
-		statsTexts[6].text = currentUnit.GetTotalModifiedStat(StatType.Dodge) + " %";
+		statsTexts[0].text = currentUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Health).ToString();
+		statsTexts[1].text = currentUnit.unitStatCalculator.GetTotalModifiedAttackStat()[0] + "-" +
+		                     currentUnit.unitStatCalculator.GetTotalModifiedAttackStat()[1];
+		statsTexts[2].text = currentUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Defense) + " %";
+		statsTexts[3].text = currentUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Speed).ToString();
+		statsTexts[4].text = currentUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Crit) + " %";
+		statsTexts[5].text = currentUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Accuracy) + " %";
+		statsTexts[6].text = currentUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Dodge) + " %";
 	}
 
 	public void RemoveUnit(Unit unit)
@@ -491,15 +493,16 @@ public class GameManager : MonoBehaviour
 
 	public void TrySwitchStance()
 	{
-		if (currentUnit.hasComittedStance)
+		if (currentUnit.unitStance.hasComittedStance)
 		{
 			Debug.Log("Stance already committed. Cannot preview/change anymore.");
 			return;
 		}
 
 		int stanceCount = Enum.GetValues(typeof(StanceType)).Length;
-		currentUnit.previewStance = (StanceType)(((int)currentUnit.previewStance + 1) % stanceCount);
+		currentUnit.unitStance.previewStance =
+			(StanceType)(((int)currentUnit.unitStance.previewStance + 1) % stanceCount);
 
-		Debug.Log($"{currentUnit.unitName} switched to {currentUnit.previewStance} stance!");
+		Debug.Log($"{currentUnit.unitName} switched to {currentUnit.unitStance.previewStance} stance!");
 	}
 }

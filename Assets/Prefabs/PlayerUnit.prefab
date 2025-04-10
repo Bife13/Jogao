@@ -513,6 +513,13 @@ GameObject:
   - component: {fileID: 3559671495171587936}
   - component: {fileID: 5675789171197788692}
   - component: {fileID: -547358101322953889}
+  - component: {fileID: 3900757096635621640}
+  - component: {fileID: 6581829177088594900}
+  - component: {fileID: 2694905838305980264}
+  - component: {fileID: 7986578638944179492}
+  - component: {fileID: 5300396928533141632}
+  - component: {fileID: 8473690288518349056}
+  - component: {fileID: 1684890923656634183}
   m_Layer: 6
   m_Name: PlayerUnit
   m_TagString: Untagged
@@ -548,26 +555,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b12da4d85d4cddf46820d90ff83b008b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  unitHealth: {fileID: 0}
+  unitAbilityManager: {fileID: 0}
+  unitCombatCalculator: {fileID: 0}
+  unitStatCalculator: {fileID: 0}
+  unitStance: {fileID: 0}
+  unitUI: {fileID: 0}
+  unitEffects: {fileID: 0}
   unitData: {fileID: 11400000, guid: 5ffc39e571b9ab1428eebb0f3eb4a852, type: 2}
-  currentHP: 0
-  healthBar: {fileID: 3660674170326234875}
-  statusIconPanel: {fileID: 811049807836977077}
-  statusIconPrefab: {fileID: 3629713507593091196, guid: 43ad0569e9cd503438f81d733bb40493, type: 3}
-  highlightEffect: {fileID: 2279755375955782251}
-  displayObject: {fileID: 3017414184229490083}
-  unitSprite: {fileID: 8955653915399978661}
-  floatingTextPrefab: {fileID: 1300995842718250085, guid: 43df8785cfdd6694b89feba0bc68beb2, type: 3}
-  unitCanvas: {fileID: 1368321462102188761}
-  currentStance: 0
-  previewStance: 0
-  stanceBonus: 20
-  shockAmount: 25
-  stanceReduction: 10
-  hasComittedStance: 0
-  items: []
-  activeCoating: {fileID: 0}
-  coatingDuration: 0
-  coatingIcon: {fileID: 0}
 --- !u!61 &5675789171197788692
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -629,6 +624,109 @@ MonoBehaviour:
   unit: {fileID: 3559671495171587936}
   highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   initialHighlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+--- !u!114 &3900757096635621640
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4219958431138558770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddf4a8b8d7e8bf148b3ae4a949c9bc01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentHP: 0
+--- !u!114 &6581829177088594900
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4219958431138558770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffc0e24875c47414886652b35804e375, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _abilities: []
+--- !u!114 &2694905838305980264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4219958431138558770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 174a9107c87bce343a2d866a59696509, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7986578638944179492
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4219958431138558770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71f1226b8b0420f42afd45a9c1e37699, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  items: []
+--- !u!114 &5300396928533141632
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4219958431138558770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64fab54d2ad86324ab9b32c78b82d0b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentStance: 0
+  previewStance: 0
+  stanceBonus: 20
+  stanceReduction: 10
+  hasComittedStance: 0
+--- !u!114 &8473690288518349056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4219958431138558770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90263ac1c6d9b0944a493942f4fb279a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  statusIconPanel: {fileID: 811049807836977077}
+  statusIconPrefab: {fileID: 3629713507593091196, guid: 43ad0569e9cd503438f81d733bb40493, type: 3}
+  highlightEffect: {fileID: 2279755375955782251}
+  displayObject: {fileID: 3017414184229490083}
+  unitSprite: {fileID: 8955653915399978661}
+  floatingTextPrefab: {fileID: 1300995842718250085, guid: 43df8785cfdd6694b89feba0bc68beb2, type: 3}
+  unitCanvas: {fileID: 1368321462102188761}
+  coatingIcon: {fileID: 2962842352474347388}
+  healthBar: {fileID: 3660674170326234875}
+--- !u!114 &1684890923656634183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4219958431138558770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b871dc13d431b9468793699795b901b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  activeCoating: {fileID: 0}
+  coatingDuration: 0
 --- !u!1 &5216584375262259632
 GameObject:
   m_ObjectHideFlags: 0
@@ -938,6 +1036,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 43ad0569e9cd503438f81d733bb40493, type: 3}
+--- !u!114 &2962842352474347388 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4159492852250530484, guid: 43ad0569e9cd503438f81d733bb40493, type: 3}
+  m_PrefabInstance: {fileID: 1200031033389221320}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5d41e05d6281c4468c451dc4e6c8aef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &3977239873577867314 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2852646953613581818, guid: 43ad0569e9cd503438f81d733bb40493, type: 3}

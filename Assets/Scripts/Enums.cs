@@ -23,9 +23,11 @@ public enum EffectType
 	Buff,
 	Debuff,
 	Status,
+	StatusImprovement,
 	ModifyCoating,
 	CooldownReduction,
-	DamageModifier
+	DamageModifier,
+	None
 }
 
 public enum StatusType
@@ -36,6 +38,7 @@ public enum StatusType
 	Stun,
 	Shock,
 	None,
+	Any,
 }
 
 public enum EffectTiming
