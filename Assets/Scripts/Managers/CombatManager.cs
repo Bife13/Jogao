@@ -6,8 +6,7 @@ public class CombatManager : MonoBehaviour
 {
 	public GameManager gameManager;
 	private UnitManager unitManager;
-	public bool combatStarted = false;
-	public bool combatEnded = false;
+	public bool inCombat = false;
 
 	public void Initialize()
 	{
@@ -21,7 +20,7 @@ public class CombatManager : MonoBehaviour
 		yield return new WaitForSeconds(1f);
 		if (gameManager.turnManager.roundCounter < unitManager._waves.Count)
 		{
-			combatEnded = false;
+			inCombat = true;
 			unitManager.SpawnEnemies();
 			unitManager.OrganizeUnits();
 			yield return new WaitForSeconds(0.5f);
@@ -36,7 +35,7 @@ public class CombatManager : MonoBehaviour
 	{
 		yield return new WaitForSeconds(2f);
 
-		while (!combatEnded)
+		while (inCombat)
 		{
 			if (CheckEndRound())
 				break;
@@ -72,7 +71,8 @@ public class CombatManager : MonoBehaviour
 			}
 
 			currentUnit.unitEffects.ProcessEffectsPerTurn(EffectTiming.EndTurn, gameManager.turnManager.turnCounter);
-
+			yield return new WaitForSeconds(0.5f);
+			CheckEndRound();
 			unitManager.currentUnitIndex++;
 			if (unitManager.currentUnitIndex >= gameManager.turnManager.turnOrder.Count)
 			{
@@ -143,9 +143,12 @@ public class CombatManager : MonoBehaviour
 		int alivePlayers = unitManager.playerUnits.Count(u => u.unitHealth.isAlive());
 		int aliveEnemies = unitManager.enemyUnits.Count(u => u.unitHealth.isAlive());
 
-		if ((alivePlayers <= 0 || aliveEnemies <= 0) && combatStarted)
+		Debug.Log("Players:" + alivePlayers);
+		Debug.Log("Enemies:" + aliveEnemies);
+
+		if ((alivePlayers <= 0 || aliveEnemies <= 0) && inCombat)
 		{
-			combatEnded = true;
+			inCombat = false;
 			gameManager.turnManager.roundCounter++;
 			unitManager.currentUnitIndex = 0;
 			gameManager.combatUIManager.HandlePanel(false);
@@ -180,6 +183,4 @@ public class CombatManager : MonoBehaviour
 		if (winner == "Player")
 			StartCoroutine(StartCombat());
 	}
-
-	
 }

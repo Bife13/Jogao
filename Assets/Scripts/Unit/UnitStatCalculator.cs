@@ -6,8 +6,6 @@ public class UnitStatCalculator : MonoBehaviour
 {
 	private Unit unit;
 	
-	[Header("Items")]
-	public List<Item> items = new List<Item>();
 
 	public void Initialize(Unit owner)
 	{
@@ -42,9 +40,7 @@ public class UnitStatCalculator : MonoBehaviour
 				modifier += activeEffect.effect.amount;
 			}
 		}
-
-		modifier += PassiveItemModifiers(statType);
-
+		
 		return modifier;
 	}
 
@@ -79,23 +75,5 @@ public class UnitStatCalculator : MonoBehaviour
 
 		return resultValue;
 	}
-
-	public float PassiveItemModifiers(StatType statType)
-	{
-		float modifier = 0;
-
-		foreach (Item item in items)
-		{
-			foreach (ItemEffect itemEffect in item.itemEffects)
-			{
-				if (itemEffect.triggerType == TriggerType.Passive && itemEffect.affectedStatType == statType &&
-				    itemEffect.duration == 0)
-				{
-					modifier += itemEffect.value;
-				}
-			}
-		}
-
-		return modifier;
-	}
+	
 }

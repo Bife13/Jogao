@@ -22,12 +22,7 @@ public enum EffectType
 {
 	Buff,
 	Debuff,
-	Status,
-	StatusImprovement,
-	ModifyCoating,
-	CooldownReduction,
-	DamageModifier,
-	None
+	Status
 }
 
 public enum StatusType
@@ -80,23 +75,22 @@ public enum StanceType
 	Defensive = 2
 }
 
-public enum ItemType
-{
-	Offensive,
-	Defensive,
-	Utility,
-	General
-}
-
 public enum TriggerType
 {
-	Passive,
 	OnHit,
-	OnCoat,
-	OnTurnStart,
 	OnCrit,
-	OnAllyHit,
+	OnGetHit,
+	OnTurnStart,
+	OnTurnEnd,
+	OnLowHealth,
 	OnStatusApply,
-	OnDefend
 }
 
+public enum ItemEffectType
+{
+	ApplyStatus,
+	ApplyBuff,
+	ApplyDebuff,
+	Heal,
+	Cleanse
+}

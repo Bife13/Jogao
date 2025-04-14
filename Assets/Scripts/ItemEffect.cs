@@ -1,18 +1,36 @@
-using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-[Serializable]
+[System.Serializable]
 public class ItemEffect
 {
 	public TriggerType triggerType;
-	public EffectType effectType;
+	public ItemEffectType itemEffectType;
 
-	public StatType affectedStatType;
-	public StatusType statusType;
+	[Header("Effects")]
+	public bool applyEffect = false;
 
-	public int value; // flat stat increase or stacks
-	public float percentValue; // 
-	public int duration; // effect duration
-	public string coatingOverride;
-	public string notes;
+	[ShowIf("applyEffect")]
+	public Effect effectToApply;
+
+	[ShowIf("applyEffect")]
+	public float effectChance;
+
+	[Header("Healing")]
+	public bool isHealing = false;
+
+	[ShowIf("applyEffect")]
+	public int healingAmount;
+
+	[Header("Cleanse")]
+	public bool isCleanse = false;
+
+	[ShowIf("isCleanse")]
+	public EffectType effectToCleanse;
+
+	[ShowIf("isCleanse")]
+	public StatusType statusTypeToCleanse;
+
+	[ShowIf("isCleanse")]
+	public int cleanseAmount;
 }
