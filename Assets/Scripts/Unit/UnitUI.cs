@@ -1,18 +1,18 @@
 using System.Collections.Generic;
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class UnitUI : MonoBehaviour
 {
 	private Unit unit;
-	private UnitEffects unitEffects;
 
 	public GameObject statusIconPanel;
 	public GameObject statusIconPrefab;
 
 	private Dictionary<Effect, EffectIconUI> activeIcons = new Dictionary<Effect, EffectIconUI>();
-	
+
 	public GameObject highlightEffect;
 
 	[SerializeField]
@@ -31,10 +31,12 @@ public class UnitUI : MonoBehaviour
 	private Vector3 worldPositionForFloatingText;
 	public Image healthBar;
 
-	private void Awake()
+	[SerializeField]
+	private TMP_Text healthAmounts;
+
+	public void Initialize(Unit owner)
 	{
-		unit = GetComponent<Unit>();
-		unitEffects =  GetComponent<UnitEffects>();;
+		unit = owner;
 	}
 
 	private void Start()
@@ -42,9 +44,10 @@ public class UnitUI : MonoBehaviour
 		worldPositionForFloatingText = unitSprite.transform.position + Vector3.up * 2f;
 	}
 
-	public void UpdateHealthBar(float value)
+	public void UpdateHealthBar(int currentHP, int maxHP)
 	{
-		DOTween.To(() => healthBar.fillAmount, x => healthBar.fillAmount = x, value, 0.5f);
+		DOTween.To(() => healthBar.fillAmount, x => healthBar.fillAmount = x, (float)currentHP / maxHP, 0.5f);
+		healthAmounts.text = currentHP + " / " + maxHP;
 	}
 
 	public void ShowFloatingText(string message, Color color)
@@ -66,7 +69,7 @@ public class UnitUI : MonoBehaviour
 		List<Effect> effectsToRemove = new List<Effect>();
 		foreach (var kvp in activeIcons)
 		{
-			bool stillActive = unitEffects.activeEffects.Exists(ae => ae.effect == kvp.Key);
+			bool stillActive = unit.unitEffects.activeEffects.Exists(ae => ae.effect == kvp.Key);
 			if (!stillActive)
 			{
 				Destroy(kvp.Value.gameObject);
@@ -78,7 +81,7 @@ public class UnitUI : MonoBehaviour
 			activeIcons.Remove(effect);
 
 		// Update or Add icons
-		foreach (var activeEffect in unitEffects.activeEffects)
+		foreach (var activeEffect in unit.unitEffects.activeEffects)
 		{
 			if (activeIcons.ContainsKey(activeEffect.effect))
 			{
@@ -97,8 +100,8 @@ public class UnitUI : MonoBehaviour
 	public void RefreshCoatingUI(bool isActive)
 	{
 		coatingIcon.gameObject.SetActive(isActive);
-		if (unitEffects.activeCoating)
-			coatingIcon.Setup(unitEffects.activeCoating.coatingSprite, unitEffects.coatingDuration);
+		if (unit.unitEffects.activeCoating)
+			coatingIcon.Setup(unit.unitEffects.activeCoating.coatingSprite, unit.unitEffects.coatingDuration);
 	}
 
 	public void SetHighlight(bool isOn)

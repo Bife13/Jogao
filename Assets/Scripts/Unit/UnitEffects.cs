@@ -7,19 +7,13 @@ using Random = UnityEngine.Random;
 public class UnitEffects : MonoBehaviour
 {
 	private Unit unit;
-	private UnitUI unitUI;
-	private UnitHealth unitHealth;
-	private UnitCombatCalculator unitCombatCalculator;
 	public List<ActiveEffect> activeEffects = new List<ActiveEffect>();
 	public WeaponCoating activeCoating = null;
 	public int coatingDuration = 0;
 
-	private void Awake()
+	public void Initialize(Unit owner)
 	{
-		unit = GetComponent<Unit>();
-		unitUI = GetComponent<UnitUI>();
-		unitHealth = GetComponent<UnitHealth>();
-		unitCombatCalculator = GetComponent<UnitCombatCalculator>();
+		unit = owner;
 	}
 
 	public void ApplyEffect(Effect effect)
@@ -34,17 +28,17 @@ public class UnitEffects : MonoBehaviour
 				if (effect.isStackable)
 				{
 					existing.remainingDuration += effect.turnDuration; // Increase duration
-					unitUI.RefreshStatusIcons();
+					unit.unitUI.RefreshStatusIcons();
 					return;
 				}
 
 				if (existing.remainingDuration < effect.turnDuration)
 					existing.remainingDuration = effect.turnDuration; // Refresh duration
-				unitUI.RefreshStatusIcons();
+				unit.unitUI.RefreshStatusIcons();
 				return;
 			}
 
-			activeEffects.Add(new ActiveEffect(effect, GameManager.Instance.turnCounter));
+			activeEffects.Add(new ActiveEffect(effect, GameManager.Instance.turnManager.turnCounter));
 
 			if (effect.isCoatingBuff)
 			{
@@ -57,7 +51,7 @@ public class UnitEffects : MonoBehaviour
 				}
 			}
 
-			unitUI.RefreshStatusIcons();
+			unit.unitUI.RefreshStatusIcons();
 		}
 	}
 
@@ -112,17 +106,17 @@ public class UnitEffects : MonoBehaviour
 					{
 						case StatusType.Poison:
 
-							unitHealth.TakeDoTDamage(appliedEffect.remainingDuration, DamageType.DoT);
+							unit.unitHealth.TakeDoTDamage(appliedEffect.remainingDuration, DamageType.DoT);
 							Debug.Log(
 								$"{unit.unitName} takes {appliedEffect.remainingDuration} damage from {appliedEffect.effect.effectName}");
 							break;
 						case StatusType.Bleed:
-							unitHealth.TakeDoTDamage(appliedEffect.remainingDuration, DamageType.DoT);
+							unit.unitHealth.TakeDoTDamage(appliedEffect.remainingDuration, DamageType.DoT);
 							Debug.Log(
 								$"{unit.unitName} takes {appliedEffect.remainingDuration} damage from {appliedEffect.effect.effectName}");
 							break;
 						case StatusType.Burn:
-							unitHealth.TakeDoTDamage(
+							unit.unitHealth.TakeDoTDamage(
 								Mathf.CeilToInt(unit.maxHP * (appliedEffect.effect.statusDamagePerTurn / 100f)),
 								DamageType.DoT);
 							Debug.Log(
@@ -132,13 +126,13 @@ public class UnitEffects : MonoBehaviour
 
 
 					appliedEffect.TickEffect(currentTurn);
-					unitUI.RefreshStatusIcons();
+					unit.unitUI.RefreshStatusIcons();
 
 					if (appliedEffect.IsExpired())
 					{
 						Debug.Log($"{appliedEffect.effect.effectName} expired on {unit.unitName}");
 						activeEffects.Remove(appliedEffect);
-						unitUI.RefreshStatusIcons();
+						unit.unitUI.RefreshStatusIcons();
 					}
 				}
 			}
@@ -149,7 +143,7 @@ public class UnitEffects : MonoBehaviour
 	{
 		if (ability.abilityEffectType == AbilityEffectType.Debuff && target != this)
 		{
-			if (!unitCombatCalculator.PerformAccuracyDodgeCheck(ability.accuracy, target))
+			if (!unit.unitCombatCalculator.PerformAccuracyDodgeCheck(ability.accuracy, target))
 				return false;
 		}
 
@@ -178,7 +172,7 @@ public class UnitEffects : MonoBehaviour
 						case EffectType.Debuff:
 							Debug.Log($"{unit.unitName} had {activeEffects[i].effect.name} cleansed!");
 							activeEffects.RemoveAt(i);
-							unitUI.RefreshStatusIcons();
+							unit.unitUI.RefreshStatusIcons();
 							removed++;
 							break;
 						case EffectType.Status:
@@ -186,7 +180,7 @@ public class UnitEffects : MonoBehaviour
 							{
 								Debug.Log($"{unit.unitName} had {activeEffects[i].effect.name} cleansed!");
 								activeEffects.RemoveAt(i);
-								unitUI.RefreshStatusIcons();
+								unit.unitUI.RefreshStatusIcons();
 								removed++;
 							}
 
@@ -195,13 +189,13 @@ public class UnitEffects : MonoBehaviour
 
 					if (removed >= amount)
 					{
-						unitUI.RefreshStatusIcons();
+						unit.unitUI.RefreshStatusIcons();
 						break;
 					}
 				}
 			}
 
-		unitUI.RefreshStatusIcons();
+		unit.unitUI.RefreshStatusIcons();
 	}
 
 
@@ -270,21 +264,21 @@ public class UnitEffects : MonoBehaviour
 		if (activeCoating != null && ability.isWeaponAttack)
 		{
 			coatingDuration--;
-			unitUI.RefreshCoatingUI(true);
+			unit.unitUI.RefreshCoatingUI(true);
 			Debug.Log($"{unit.unitName}'s {activeCoating.coatingName}  has: " + coatingDuration);
 
 			if (coatingDuration <= 0)
 			{
 				Debug.Log($"{unit.unitName}'s {activeCoating.coatingName} coating has worn off.");
 				activeCoating = null;
-				unitUI.RefreshCoatingUI(false);
+				unit.unitUI.RefreshCoatingUI(false);
 			}
 		}
 
 		if (ability.canCoat)
 		{
 			ApplyWeaponCoating(ability.coating);
-			unitUI.RefreshCoatingUI(true);
+			unit.unitUI.RefreshCoatingUI(true);
 		}
 	}
 
@@ -293,6 +287,6 @@ public class UnitEffects : MonoBehaviour
 		activeCoating = coating;
 		coatingDuration = activeCoating.coatDuration;
 		Debug.Log($"{unit.unitName} applied {coating.coatingName} coating to their weapon!");
-		unitUI.RefreshCoatingUI(true);
+		unit.unitUI.RefreshCoatingUI(true);
 	}
 }

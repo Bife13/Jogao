@@ -7,30 +7,25 @@ using Random = UnityEngine.Random;
 public class UnitCombatCalculator : MonoBehaviour
 {
 	private Unit unit;
-	private UnitStatCalculator unitStatCalculator;
-	private UnitEffects unitEffects;
-	private UnitAbilityManager unitAbilityManager;
+
 
 	private float shockAmount = 25;
 
 
-	private void Awake()
+	public void Initialize(Unit owner)
 	{
 		unit = GetComponent<Unit>();
-		unitStatCalculator = GetComponent<UnitStatCalculator>();
-		unitEffects = GetComponent<UnitEffects>();
-		unitAbilityManager = GetComponent<UnitAbilityManager>();
 	}
 
 	public virtual float CalculateDamage(Ability ability, Unit target)
 	{
-		float damage = Random.Range(unitStatCalculator.GetTotalModifiedAttackStat()[0],
-			unitStatCalculator.GetTotalModifiedAttackStat()[1]);
+		float damage = Random.Range(unit.unitStatCalculator.GetTotalModifiedAttackStat()[0],
+			unit.unitStatCalculator.GetTotalModifiedAttackStat()[1]);
 
-		if (PerformCriticalHitCheck((int)unitStatCalculator.GetTotalModifiedStat(StatType.Crit) +
+		if (PerformCriticalHitCheck((int)unit.unitStatCalculator.GetTotalModifiedStat(StatType.Crit) +
 		                            ability.bonusCritical))
 		{
-			damage = (1.5f * unitStatCalculator.GetTotalModifiedAttackStat()[1]);
+			damage = (1.5f * unit.unitStatCalculator.GetTotalModifiedAttackStat()[1]);
 			Debug.Log($"{target.unitName} hit a Critical Strike");
 		}
 
@@ -53,7 +48,7 @@ public class UnitCombatCalculator : MonoBehaviour
 	{
 		float accuracyRoll = Random.Range(0f, 100f);
 		float dodgeThreshold = target.unitStatCalculator.GetTotalModifiedStat(StatType.Dodge);
-		float currentAccuracy = unitStatCalculator.GetTotalModifiedStat(StatType.Accuracy);
+		float currentAccuracy = unit.unitStatCalculator.GetTotalModifiedStat(StatType.Accuracy);
 		if (accuracyRoll <= abilityAccuracy + currentAccuracy - dodgeThreshold)
 		{
 			return true; // Hit
@@ -75,24 +70,24 @@ public class UnitCombatCalculator : MonoBehaviour
 	{
 		if (PerformAccuracyDodgeCheck(ability.accuracy, target) || target == this)
 		{
-			if (unitEffects.activeCoating != null && ability.isWeaponAttack)
+			if (unit.unitEffects.activeCoating != null && ability.isWeaponAttack)
 			{
-				int coatDamage = unitEffects.activeCoating.bonusDamage;
-				if (unitEffects.HasCoatingBuff())
+				int coatDamage = unit.unitEffects.activeCoating.bonusDamage;
+				if (unit.unitEffects.HasCoatingBuff())
 				{
-					coatDamage *= unitEffects.CoatingBuffMultiplier();
+					coatDamage *= unit.unitEffects.CoatingBuffMultiplier();
 				}
 
 				damage += coatDamage;
-				target.unitEffects.ApplyEffect(unitEffects.activeCoating.effect);
+				target.unitEffects.ApplyEffect(unit.unitEffects.activeCoating.effect);
 			}
 
 			target.unitHealth.TakeDirectDamage(Mathf.CeilToInt(damage), DamageType.Direct, unit);
-			unitEffects.CheckAndApplyEffects(ability, target);
+			unit.unitEffects.CheckAndApplyEffects(ability, target);
 			return true;
 		}
 
-		GameManager.Instance.ActionChosen("Miss");
+		GameManager.Instance.combatUIManager.ActionChosen("Miss");
 		return false;
 	}
 
@@ -103,16 +98,16 @@ public class UnitCombatCalculator : MonoBehaviour
 			healAmount *= 2;
 
 		target.unitHealth.Heal(Mathf.CeilToInt(healAmount));
-		unitEffects.CheckAndApplyEffects(ability, target);
+		unit.unitEffects.CheckAndApplyEffects(ability, target);
 	}
 
 	public IEnumerator ExecuteCounterAttack(Unit originTarget)
 	{
 		yield return new WaitForSeconds(0.15f);
 
-		Ability counterAbility = unitEffects.GetCounterBuff().effect.counterAbility;
+		Ability counterAbility = unit.unitEffects.GetCounterBuff().effect.counterAbility;
 		List<Unit> originTargets = new List<Unit>();
 		originTargets.Add(originTarget);
-		unitAbilityManager.UseAbility(counterAbility, originTargets);
+		unit.unitAbilityManager.UseAbility(counterAbility, originTargets);
 	}
 }

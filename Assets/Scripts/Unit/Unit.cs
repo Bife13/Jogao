@@ -56,13 +56,20 @@ public class Unit : MonoBehaviour
 
 	public void Awake()
 	{
-		unitHealth = GetComponent<UnitHealth>();
 		unitAbilityManager = GetComponent<UnitAbilityManager>();
 		unitCombatCalculator = GetComponent<UnitCombatCalculator>();
+		unitEffects = GetComponent<UnitEffects>();
+		unitHealth = GetComponent<UnitHealth>();
 		unitStatCalculator = GetComponent<UnitStatCalculator>();
 		unitStance = GetComponent<UnitStance>();
 		unitUI = GetComponent<UnitUI>();
-		unitEffects = GetComponent<UnitEffects>();
+
+		unitAbilityManager.Initialize(this);
+		unitCombatCalculator.Initialize(this);
+		unitEffects.Initialize(this);
+		unitHealth.Initialize(this);
+		unitStatCalculator.Initialize(this);
+		unitUI.Initialize(this);
 
 		if (unitData != null)
 			LoadFromData();
@@ -75,6 +82,7 @@ public class Unit : MonoBehaviour
 
 	public virtual void Start()
 	{
+		unitUI.UpdateHealthBar(unitHealth.currentHP, maxHP);
 	}
 
 	private void LoadFromData()
@@ -112,12 +120,12 @@ public class Unit : MonoBehaviour
 
 	public void AttackAnimation(float direction)
 	{
-		Vector3 originalPosition = unitUI.unitSprite.transform.position;
+		Vector3 originalPosition = unitUI.transform.position;
 		DOVirtual.DelayedCall(0.1f,
 			() =>
 			{
-				unitUI.unitSprite.transform.DOMoveX(unitUI.unitSprite.transform.position.x + 0.85f * direction, 0.25f)
-					.OnComplete(() => { unitUI.unitSprite.transform.DOMoveX(originalPosition.x, 0.25f); });
+				unitUI.transform.DOMoveX(unitUI.transform.position.x + 0.85f * direction, 0.25f)
+					.OnComplete(() => { unitUI.transform.DOMoveX(originalPosition.x, 0.25f); });
 			});
 	}
 }

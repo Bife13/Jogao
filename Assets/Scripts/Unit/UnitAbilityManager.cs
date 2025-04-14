@@ -1,25 +1,21 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class UnitAbilityManager : MonoBehaviour
 {
 	private Unit unit;
-	private UnitCombatCalculator unitCombatCalculator;
-	private UnitEffects unitEffects;
+
 	[HideInInspector]
 	public List<Ability> _abilities = new List<Ability>();
+
 	public Dictionary<Ability, int> abilityCooldowns = new Dictionary<Ability, int>();
 
-	private void Awake()
+	public void Initialize(Unit owner)
 	{
-		unit = GetComponent<Unit>();
-		unitCombatCalculator = GetComponent<UnitCombatCalculator>();
-		unitEffects = GetComponent<UnitEffects>();
+		unit = owner;
 	}
 
-	public virtual void UseAbility(Ability ability, List<Unit> targets)
+	public void UseAbility(Ability ability, List<Unit> targets)
 	{
 		unit.BeforeAbility();
 
@@ -36,29 +32,29 @@ public class UnitAbilityManager : MonoBehaviour
 				return;
 			}
 
-			unitEffects.HandleWeaponCoating(ability);
+			unit.unitEffects.HandleWeaponCoating(ability);
 
 			switch (ability.abilityEffectType)
 			{
 				case AbilityEffectType.Damage:
 
-					float damage = unitCombatCalculator.CalculateDamage(ability, target);
-					hit = unitCombatCalculator.ApplyDamageOrMiss(ability, target, damage);
+					float damage = unit.unitCombatCalculator.CalculateDamage(ability, target);
+					hit = unit.unitCombatCalculator.ApplyDamageOrMiss(ability, target, damage);
 					break;
 
 				case AbilityEffectType.Heal:
-					unitCombatCalculator.ApplyHealing(ability, target);
+					unit.unitCombatCalculator.ApplyHealing(ability, target);
 					break;
 				case AbilityEffectType.Buff:
 				case AbilityEffectType.Debuff:
 				case AbilityEffectType.StatusEffect:
-					hit = unitEffects.PerformEffectApplication(ability, target);
+					hit = unit.unitEffects.PerformEffectApplication(ability, target);
 					break;
 			}
 
 			if (ability.canCleanse)
 			{
-				unitEffects.CleanseTarget(target, ability);
+				unit.unitEffects.CleanseTarget(target, ability);
 			}
 
 			if (ability.canSwap)
@@ -74,7 +70,7 @@ public class UnitAbilityManager : MonoBehaviour
 		unit.AfterAbilityUse(ability, hit);
 	}
 
-	protected virtual void ApplyAbilityCooldown(Ability ability)
+	private void ApplyAbilityCooldown(Ability ability)
 	{
 		abilityCooldowns[ability] = ability.cooldown;
 	}

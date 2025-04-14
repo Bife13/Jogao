@@ -5,20 +5,13 @@ using UnityEngine;
 public class UnitStatCalculator : MonoBehaviour
 {
 	private Unit unit;
-	private UnitEffects unitEffects;
-	private UnitStance unitStance;
-	private UnitHealth unitHealth;
-
-
+	
 	[Header("Items")]
 	public List<Item> items = new List<Item>();
 
-	private void Awake()
+	public void Initialize(Unit owner)
 	{
-		unit = GetComponent<Unit>();
-		unitEffects = GetComponent<UnitEffects>();
-		unitStance = GetComponent<UnitStance>();
-		unitHealth = GetComponent<UnitHealth>();
+		unit = owner;
 	}
 
 	public float GetTotalModifiedStat(StatType statType)
@@ -32,7 +25,7 @@ public class UnitStatCalculator : MonoBehaviour
 	{
 		List<int> finalValues = new List<int>();
 		float modifier = CalculateModifier(StatType.Attack);
-		modifier += unitStance.CalculateStanceBonusAttackAmount() + 100;
+		modifier += unit.unitStance.CalculateStanceBonusAttackAmount() + 100;
 		modifier /= 100;
 		finalValues.Add(Mathf.CeilToInt(unit.minDamage * modifier));
 		finalValues.Add(Mathf.CeilToInt(unit.maxDamage * modifier));
@@ -42,7 +35,7 @@ public class UnitStatCalculator : MonoBehaviour
 	public float CalculateModifier(StatType statType)
 	{
 		float modifier = 0;
-		foreach (var activeEffect in unitEffects.activeEffects)
+		foreach (var activeEffect in unit.unitEffects.activeEffects)
 		{
 			if (activeEffect.effect.statAffected == statType)
 			{
@@ -61,7 +54,7 @@ public class UnitStatCalculator : MonoBehaviour
 		switch (statType)
 		{
 			case StatType.Health:
-				resultValue = unitHealth.currentHP;
+				resultValue = unit.unitHealth.currentHP;
 				break;
 			case StatType.Speed:
 				resultValue = unit.speed + modifier;
@@ -70,7 +63,7 @@ public class UnitStatCalculator : MonoBehaviour
 				resultValue = unit.accuracy + modifier;
 				break;
 			case StatType.Defense:
-				resultValue = unit.baseDefense + modifier + unitStance.CalculateStanceBonusDefense();
+				resultValue = unit.baseDefense + modifier + unit.unitStance.CalculateStanceBonusDefense();
 				break;
 			case StatType.Crit:
 				resultValue = unit.critChance + modifier;

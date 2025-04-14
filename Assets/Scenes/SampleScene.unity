@@ -4761,6 +4761,10 @@ GameObject:
   - component: {fileID: 1979600445}
   - component: {fileID: 1979600444}
   - component: {fileID: 1979600446}
+  - component: {fileID: 1979600450}
+  - component: {fileID: 1979600449}
+  - component: {fileID: 1979600448}
+  - component: {fileID: 1979600447}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -4780,45 +4784,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a29cf1833c044947913c01cf0636b25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  allUnits:
-  - {fileID: 274142312}
-  - {fileID: 343158012}
-  playerUnits: []
-  enemyUnits: []
-  skillPanel: {fileID: 1789143137}
-  statsTexts:
-  - {fileID: 1533916849}
-  - {fileID: 1781211010}
-  - {fileID: 1436114836}
-  - {fileID: 272722754}
-  - {fileID: 739111939}
-  - {fileID: 133217957}
-  - {fileID: 132908023}
-  _buttonHandlers:
-  - {fileID: 928297927}
-  - {fileID: 666107223}
-  - {fileID: 1884269533}
-  - {fileID: 2101257573}
-  - {fileID: 1784432360}
-  currentUnitIndex: 0
-  roundCounter: 0
-  turnCounter: 0
-  combatStarted: 1
-  combatEnded: 0
-  _waves:
-  - {fileID: 11400000, guid: d79a8b6246898df45b55224a922df578, type: 2}
-  - {fileID: 11400000, guid: cf939b3c22151354685aab4bf872c53e, type: 2}
-  - {fileID: 11400000, guid: 0f742dcd02d12c448b3b6990954f974d, type: 2}
-  - {fileID: 11400000, guid: 2801de1a18bddc649bb61331b929a7da, type: 2}
-  - {fileID: 11400000, guid: c3fe05d9d45a4844899596f06b105893, type: 2}
-  - {fileID: 11400000, guid: 5455298edf8c0ea499d1f026a2b44d6b, type: 2}
-  - {fileID: 11400000, guid: 52bd0b327d43c9f40ad4f2aa7e8247ec, type: 2}
-  - {fileID: 11400000, guid: 2b1231a43d2518e43942bf917e18aa48, type: 2}
-  - {fileID: 11400000, guid: 59843467b9c009540aa0d85d00b26f5f, type: 2}
-  - {fileID: 11400000, guid: 0dc3d8141f77d0c4fa67c294763fae3e, type: 2}
-  waveSpawningLocation: {fileID: 1259169715}
-  unitSpacing: 2.5
-  yOffset: 0.05
+  combatManager: {fileID: 0}
+  combatUIManager: {fileID: 0}
+  turnManager: {fileID: 0}
+  unitManager: {fileID: 0}
 --- !u!4 &1979600445
 Transform:
   m_ObjectHideFlags: 0
@@ -4848,6 +4817,92 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isSelecting: 0
   currentAbility: {fileID: 0}
+--- !u!114 &1979600447
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1979600443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e3d7773879052e46a14222bf995996d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  allUnits:
+  - {fileID: 274142312}
+  - {fileID: 343158012}
+  playerUnits: []
+  enemyUnits: []
+  _waves:
+  - {fileID: 11400000, guid: d79a8b6246898df45b55224a922df578, type: 2}
+  - {fileID: 11400000, guid: cf939b3c22151354685aab4bf872c53e, type: 2}
+  - {fileID: 11400000, guid: 0f742dcd02d12c448b3b6990954f974d, type: 2}
+  currentUnit: {fileID: 0}
+  currentUnitIndex: 0
+  waveSpawningLocation: {fileID: 1259169715}
+  unitSpacing: 2.5
+  yOffset: 0.25
+--- !u!114 &1979600448
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1979600443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09659e9ab7ba1d44eac3af615a55142d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameManager: {fileID: 0}
+  unitManager: {fileID: 0}
+  turnOrder: []
+  roundCounter: 0
+  turnCounter: 0
+--- !u!114 &1979600449
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1979600443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c851e71a7414a694b9acc7a8fa203ed9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameManager: {fileID: 0}
+  skillPanel: {fileID: 1789143137}
+  statsTexts:
+  - {fileID: 1533916849}
+  - {fileID: 1781211010}
+  - {fileID: 1436114836}
+  - {fileID: 272722754}
+  - {fileID: 739111939}
+  - {fileID: 133217957}
+  - {fileID: 132908023}
+  _buttonHandlers:
+  - {fileID: 928297927}
+  - {fileID: 666107223}
+  - {fileID: 1884269533}
+  - {fileID: 2101257573}
+  - {fileID: 1784432360}
+--- !u!114 &1979600450
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1979600443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced3acb4556b4834f8e09d141943687d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameManager: {fileID: 0}
+  combatStarted: 0
+  combatEnded: 0
 --- !u!1 &2004806874
 GameObject:
   m_ObjectHideFlags: 0
@@ -5245,7 +5300,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8519021586597205577, guid: 8fc84dcca1b30fb4194e2282773f6a2b, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -104
+      value: -115
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5260,6 +5315,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6751299254431060749, guid: cc2bcbf6e7fd0064ebf49f6858bc2f12, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -115
+      objectReference: {fileID: 0}
     - target: {fileID: 7261657699041926545, guid: cc2bcbf6e7fd0064ebf49f6858bc2f12, type: 3}
       propertyPath: m_Name
       value: Mage

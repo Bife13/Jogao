@@ -37,7 +37,7 @@ public class EnemyUnit : Unit
 
 	public void PerformIntent()
 	{
-		List<Unit> targets = GameManager.Instance.GetValidTargetsForEnemy(nextAbility);
+		List<Unit> targets = GameManager.Instance.unitManager.GetValidTargetsForEnemy(nextAbility);
 		unitAbilityManager.UseAbility(nextAbility, targets);
 	}
 }

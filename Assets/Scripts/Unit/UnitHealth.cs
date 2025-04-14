@@ -5,20 +5,12 @@ using UnityEngine;
 public class UnitHealth : MonoBehaviour
 {
 	private Unit unit;
-	private UnitStatCalculator unitStatCalculator;
-	private UnitEffects unitEffects;
-	private UnitUI unitUI;
-	private UnitCombatCalculator unitCombatCalculator;
 	public int currentHP;
 
 
-	private void Awake()
+	public void Initialize(Unit owner)
 	{
-		unit = GetComponent<Unit>();
-		unitStatCalculator = GetComponent<UnitStatCalculator>();
-		unitEffects = GetComponent<UnitEffects>();
-		unitUI = GetComponent<UnitUI>();
-		unitCombatCalculator = GetComponent<UnitCombatCalculator>();
+		unit = owner;
 	}
 
 	public void TakeDoTDamage(int damage, DamageType damageType)
@@ -31,12 +23,12 @@ public class UnitHealth : MonoBehaviour
 				currentHP = Math.Max(currentHP - finalDamage, 0);
 				Debug.Log($"{unit.unitName} took {finalDamage} DoT damage! Remaining HP: {currentHP}");
 				//Move this to UI
-				unitUI.ShowFloatingText(finalDamage.ToString(), Color.black);
+				unit.unitUI.ShowFloatingText(finalDamage.ToString(), Color.black);
 				break;
 		}
 
 		//Move this to UI
-		unitUI.UpdateHealthBar((float)currentHP / unit.maxHP);
+		unit.unitUI.UpdateHealthBar(currentHP, unit.maxHP);
 		CheckDeath();
 	}
 
@@ -47,22 +39,22 @@ public class UnitHealth : MonoBehaviour
 		{
 			case DamageType.Direct:
 				float reducedDamage = damage *
-				                      (unitStatCalculator.GetTotalModifiedStat(StatType.Defense) /
+				                      (unit.unitStatCalculator.GetTotalModifiedStat(StatType.Defense) /
 				                       100f);
 				finalDamage = Mathf.Max(0, damage - Mathf.CeilToInt(reducedDamage));
 				currentHP = Math.Max(currentHP - finalDamage, 0);
 				Debug.Log($"{unit.unitName} took {finalDamage} damage! Remaining HP: {currentHP}");
-				unitUI.ShowFloatingText(finalDamage.ToString(), Color.black);
+				unit.unitUI.ShowFloatingText(finalDamage.ToString(), Color.black);
 
-				if (unitEffects.HasCounterBuff() && isAlive())
+				if (unit.unitEffects.HasCounterBuff() && isAlive())
 				{
-					StartCoroutine(unitCombatCalculator.ExecuteCounterAttack(originTarget));
+					StartCoroutine(unit.unitCombatCalculator.ExecuteCounterAttack(originTarget));
 				}
 
 				break;
 		}
 
-		unitUI.UpdateHealthBar((float)currentHP / unit.maxHP);
+		unit.unitUI.UpdateHealthBar(currentHP, unit.maxHP);
 		CheckDeath();
 	}
 
@@ -70,8 +62,8 @@ public class UnitHealth : MonoBehaviour
 	{
 		currentHP = Math.Min(currentHP + amount, unit.maxHP);
 
-		unitUI.ShowFloatingText(amount.ToString(), Color.black);
-		unitUI.UpdateHealthBar((float)currentHP / unit.maxHP);
+		unit.unitUI.ShowFloatingText(amount.ToString(), Color.black);
+		unit.unitUI.UpdateHealthBar(currentHP, unit.maxHP);
 	}
 
 	public bool isAlive()
@@ -84,10 +76,10 @@ public class UnitHealth : MonoBehaviour
 		if (!isAlive())
 		{
 			//UI STUFF
-			unitUI.displayObject.SetActive(false);
-			unitUI.unitSprite.SetActive(false);
+			unit.unitUI.displayObject.SetActive(false);
+			unit.unitUI.unitSprite.SetActive(false);
 			Destroy(gameObject, 2f);
-			GameManager.Instance.RemoveUnit(unit);
+			GameManager.Instance.unitManager.RemoveUnit(unit);
 		}
 	}
 }

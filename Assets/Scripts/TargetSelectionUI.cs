@@ -23,7 +23,7 @@ public class TargetSelectionUI : MonoBehaviour
 		currentAbility = ability;
 
 		// Define your targeting logic based on ability type
-		validTargets = GameManager.Instance.GetValidTargets(ability);
+		validTargets = GameManager.Instance.unitManager.GetValidTargets(ability);
 
 		Debug.Log($"Select target(s) for: {ability.abilityName}");
 
@@ -45,7 +45,7 @@ public class TargetSelectionUI : MonoBehaviour
 		Debug.Log($"Target {unit.unitName} selected!");
 
 		// Apply the ability now that the target is chosen
-		PlayerUnit actingPlayer = GameManager.Instance.GetCurrentPlayerUnit();
+		PlayerUnit actingPlayer = GameManager.Instance.unitManager.GetCurrentPlayerUnit();
 		switch (currentAbility.targetType)
 		{
 			case AbilityTargetType.Ally:
