@@ -16,6 +16,7 @@ using Random = UnityEngine.Random;
 [RequireComponent(typeof(UnitStance))]
 [RequireComponent(typeof(UnitUI))]
 [RequireComponent(typeof(UnitEffects))]
+[RequireComponent(typeof(UnitInventory))]
 public class Unit : MonoBehaviour
 {
 	[HideInInspector]
@@ -38,6 +39,9 @@ public class Unit : MonoBehaviour
 
 	[HideInInspector]
 	public UnitEffects unitEffects;
+
+	[HideInInspector]
+	public UnitInventory unitInventory;
 
 	[Header("Runtime Stats")]
 	[SerializeField]
@@ -63,6 +67,7 @@ public class Unit : MonoBehaviour
 		unitStatCalculator = GetComponent<UnitStatCalculator>();
 		unitStance = GetComponent<UnitStance>();
 		unitUI = GetComponent<UnitUI>();
+		unitInventory = GetComponent<UnitInventory>();
 
 		unitAbilityManager.Initialize(this);
 		unitCombatCalculator.Initialize(this);
@@ -70,6 +75,7 @@ public class Unit : MonoBehaviour
 		unitHealth.Initialize(this);
 		unitStatCalculator.Initialize(this);
 		unitUI.Initialize(this);
+		unitInventory.Initialize(this);
 
 		if (unitData != null)
 			LoadFromData();

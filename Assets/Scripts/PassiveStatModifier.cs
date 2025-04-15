@@ -7,6 +7,7 @@ public class PassiveStatModifier
 	public int amount;
 }
 
+[System.Serializable]
 public class StatusStatModifier : PassiveStatModifier
 {
 	public StatusType statusType;

@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [System.Serializable]
 public class ItemEffect
 {
-	public TriggerType triggerType;
+	[FormerlySerializedAs("triggerType")]
+	public ItemTriggerType itemTriggerType;
 	public ItemEffectType itemEffectType;
 
 	[Header("Effects")]

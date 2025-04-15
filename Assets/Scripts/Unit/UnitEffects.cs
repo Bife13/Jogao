@@ -62,14 +62,16 @@ public class UnitEffects : MonoBehaviour
 				for (int i = 0; i < ability.effects.Count; i++)
 				{
 					float effectRoll = Random.Range(0f, 100f);
-					if (ability.effects[i] != null && effectRoll <= ability.effectChances[i])
+					if (ability.effects[i] != null && effectRoll <= ability.effectChances[i] +
+					    unit.unitInventory.HandlePassiveItem(ability.effects[i].statusEffect))
 						target.unitEffects.ApplyEffect(ability.effects[i]);
 				}
 			else
 			{
 				int randomIndex = Random.Range(0, ability.effects.Count);
 				float effectRoll = Random.Range(0f, 100f);
-				if (ability.effects[randomIndex] != null && effectRoll <= ability.effectChances[randomIndex])
+				if (ability.effects[randomIndex] != null && effectRoll <= ability.effectChances[randomIndex] +
+				    unit.unitInventory.HandlePassiveItem(ability.effects[randomIndex].statusEffect))
 					target.unitEffects.ApplyEffect(ability.effects[randomIndex]);
 			}
 	}

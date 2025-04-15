@@ -75,7 +75,7 @@ public enum StanceType
 	Defensive = 2
 }
 
-public enum TriggerType
+public enum ItemTriggerType
 {
 	OnHit,
 	OnCrit,

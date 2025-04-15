@@ -5,7 +5,6 @@ using UnityEngine;
 public class UnitStatCalculator : MonoBehaviour
 {
 	private Unit unit;
-	
 
 	public void Initialize(Unit owner)
 	{
@@ -22,9 +21,9 @@ public class UnitStatCalculator : MonoBehaviour
 	public List<int> GetTotalModifiedAttackStat()
 	{
 		List<int> finalValues = new List<int>();
-		float modifier = CalculateModifier(StatType.Attack);
-		modifier += unit.unitStance.CalculateStanceBonusAttackAmount() + 100;
+		float modifier = CalculateModifier(StatType.Attack) + 100;
 		modifier /= 100;
+		Debug.Log("MODIFIER IS:" + modifier);
 		finalValues.Add(Mathf.CeilToInt(unit.minDamage * modifier));
 		finalValues.Add(Mathf.CeilToInt(unit.maxDamage * modifier));
 		return finalValues;
@@ -40,7 +39,10 @@ public class UnitStatCalculator : MonoBehaviour
 				modifier += activeEffect.effect.amount;
 			}
 		}
-		
+
+		modifier += unit.unitInventory.HandlePassiveItem(statType) +
+		            unit.unitStance.CalculateStanceBonusAttackAmount();
+
 		return modifier;
 	}
 
@@ -62,18 +64,13 @@ public class UnitStatCalculator : MonoBehaviour
 				resultValue = unit.baseDefense + modifier + unit.unitStance.CalculateStanceBonusDefense();
 				break;
 			case StatType.Crit:
-				resultValue = unit.critChance + modifier;
-				if (resultValue < 0)
-					resultValue = 0;
+				resultValue = Mathf.Max(0f, unit.critChance + modifier);
 				break;
 			case StatType.Dodge:
-				resultValue = unit.dodge + modifier;
-				if (resultValue < 0)
-					resultValue = 0;
+				resultValue = Mathf.Max(0f, unit.dodge + modifier);
 				break;
 		}
 
 		return resultValue;
 	}
-	
 }
