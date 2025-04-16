@@ -28,7 +28,7 @@ public class TurnManager : MonoBehaviour
 
 		foreach (Unit unit in unitManager.allUnits)
 		{
-			int randomRoll = Random.Range(1, randomMax + 1);
+			int randomRoll = Random.Range(1, 6);
 			int initiative = (int)unit.unitStatCalculator.GetTotalModifiedStat(StatType.Speed) + randomRoll;
 
 			unitInitiatives.Add((unit, initiative));

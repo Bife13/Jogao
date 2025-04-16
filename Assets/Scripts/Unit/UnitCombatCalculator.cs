@@ -20,7 +20,7 @@ public class UnitCombatCalculator : MonoBehaviour
 	public virtual float CalculateDamage(Ability ability, Unit target)
 	{
 		float damage = Random.Range(unit.unitStatCalculator.GetTotalModifiedAttackStat()[0],
-			unit.unitStatCalculator.GetTotalModifiedAttackStat()[1]);
+			unit.unitStatCalculator.GetTotalModifiedAttackStat()[1] + 1);
 
 		if (PerformCriticalHitCheck((int)unit.unitStatCalculator.GetTotalModifiedStat(StatType.Crit) +
 		                            ability.bonusCritical))
@@ -46,7 +46,7 @@ public class UnitCombatCalculator : MonoBehaviour
 
 	public bool PerformAccuracyDodgeCheck(int abilityAccuracy, Unit target)
 	{
-		float accuracyRoll = Random.Range(0f, 100f);
+		int accuracyRoll = Random.Range(1, 101);
 		float dodgeThreshold = target.unitStatCalculator.GetTotalModifiedStat(StatType.Dodge);
 		float currentAccuracy = unit.unitStatCalculator.GetTotalModifiedStat(StatType.Accuracy);
 		if (accuracyRoll <= abilityAccuracy + currentAccuracy - dodgeThreshold)
@@ -59,7 +59,7 @@ public class UnitCombatCalculator : MonoBehaviour
 
 	public bool PerformCriticalHitCheck(int finalCritChance)
 	{
-		float critRoll = Random.Range(0f, 100f);
+		int critRoll = Random.Range(1, 101);
 		if (critRoll <= finalCritChance)
 			return true; //CRIT
 
@@ -83,7 +83,8 @@ public class UnitCombatCalculator : MonoBehaviour
 			}
 
 			target.unitHealth.TakeDirectDamage(Mathf.CeilToInt(damage), DamageType.Direct, unit);
-			unit.unitEffects.CheckAndApplyEffects(ability, target);
+			unit.unitEffects.CheckAndApplyAbilityEffects(ability, target);
+			unit.unitInventory.HandleItemTriggers(ItemTriggerType.OnHit, unit, target);
 			return true;
 		}
 
@@ -93,12 +94,12 @@ public class UnitCombatCalculator : MonoBehaviour
 
 	public virtual void ApplyHealing(Ability ability, Unit target)
 	{
-		float healAmount = Random.Range(ability.basePower, ability.maxPower);
+		float healAmount = Random.Range(ability.basePower, ability.maxPower + 1);
 		if (PerformCriticalHitCheck(15 + ability.bonusCritical))
 			healAmount *= 2;
 
 		target.unitHealth.Heal(Mathf.CeilToInt(healAmount));
-		unit.unitEffects.CheckAndApplyEffects(ability, target);
+		unit.unitEffects.CheckAndApplyAbilityEffects(ability, target);
 	}
 
 	public IEnumerator ExecuteCounterAttack(Unit originTarget)

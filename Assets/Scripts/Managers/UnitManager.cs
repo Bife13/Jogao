@@ -86,19 +86,19 @@ public class UnitManager : MonoBehaviour
 
 		switch (ability.targetType)
 		{
-			case AbilityTargetType.Enemy:
+			case TargetType.Enemy:
 				validTargets = enemyUnits.FindAll(u => u.unitHealth.isAlive());
 				break;
-			case AbilityTargetType.Ally:
+			case TargetType.Ally:
 				validTargets = playerUnits.FindAll(u => u.unitHealth.isAlive());
 				break;
-			case AbilityTargetType.AllEnemies:
+			case TargetType.AllEnemies:
 				validTargets = enemyUnits.FindAll(u => u.unitHealth.isAlive());
 				break;
-			case AbilityTargetType.AllAllies:
+			case TargetType.AllAllies:
 				validTargets = playerUnits.FindAll(u => u.unitHealth.isAlive());
 				break;
-			case AbilityTargetType.Self:
+			case TargetType.Self:
 				validTargets.Add(currentUnit);
 				break;
 
@@ -119,7 +119,7 @@ public class UnitManager : MonoBehaviour
 
 		switch (ability.targetType)
 		{
-			case AbilityTargetType.Enemy:
+			case TargetType.Enemy:
 				validTargets = playerUnits.FindAll(u => u.unitHealth.isAlive());
 				if (validTargets.Count > 0)
 				{
@@ -129,7 +129,7 @@ public class UnitManager : MonoBehaviour
 				}
 
 				break;
-			case AbilityTargetType.Ally:
+			case TargetType.Ally:
 				validTargets = enemyUnits.FindAll(u => u.unitHealth.isAlive());
 				if (validTargets.Count > 0)
 				{
@@ -139,13 +139,13 @@ public class UnitManager : MonoBehaviour
 				}
 
 				break;
-			case AbilityTargetType.AllEnemies:
+			case TargetType.AllEnemies:
 				validTargets = playerUnits.FindAll(u => u.unitHealth.isAlive());
 				break;
-			case AbilityTargetType.AllAllies:
+			case TargetType.AllAllies:
 				validTargets = enemyUnits.FindAll(u => u.unitHealth.isAlive());
 				break;
-			case AbilityTargetType.Self:
+			case TargetType.Self:
 				validTargets.Add(currentUnit);
 				break;
 

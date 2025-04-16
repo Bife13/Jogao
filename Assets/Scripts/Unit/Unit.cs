@@ -120,7 +120,7 @@ public class Unit : MonoBehaviour
 	{
 		if (ability.debuffSelf && hit)
 		{
-			unitEffects.CheckAndApplyEffects(ability, this);
+			unitEffects.CheckAndApplyAbilityEffects(ability, this);
 		}
 	}
 

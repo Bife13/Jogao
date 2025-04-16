@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public enum AbilityTargetType
+public enum TargetType
 {
 	Enemy,
 	Ally,

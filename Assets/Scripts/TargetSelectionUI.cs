@@ -48,9 +48,9 @@ public class TargetSelectionUI : MonoBehaviour
 		PlayerUnit actingPlayer = GameManager.Instance.unitManager.GetCurrentPlayerUnit();
 		switch (currentAbility.targetType)
 		{
-			case AbilityTargetType.Ally:
-			case AbilityTargetType.Enemy:
-			case AbilityTargetType.Self:
+			case TargetType.Ally:
+			case TargetType.Enemy:
+			case TargetType.Self:
 				List<Unit> targets = new List<Unit>();
 				targets.Add(unit);
 				if (!actingPlayer.unitAbilityManager.CanUseAbility(currentAbility))
@@ -69,8 +69,8 @@ public class TargetSelectionUI : MonoBehaviour
 				EndTargetSelection();
 
 				break;
-			case AbilityTargetType.AllAllies:
-			case AbilityTargetType.AllEnemies:
+			case TargetType.AllAllies:
+			case TargetType.AllEnemies:
 				if (!actingPlayer.unitAbilityManager.CanUseAbility(currentAbility))
 				{
 					Debug.LogWarning($"{currentAbility.abilityName} is in cooldown");

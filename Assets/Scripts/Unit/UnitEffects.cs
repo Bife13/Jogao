@@ -55,13 +55,13 @@ public class UnitEffects : MonoBehaviour
 		}
 	}
 
-	public void CheckAndApplyEffects(Ability ability, Unit target)
+	public void CheckAndApplyAbilityEffects(Ability ability, Unit target)
 	{
 		if (ability.effects.Count > 0)
 			if (ability.applyAllEffects)
 				for (int i = 0; i < ability.effects.Count; i++)
 				{
-					float effectRoll = Random.Range(0f, 100f);
+					int effectRoll = Random.Range(1, 101);
 					if (ability.effects[i] != null && effectRoll <= ability.effectChances[i] +
 					    unit.unitInventory.HandlePassiveItem(ability.effects[i].statusEffect))
 						target.unitEffects.ApplyEffect(ability.effects[i]);
@@ -69,11 +69,18 @@ public class UnitEffects : MonoBehaviour
 			else
 			{
 				int randomIndex = Random.Range(0, ability.effects.Count);
-				float effectRoll = Random.Range(0f, 100f);
+				int effectRoll = Random.Range(1, 101);
 				if (ability.effects[randomIndex] != null && effectRoll <= ability.effectChances[randomIndex] +
 				    unit.unitInventory.HandlePassiveItem(ability.effects[randomIndex].statusEffect))
 					target.unitEffects.ApplyEffect(ability.effects[randomIndex]);
 			}
+	}
+
+	public void CheckAndApplyItemEffect(ItemEffect itemEffect, Unit target)
+	{
+		int effectRoll = Random.Range(1, 101);
+		if (effectRoll <= itemEffect.effectChance)
+			target.unitEffects.ApplyEffect(itemEffect.effectToApply);
 	}
 
 	public bool CheckForActiveEffects(Unit target, List<Effect> effects)
@@ -149,7 +156,7 @@ public class UnitEffects : MonoBehaviour
 				return false;
 		}
 
-		CheckAndApplyEffects(ability, target);
+		CheckAndApplyAbilityEffects(ability, target);
 		return true;
 	}
 
@@ -160,15 +167,15 @@ public class UnitEffects : MonoBehaviour
 		Debug.Log($"{target.unitName} is cleansed of {amount} debuffs!");
 	}
 
-	public void Cleanse(int amount, EffectType abilityEffectTypeToCleanse, StatusType abilityStatusTypeToCleanse)
+	public void Cleanse(int amount, EffectType effectTypeToCleanse, StatusType statusTypeToCleanse)
 	{
 		int removed = 0;
 		if (activeEffects.Count > 0)
 			for (int i = activeEffects.Count - 1; i >= 0; i--)
 			{
-				if (activeEffects[i].effect.effectType == abilityEffectTypeToCleanse)
+				if (activeEffects[i].effect.effectType == effectTypeToCleanse)
 				{
-					switch (abilityEffectTypeToCleanse)
+					switch (effectTypeToCleanse)
 					{
 						case EffectType.Buff:
 						case EffectType.Debuff:
@@ -178,7 +185,7 @@ public class UnitEffects : MonoBehaviour
 							removed++;
 							break;
 						case EffectType.Status:
-							if (activeEffects[i].effect.statusEffect == abilityStatusTypeToCleanse)
+							if (activeEffects[i].effect.statusEffect == statusTypeToCleanse)
 							{
 								Debug.Log($"{unit.unitName} had {activeEffects[i].effect.name} cleansed!");
 								activeEffects.RemoveAt(i);

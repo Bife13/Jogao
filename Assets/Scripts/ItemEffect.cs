@@ -7,6 +7,7 @@ public class ItemEffect
 {
 	[FormerlySerializedAs("triggerType")]
 	public ItemTriggerType itemTriggerType;
+
 	public ItemEffectType itemEffectType;
 
 	[Header("Effects")]
@@ -17,6 +18,9 @@ public class ItemEffect
 
 	[ShowIf("applyEffect")]
 	public float effectChance;
+
+	[ShowIf("applyEffect")]
+	public TargetType targetType;
 
 	[Header("Healing")]
 	public bool isHealing = false;

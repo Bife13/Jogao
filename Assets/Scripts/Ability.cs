@@ -17,7 +17,7 @@ public class Ability : ScriptableObject
 
 	public Sprite icon;
 
-	public AbilityTargetType targetType;
+	public TargetType targetType;
 	public AbilityEffectType abilityEffectType;
 
 	public int

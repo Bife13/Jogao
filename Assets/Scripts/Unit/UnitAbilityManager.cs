@@ -92,24 +92,24 @@ public class UnitAbilityManager : MonoBehaviour
 		if (unit is PlayerUnit)
 			switch (ability.targetType)
 			{
-				case AbilityTargetType.Enemy:
+				case TargetType.Enemy:
 					if (target.unitType != UnitType.ENEMY)
 						return false;
 					break;
-				case AbilityTargetType.Ally:
+				case TargetType.Ally:
 					if (target.unitType != UnitType.PLAYER)
 						return false;
 					break;
-				case AbilityTargetType.Self:
+				case TargetType.Self:
 					if (target != this.GetComponent<Unit>())
 						return false;
 					break;
-				case AbilityTargetType.AllEnemies:
+				case TargetType.AllEnemies:
 					if (target.unitType != UnitType.ENEMY)
 						if (!ability.hitsSelf)
 							return false;
 					break;
-				case AbilityTargetType.AllAllies:
+				case TargetType.AllAllies:
 					if (target.unitType != UnitType.PLAYER)
 						return false;
 					break;
@@ -120,24 +120,24 @@ public class UnitAbilityManager : MonoBehaviour
 		{
 			switch (ability.targetType)
 			{
-				case AbilityTargetType.Enemy:
+				case TargetType.Enemy:
 					if (target.unitType != UnitType.PLAYER)
 						return false;
 					break;
-				case AbilityTargetType.Ally:
+				case TargetType.Ally:
 					if (target.unitType != UnitType.ENEMY)
 						return false;
 					break;
-				case AbilityTargetType.Self:
+				case TargetType.Self:
 					if (target != this.GetComponent<Unit>())
 						return false;
 					break;
-				case AbilityTargetType.AllEnemies:
+				case TargetType.AllEnemies:
 					if (target.unitType != UnitType.PLAYER)
 						if (!ability.hitsSelf)
 							return false;
 					break;
-				case AbilityTargetType.AllAllies:
+				case TargetType.AllAllies:
 					if (target.unitType != UnitType.ENEMY)
 						return false;
 					break;
