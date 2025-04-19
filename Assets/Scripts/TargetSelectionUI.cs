@@ -22,11 +22,17 @@ public class TargetSelectionUI : MonoBehaviour
 		isSelecting = true;
 		currentAbility = ability;
 
-		// Define your targeting logic based on ability type
+		List<Unit> allUnits = GameManager.Instance.unitManager.allUnits;
+
+		foreach (Unit u in allUnits)
+		{
+			u.GetComponent<TargetableUnit>().EnableInitialSelectionHighlight(false);
+			u.GetComponent<TargetableUnit>().enabled = false;
+		}
+
 		validTargets = GameManager.Instance.unitManager.GetValidTargets(ability);
 
 		Debug.Log($"Select target(s) for: {ability.abilityName}");
-
 		foreach (Unit u in validTargets)
 		{
 			u.GetComponent<TargetableUnit>().enabled = true;

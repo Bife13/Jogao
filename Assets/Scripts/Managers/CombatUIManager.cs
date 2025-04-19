@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class CombatUIManager : MonoBehaviour
 {
@@ -12,11 +13,19 @@ public class CombatUIManager : MonoBehaviour
 	private GameObject skillPanel;
 
 	[SerializeField]
-	private List<TMP_Text> statsTexts;
+	private List<TMP_Text> playerStatsTexts;
+
+	[SerializeField]
+	private List<TMP_Text> enemyStatsTexts;
 
 	[SerializeField]
 	private List<ButtonHandler> _buttonHandlers = new List<ButtonHandler>();
 
+	[SerializeField]
+	private GameObject playerStats;
+
+	[SerializeField]
+	private GameObject enemyStats;
 
 	public void Initialize()
 	{
@@ -69,7 +78,7 @@ public class CombatUIManager : MonoBehaviour
 					_buttonHandlers[i].SetAbility(playerAbilities[i], 0);
 			}
 
-			UpdateStats();
+			ShowPlayerUnitStats(unitManager.currentUnit);
 		}
 		else
 		{
@@ -82,17 +91,35 @@ public class CombatUIManager : MonoBehaviour
 		}
 	}
 
-	public void UpdateStats()
+	public void ShowPlayerUnitStats(Unit selectedUnit)
 	{
-		Unit currentUnit = unitManager.currentUnit;
-		statsTexts[0].text = currentUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Health).ToString();
-		statsTexts[1].text = currentUnit.unitStatCalculator.GetTotalModifiedAttackStat()[0] + "-" +
-		                     currentUnit.unitStatCalculator.GetTotalModifiedAttackStat()[1];
-		statsTexts[2].text = currentUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Defense) + " %";
-		statsTexts[3].text = currentUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Speed).ToString();
-		statsTexts[4].text = currentUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Crit) + " %";
-		statsTexts[5].text = currentUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Accuracy) + " %";
-		statsTexts[6].text = currentUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Dodge) + " %";
+		playerStats.SetActive(true);
+		playerStatsTexts[0].text = selectedUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Health).ToString();
+		playerStatsTexts[1].text = selectedUnit.unitStatCalculator.GetTotalModifiedAttackStat()[0] + "-" +
+		                           selectedUnit.unitStatCalculator.GetTotalModifiedAttackStat()[1];
+		playerStatsTexts[2].text = selectedUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Defense) + " %";
+		playerStatsTexts[3].text = selectedUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Speed).ToString();
+		playerStatsTexts[4].text = selectedUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Crit) + " %";
+		playerStatsTexts[5].text = selectedUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Accuracy) + " %";
+		playerStatsTexts[6].text = selectedUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Dodge) + " %";
+	}
+
+	public void ShowEnemyUnitStats(Unit selectedUnit)
+	{
+		enemyStats.SetActive(true);
+		enemyStatsTexts[0].text = selectedUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Health).ToString();
+		enemyStatsTexts[1].text = selectedUnit.unitStatCalculator.GetTotalModifiedAttackStat()[0] + "-" +
+		                          selectedUnit.unitStatCalculator.GetTotalModifiedAttackStat()[1];
+		enemyStatsTexts[2].text = selectedUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Defense) + " %";
+		enemyStatsTexts[3].text = selectedUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Speed).ToString();
+		enemyStatsTexts[4].text = selectedUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Crit) + " %";
+		enemyStatsTexts[5].text = selectedUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Accuracy) + " %";
+		enemyStatsTexts[6].text = selectedUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Dodge) + " %";
+	}
+
+	public void HidePlayerUnitStats()
+	{
+		playerStats.SetActive(false);
 	}
 
 	public void TrySwitchStance()

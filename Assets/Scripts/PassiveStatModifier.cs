@@ -12,3 +12,9 @@ public class StatusStatModifier : PassiveStatModifier
 {
 	public StatusType statusType;
 }
+
+[System.Serializable]
+public class JinxStatModifier : PassiveStatModifier
+{
+	public ConditionType conditionType;
+}

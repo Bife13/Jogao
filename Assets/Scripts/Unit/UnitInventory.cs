@@ -11,9 +11,9 @@ public class UnitInventory : MonoBehaviour
 		unit = owner;
 	}
 
-	public float HandlePassiveItem(StatType statType)
+	public int HandleStatPassiveItem(StatType statType)
 	{
-		float finalValue = 0;
+		int finalValue = 0;
 		foreach (EquippableItem item in equippedItems)
 		{
 			foreach (PassiveStatModifier statModifier in item.baseStatBonuses)
@@ -28,9 +28,9 @@ public class UnitInventory : MonoBehaviour
 		return finalValue;
 	}
 
-	public float HandlePassiveItem(StatusType statusType)
+	public int HandleStatusPassiveItem(StatusType statusType)
 	{
-		float finalValue = 0;
+		int finalValue = 0;
 		foreach (EquippableItem item in equippedItems)
 		{
 			foreach (StatusStatModifier statModifier in item.baseStatBonuses)
@@ -42,6 +42,22 @@ public class UnitInventory : MonoBehaviour
 			}
 		}
 
+		return finalValue;
+	}
+
+	public int HandleJinxPassiveItem()
+	{
+		int finalValue = 0;
+		foreach (EquippableItem item in equippedItems)
+		{
+			foreach (JinxStatModifier statModifier in item.baseStatBonuses)
+			{
+				if (statModifier.conditionType == ConditionType.Jinx)
+				{
+					finalValue += statModifier.amount;
+				}
+			}
+		}
 		return finalValue;
 	}
 
@@ -65,15 +81,15 @@ public class UnitInventory : MonoBehaviour
 			case ItemEffectType.ApplyDebuff:
 			case ItemEffectType.ApplyBuff:
 				if (itemEffect.targetType == TargetType.Self)
-					target.unitEffects.CheckAndApplyItemEffect(itemEffect, self);
+					target.unitConditions.CheckAndApplyItemCondition(itemEffect, self);
 				if (itemEffect.targetType == TargetType.Enemy)
-					target.unitEffects.CheckAndApplyItemEffect(itemEffect, target);
+					target.unitConditions.CheckAndApplyItemCondition(itemEffect, target);
 				break;
 			case ItemEffectType.Heal:
 				target.unitHealth.Heal(itemEffect.healingAmount);
 				break;
 			case ItemEffectType.Cleanse:
-				target.unitEffects.Cleanse(itemEffect.cleanseAmount, itemEffect.effectToCleanse,
+				target.unitConditions.Cleanse(itemEffect.cleanseAmount, itemEffect.conditionToCleanse,
 					itemEffect.statusTypeToCleanse);
 				break;
 		}

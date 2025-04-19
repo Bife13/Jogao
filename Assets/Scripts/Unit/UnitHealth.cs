@@ -46,7 +46,7 @@ public class UnitHealth : MonoBehaviour
 				Debug.Log($"{unit.unitName} took {finalDamage} damage! Remaining HP: {currentHP}");
 				unit.unitUI.ShowFloatingText(finalDamage.ToString(), Color.black);
 
-				if (unit.unitEffects.HasCounterBuff() && isAlive())
+				if (unit.unitConditions.HasCounterBuff() && isAlive())
 				{
 					StartCoroutine(unit.unitCombatCalculator.ExecuteCounterAttack(originTarget));
 				}

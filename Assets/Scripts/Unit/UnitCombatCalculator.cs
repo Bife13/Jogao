@@ -26,19 +26,19 @@ public class UnitCombatCalculator : MonoBehaviour
 		                            ability.bonusCritical))
 		{
 			damage = (1.5f * unit.unitStatCalculator.GetTotalModifiedAttackStat()[1]);
-			Debug.Log($"{target.unitName} hit a Critical Strike");
+			Debug.Log($"{unit.unitName} hit a Critical Strike");
 		}
 
 		float baseDamage = damage;
 		damage += damage * (ability.basePower / 100f);
 
-		if (target.unitEffects.CheckForActiveEffects(target, ability.boostingEffects))
+		if (target.unitConditions.CheckForActiveConditions(target, ability.boostingConditions))
 			damage += baseDamage * (ability.statusBoost / 100f);
 
-		if (target.unitEffects.HasShockedDebuff())
+		if (target.unitConditions.HasShockedDebuff())
 		{
 			damage += baseDamage * (shockAmount / 100f);
-			target.unitEffects.ProcessEffectsPerTurn(EffectTiming.OnHit, 500);
+			target.unitConditions.ProcessConditionsPerTurn(ConditionTiming.OnHit, 500);
 		}
 
 		return damage;
@@ -70,20 +70,20 @@ public class UnitCombatCalculator : MonoBehaviour
 	{
 		if (PerformAccuracyDodgeCheck(ability.accuracy, target) || target == this)
 		{
-			if (unit.unitEffects.activeCoating != null && ability.isWeaponAttack)
+			if (unit.unitConditions.activeCoating != null && ability.isWeaponAttack)
 			{
-				int coatDamage = unit.unitEffects.activeCoating.bonusDamage;
-				if (unit.unitEffects.HasCoatingBuff())
+				int coatDamage = unit.unitConditions.activeCoating.bonusDamage;
+				if (unit.unitConditions.HasCoatingBuff())
 				{
-					coatDamage *= unit.unitEffects.CoatingBuffMultiplier();
+					coatDamage *= unit.unitConditions.CoatingBuffMultiplier();
 				}
 
 				damage += coatDamage;
-				target.unitEffects.ApplyEffect(unit.unitEffects.activeCoating.effect);
+				target.unitConditions.ApplyCondition(unit.unitConditions.activeCoating.condition);
 			}
 
 			target.unitHealth.TakeDirectDamage(Mathf.CeilToInt(damage), DamageType.Direct, unit);
-			unit.unitEffects.CheckAndApplyAbilityEffects(ability, target);
+			unit.unitConditions.CheckAndApplyAbilityConditions(ability, target);
 			unit.unitInventory.HandleItemTriggers(ItemTriggerType.OnHit, unit, target);
 			return true;
 		}
@@ -99,14 +99,14 @@ public class UnitCombatCalculator : MonoBehaviour
 			healAmount *= 2;
 
 		target.unitHealth.Heal(Mathf.CeilToInt(healAmount));
-		unit.unitEffects.CheckAndApplyAbilityEffects(ability, target);
+		unit.unitConditions.CheckAndApplyAbilityConditions(ability, target);
 	}
 
 	public IEnumerator ExecuteCounterAttack(Unit originTarget)
 	{
 		yield return new WaitForSeconds(0.15f);
 
-		Ability counterAbility = unit.unitEffects.GetCounterBuff().effect.counterAbility;
+		Ability counterAbility = unit.unitConditions.GetCounterBuff().condition.counterAbility;
 		List<Unit> originTargets = new List<Unit>();
 		originTargets.Add(originTarget);
 		unit.unitAbilityManager.UseAbility(counterAbility, originTargets);

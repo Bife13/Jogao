@@ -36,19 +36,19 @@ public class Ability : ScriptableObject
 	public int statusBoost;
 
 	[ShowIf("isStatusBoosted")]
-	public List<Effect> boostingEffects;
+	public List<Condition> boostingConditions;
 
-	[Header("Effects")]
-	public bool hasEffects;
+	[Header("Conditions")]
+	public bool hasConditions;
 
-	[ShowIf("hasEffects")]
-	public bool applyAllEffects;
+	[ShowIf("hasConditions")]
+	public bool applyAllConditions;
 
-	[ShowIf("hasEffects")]
-	public List<Effect> effects;
+	[ShowIf("hasConditions")]
+	public List<Condition> conditions;
 
-	[ShowIf("hasEffects")]
-	public List<int> effectChances;
+	[ShowIf("hasConditions")]
+	public List<int> conditionChances;
 
 	[Header("Cleanse")]
 	public bool canCleanse;
@@ -57,7 +57,7 @@ public class Ability : ScriptableObject
 	public int cleanseAmount = 1;
 
 	[ShowIf("canCleanse")]
-	public EffectType effectTypeToCleanse;
+	public ConditionType conditionTypeToCleanse;
 
 	[ShowIf("canCleanse")]
 	public StatusType statusTypeToCleanse;

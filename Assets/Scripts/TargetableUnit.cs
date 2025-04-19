@@ -40,6 +40,11 @@ public class TargetableUnit : MonoBehaviour
 
 	private void OnMouseEnter()
 	{
+		if (unit.unitType == UnitType.PLAYER)
+			GameManager.Instance.combatUIManager.ShowPlayerUnitStats(unit);
+		if (unit.unitType == UnitType.ENEMY)
+			GameManager.Instance.combatUIManager.ShowEnemyUnitStats(unit);
+
 		if (!enabled) return;
 		if (!TargetSelectionUI.Instance.isSelecting) return;
 		EnableSelectionHighlight(true);
@@ -47,6 +52,9 @@ public class TargetableUnit : MonoBehaviour
 
 	private void OnMouseExit()
 	{
+		Unit currentUnit = GameManager.Instance.unitManager.currentUnit;
+		if (unit.unitType == UnitType.PLAYER && currentUnit != null)
+			GameManager.Instance.combatUIManager.ShowPlayerUnitStats(currentUnit);
 		if (!enabled) return;
 		if (!TargetSelectionUI.Instance.isSelecting) return;
 		EnableInitialSelectionHighlight(true);

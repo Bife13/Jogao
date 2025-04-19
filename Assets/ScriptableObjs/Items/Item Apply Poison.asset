@@ -19,13 +19,13 @@ MonoBehaviour:
   itemEffects:
   - itemTriggerType: 0
     itemEffectType: 0
-    applyEffect: 1
-    effectToApply: {fileID: 11400000, guid: 911df7f41540e054086476386d862a5c, type: 2}
-    effectChance: 100
+    applyCondition: 1
+    conditionToApply: {fileID: 11400000, guid: b931a9bb80a81764d977e73d091adc42, type: 2}
+    conditionChance: 100
     targetType: 0
     isHealing: 0
     healingAmount: 0
     isCleanse: 0
-    effectToCleanse: 0
+    conditionToCleanse: 0
     statusTypeToCleanse: 0
     cleanseAmount: 0

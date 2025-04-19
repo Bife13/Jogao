@@ -15,7 +15,7 @@ using Random = UnityEngine.Random;
 [RequireComponent(typeof(UnitStatCalculator))]
 [RequireComponent(typeof(UnitStance))]
 [RequireComponent(typeof(UnitUI))]
-[RequireComponent(typeof(UnitEffects))]
+[RequireComponent(typeof(UnitConditions))]
 [RequireComponent(typeof(UnitInventory))]
 public class Unit : MonoBehaviour
 {
@@ -38,7 +38,7 @@ public class Unit : MonoBehaviour
 	public UnitUI unitUI;
 
 	[HideInInspector]
-	public UnitEffects unitEffects;
+	public UnitConditions unitConditions;
 
 	[HideInInspector]
 	public UnitInventory unitInventory;
@@ -56,13 +56,14 @@ public class Unit : MonoBehaviour
 	public int minDamage { get; private set; }
 	public int maxDamage { get; private set; }
 	public int critChance { get; private set; }
+	public Tenacity unitTenacy { get; private set; }
 	public UnitType unitType { get; private set; }
 
 	public void Awake()
 	{
 		unitAbilityManager = GetComponent<UnitAbilityManager>();
 		unitCombatCalculator = GetComponent<UnitCombatCalculator>();
-		unitEffects = GetComponent<UnitEffects>();
+		unitConditions = GetComponent<UnitConditions>();
 		unitHealth = GetComponent<UnitHealth>();
 		unitStatCalculator = GetComponent<UnitStatCalculator>();
 		unitStance = GetComponent<UnitStance>();
@@ -71,7 +72,7 @@ public class Unit : MonoBehaviour
 
 		unitAbilityManager.Initialize(this);
 		unitCombatCalculator.Initialize(this);
-		unitEffects.Initialize(this);
+		unitConditions.Initialize(this);
 		unitHealth.Initialize(this);
 		unitStatCalculator.Initialize(this);
 		unitUI.Initialize(this);
@@ -103,6 +104,7 @@ public class Unit : MonoBehaviour
 		minDamage = unitData.minDamage;
 		maxDamage = unitData.maxDamage;
 		critChance = unitData.critChance;
+		unitTenacy = unitData.tenacity;
 		unitType = unitData.unitType;
 		unitAbilityManager._abilities = unitData.abilities;
 	}
@@ -120,7 +122,7 @@ public class Unit : MonoBehaviour
 	{
 		if (ability.debuffSelf && hit)
 		{
-			unitEffects.CheckAndApplyAbilityEffects(ability, this);
+			unitConditions.CheckAndApplyAbilityConditions(ability, this);
 		}
 	}
 

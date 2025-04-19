@@ -26,18 +26,18 @@ MonoBehaviour:
   isWeaponAttack: 0
   isStatusBoosted: 0
   statusBoost: 0
-  boostingEffects: []
-  hasEffects: 1
-  applyAllEffects: 1
-  effects:
-  - {fileID: 11400000, guid: b931a9bb80a81764d977e73d091adc42, type: 2}
-  effectChances: 64000000
+  boostingConditions: []
+  hasConditions: 0
+  applyAllConditions: 0
+  conditions: []
+  conditionChances: 
   canCleanse: 0
   cleanseAmount: 1
-  effectTypeToCleanse: 0
+  conditionTypeToCleanse: 0
   statusTypeToCleanse: 0
   canCoat: 1
   coating: {fileID: 11400000, guid: 16e10672258e7314599c9f18985fbf4a, type: 2}
   canSwap: 0
   abilityIndexes: 
-  selfDamage: 0
+  hitsSelf: 0
+  debuffSelf: 0

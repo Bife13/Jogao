@@ -53,7 +53,7 @@ public class CombatManager : MonoBehaviour
 
 				gameManager.turnManager.turnCounter++;
 				currentUnit.unitUI.SetHighlight(true);
-				currentUnit.unitEffects.ProcessEffectsPerTurn(EffectTiming.StartTurn,
+				currentUnit.unitConditions.ProcessConditionsPerTurn(ConditionTiming.StartTurn,
 					gameManager.turnManager.turnCounter);
 
 				yield return new WaitForSeconds(1f);
@@ -70,7 +70,7 @@ public class CombatManager : MonoBehaviour
 				}
 			}
 
-			currentUnit.unitEffects.ProcessEffectsPerTurn(EffectTiming.EndTurn, gameManager.turnManager.turnCounter);
+			currentUnit.unitConditions.ProcessConditionsPerTurn(ConditionTiming.EndTurn, gameManager.turnManager.turnCounter);
 			yield return new WaitForSeconds(0.5f);
 			CheckEndRound();
 			unitManager.currentUnitIndex++;
@@ -96,7 +96,7 @@ public class CombatManager : MonoBehaviour
 
 	IEnumerator PlayerTurn(PlayerUnit playerUnit)
 	{
-		if (!playerUnit.unitEffects.HasStunDebuff())
+		if (!playerUnit.unitConditions.HasStunDebuff())
 		{
 			Debug.Log($"{unitManager.currentUnit.unitName} is choosing an action...");
 
@@ -111,7 +111,7 @@ public class CombatManager : MonoBehaviour
 		}
 		else
 		{
-			playerUnit.unitEffects.ProcessEffectsPerTurn(EffectTiming.SkipAction, gameManager.turnManager.turnCounter);
+			playerUnit.unitConditions.ProcessConditionsPerTurn(ConditionTiming.SkipAction, gameManager.turnManager.turnCounter);
 			Debug.Log($"{unitManager.currentUnit.unitName} is stunned");
 		}
 
@@ -124,14 +124,14 @@ public class CombatManager : MonoBehaviour
 	IEnumerator EnemyTurn(EnemyUnit enemyUnit)
 	{
 		yield return new WaitForSeconds(1.0f);
-		if (!enemyUnit.unitEffects.HasStunDebuff())
+		if (!enemyUnit.unitConditions.HasStunDebuff())
 		{
 			enemyUnit.PerformIntent();
 			unitManager.currentUnit.unitUI.SetHighlight(false);
 		}
 		else
 		{
-			enemyUnit.unitEffects.ProcessEffectsPerTurn(EffectTiming.SkipAction, gameManager.turnManager.turnCounter);
+			enemyUnit.unitConditions.ProcessConditionsPerTurn(ConditionTiming.SkipAction, gameManager.turnManager.turnCounter);
 			Debug.Log($"{enemyUnit.unitName} is stunned");
 		}
 
@@ -166,7 +166,7 @@ public class CombatManager : MonoBehaviour
 		foreach (Unit unit in unitManager.playerUnits)
 		{
 			unit.unitHealth.Heal(100);
-			unit.unitEffects.activeEffects.Clear();
+			unit.unitConditions.activeConditions.Clear();
 			unit.unitAbilityManager.abilityCooldowns.Clear();
 			unit.unitUI.RefreshStatusIcons();
 			unit.unitUI.RefreshCoatingUI(false);

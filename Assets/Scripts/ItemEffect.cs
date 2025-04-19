@@ -5,34 +5,33 @@ using UnityEngine.Serialization;
 [System.Serializable]
 public class ItemEffect
 {
-	[FormerlySerializedAs("triggerType")]
 	public ItemTriggerType itemTriggerType;
 
 	public ItemEffectType itemEffectType;
 
-	[Header("Effects")]
-	public bool applyEffect = false;
+	[Header("Conditions")]
+	public bool applyCondition = false;
 
-	[ShowIf("applyEffect")]
-	public Effect effectToApply;
+	[ShowIf("applyCondition")]
+	public Condition conditionToApply;
 
-	[ShowIf("applyEffect")]
-	public float effectChance;
+	[ShowIf("applyCondition")]
+	public int conditionChance;
 
-	[ShowIf("applyEffect")]
+	[ShowIf("applyCondition")]
 	public TargetType targetType;
 
 	[Header("Healing")]
 	public bool isHealing = false;
 
-	[ShowIf("applyEffect")]
+	[ShowIf("isHealing")]
 	public int healingAmount;
 
 	[Header("Cleanse")]
 	public bool isCleanse = false;
 
 	[ShowIf("isCleanse")]
-	public EffectType effectToCleanse;
+	public ConditionType conditionToCleanse;
 
 	[ShowIf("isCleanse")]
 	public StatusType statusTypeToCleanse;

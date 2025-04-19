@@ -1,27 +1,27 @@
 using UnityEngine;
 using UnityEngine.Serialization;
 
-[CreateAssetMenu(fileName = "NewEffect", menuName = "Game/Effects/Effect")]
-public class Effect : ScriptableObject
+[CreateAssetMenu(fileName = "NewCondition", menuName = "Game/Conditions/Condition")]
+public class Condition : ScriptableObject
 {
-	public string effectName;
-	public EffectType effectType;
+	public string conditionName;
+	public ConditionType conditionType;
 	public StatType statAffected;
-	public EffectTiming effectTiming;
+	public ConditionTiming conditionTiming;
 
 	public int amount;
 	public int turnDuration;
 	public bool isStackable;
 
-	public Sprite effectIcon;
+	public Sprite conditionIcon;
 
-	[Header("Status Effects")]
-	public bool isStatusEffect;
+	[Header("Status")]
+	public bool isStatus;
 
-	[ShowIf("isStatusEffect")]
-	public StatusType statusEffect;
+	[ShowIf("isStatus")]
+	public StatusType status;
 
-	[ShowIf("isStatusEffect")]
+	[ShowIf("isStatus")]
 	public int statusDamagePerTurn;
 
 	[Header("Counterattack")]

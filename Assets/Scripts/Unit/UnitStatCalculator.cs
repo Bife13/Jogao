@@ -32,18 +32,19 @@ public class UnitStatCalculator : MonoBehaviour
 	public float CalculateModifier(StatType statType)
 	{
 		float modifier = 0;
-		foreach (var activeEffect in unit.unitEffects.activeEffects)
+		foreach (ActiveCondition activeCondition in unit.unitConditions.activeConditions)
 		{
-			if (activeEffect.effect.statAffected == statType)
+			if (activeCondition.condition.statAffected == statType)
 			{
-				modifier += activeEffect.effect.amount;
+				modifier += activeCondition.condition.amount;
 			}
 		}
 
-		modifier += unit.unitInventory.HandlePassiveItem(statType) +
+		modifier += unit.unitInventory.HandleStatPassiveItem(statType) +
 		            unit.unitStance.CalculateStanceBonusAttackAmount();
 
 		return modifier;
+		
 	}
 
 	public float CalculateStatValue(StatType statType, float modifier)

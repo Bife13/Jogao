@@ -32,7 +32,7 @@ public class UnitAbilityManager : MonoBehaviour
 				return;
 			}
 
-			unit.unitEffects.HandleWeaponCoating(ability);
+			unit.unitConditions.HandleWeaponCoating(ability);
 
 			switch (ability.abilityEffectType)
 			{
@@ -47,14 +47,14 @@ public class UnitAbilityManager : MonoBehaviour
 					break;
 				case AbilityEffectType.Buff:
 				case AbilityEffectType.Debuff:
-				case AbilityEffectType.StatusEffect:
-					hit = unit.unitEffects.PerformEffectApplication(ability, target);
+				case AbilityEffectType.Status:
+					hit = unit.unitConditions.PerformConditionApplication(ability, target);
 					break;
 			}
 
 			if (ability.canCleanse)
 			{
-				unit.unitEffects.CleanseTarget(target, ability);
+				unit.unitConditions.CleanseTarget(target, ability);
 			}
 
 			if (ability.canSwap)

@@ -15,28 +15,28 @@ public enum AbilityEffectType
 	Heal,
 	Buff,
 	Debuff,
-	StatusEffect,
+	Status,
 }
 
-public enum EffectType
+public enum ConditionType
 {
-	Buff,
-	Debuff,
+	Boon,
+	Jinx,
 	Status
 }
 
 public enum StatusType
 {
-	Bleed,
-	Poison,
-	Burn,
+	Wound,
+	Toxin,
+	Ignite,
 	Stun,
 	Shock,
 	None,
 	Any,
 }
 
-public enum EffectTiming
+public enum ConditionTiming
 {
 	StartTurn,
 	EndTurn,

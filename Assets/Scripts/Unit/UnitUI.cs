@@ -11,7 +11,7 @@ public class UnitUI : MonoBehaviour
 	public GameObject statusIconPanel;
 	public GameObject statusIconPrefab;
 
-	private Dictionary<Effect, EffectIconUI> activeIcons = new Dictionary<Effect, EffectIconUI>();
+	private Dictionary<Condition, ConditionIconUI> activeIcons = new Dictionary<Condition, ConditionIconUI>();
 
 	public GameObject highlightEffect;
 
@@ -27,7 +27,7 @@ public class UnitUI : MonoBehaviour
 	[SerializeField]
 	private Transform unitCanvas;
 
-	public EffectIconUI coatingIcon;
+	public ConditionIconUI coatingIcon;
 	private Vector3 worldPositionForFloatingText;
 	public Image healthBar;
 
@@ -66,33 +66,33 @@ public class UnitUI : MonoBehaviour
 	public void RefreshStatusIcons()
 	{
 		// Clear old icons that no longer exist
-		List<Effect> effectsToRemove = new List<Effect>();
+		List<Condition> conditionsToRemove = new List<Condition>();
 		foreach (var kvp in activeIcons)
 		{
-			bool stillActive = unit.unitEffects.activeEffects.Exists(ae => ae.effect == kvp.Key);
+			bool stillActive = unit.unitConditions.activeConditions.Exists(ae => ae.condition == kvp.Key);
 			if (!stillActive)
 			{
 				Destroy(kvp.Value.gameObject);
-				effectsToRemove.Add(kvp.Key);
+				conditionsToRemove.Add(kvp.Key);
 			}
 		}
 
-		foreach (var effect in effectsToRemove)
-			activeIcons.Remove(effect);
+		foreach (Condition condition in conditionsToRemove)
+			activeIcons.Remove(condition);
 
 		// Update or Add icons
-		foreach (var activeEffect in unit.unitEffects.activeEffects)
+		foreach (ActiveCondition activeCondition in unit.unitConditions.activeConditions)
 		{
-			if (activeIcons.ContainsKey(activeEffect.effect))
+			if (activeIcons.ContainsKey(activeCondition.condition))
 			{
-				activeIcons[activeEffect.effect].UpdateDuration(activeEffect.remainingDuration);
+				activeIcons[activeCondition.condition].UpdateDuration(activeCondition.remainingDuration);
 			}
 			else
 			{
 				var iconGO = Instantiate(statusIconPrefab, statusIconPanel.transform);
-				var iconUI = iconGO.GetComponent<EffectIconUI>();
-				iconUI.Setup(activeEffect.effect.effectIcon, activeEffect.remainingDuration);
-				activeIcons.Add(activeEffect.effect, iconUI);
+				var iconUI = iconGO.GetComponent<ConditionIconUI>();
+				iconUI.Setup(activeCondition.condition.conditionIcon, activeCondition.remainingDuration);
+				activeIcons.Add(activeCondition.condition, iconUI);
 			}
 		}
 	}
@@ -100,8 +100,8 @@ public class UnitUI : MonoBehaviour
 	public void RefreshCoatingUI(bool isActive)
 	{
 		coatingIcon.gameObject.SetActive(isActive);
-		if (unit.unitEffects.activeCoating)
-			coatingIcon.Setup(unit.unitEffects.activeCoating.coatingSprite, unit.unitEffects.coatingDuration);
+		if (unit.unitConditions.activeCoating)
+			coatingIcon.Setup(unit.unitConditions.activeCoating.coatingSprite, unit.unitConditions.coatingDuration);
 	}
 
 	public void SetHighlight(bool isOn)
