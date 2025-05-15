@@ -90,7 +90,10 @@ public class UnitConditions : MonoBehaviour
 		int finalChance = CalculateFinalChance(condition, ability.conditionChances[index], target);
 
 		if (conditionRoll <= finalChance)
+		{
 			target.unitConditions.ApplyCondition(condition);
+			unit.unitInventory.HandleItemTriggers(ItemTriggerType.OnStatusApply, unit, target);
+		}
 	}
 
 	private int CalculateFinalChance(Condition condition, int baseChance, Unit target)

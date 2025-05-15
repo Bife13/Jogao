@@ -70,7 +70,8 @@ public class CombatManager : MonoBehaviour
 				}
 			}
 
-			currentUnit.unitConditions.ProcessConditionsPerTurn(ConditionTiming.EndTurn, gameManager.turnManager.turnCounter);
+			currentUnit.unitConditions.ProcessConditionsPerTurn(ConditionTiming.EndTurn,
+				gameManager.turnManager.turnCounter);
 			yield return new WaitForSeconds(0.5f);
 			CheckEndRound();
 			unitManager.currentUnitIndex++;
@@ -102,6 +103,8 @@ public class CombatManager : MonoBehaviour
 
 			playerUnit.unitAbilityManager.StartTurn();
 
+			playerUnit.unitInventory.HandleItemTriggers(ItemTriggerType.OnTurnStart, playerUnit);
+
 			TargetSelectionUI.Instance.isSelecting = true;
 
 			while (TargetSelectionUI.Instance.isSelecting)
@@ -111,7 +114,8 @@ public class CombatManager : MonoBehaviour
 		}
 		else
 		{
-			playerUnit.unitConditions.ProcessConditionsPerTurn(ConditionTiming.SkipAction, gameManager.turnManager.turnCounter);
+			playerUnit.unitConditions.ProcessConditionsPerTurn(ConditionTiming.SkipAction,
+				gameManager.turnManager.turnCounter);
 			Debug.Log($"{unitManager.currentUnit.unitName} is stunned");
 		}
 
@@ -119,6 +123,8 @@ public class CombatManager : MonoBehaviour
 		unitManager.currentUnit.unitUI.SetHighlight(false);
 
 		yield return new WaitForSeconds(1.0f); // Simulate the attack animation/delay
+
+		playerUnit.unitInventory.HandleItemTriggers(ItemTriggerType.OnTurnEnd, playerUnit);
 	}
 
 	IEnumerator EnemyTurn(EnemyUnit enemyUnit)
@@ -131,7 +137,8 @@ public class CombatManager : MonoBehaviour
 		}
 		else
 		{
-			enemyUnit.unitConditions.ProcessConditionsPerTurn(ConditionTiming.SkipAction, gameManager.turnManager.turnCounter);
+			enemyUnit.unitConditions.ProcessConditionsPerTurn(ConditionTiming.SkipAction,
+				gameManager.turnManager.turnCounter);
 			Debug.Log($"{enemyUnit.unitName} is stunned");
 		}
 

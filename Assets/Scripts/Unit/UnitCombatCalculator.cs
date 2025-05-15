@@ -26,6 +26,7 @@ public class UnitCombatCalculator : MonoBehaviour
 		                            ability.bonusCritical))
 		{
 			damage = (1.5f * unit.unitStatCalculator.GetTotalModifiedAttackStat()[1]);
+			unit.unitInventory.HandleItemTriggers(ItemTriggerType.OnCrit, unit, target);
 			Debug.Log($"{unit.unitName} hit a Critical Strike");
 		}
 
@@ -83,8 +84,8 @@ public class UnitCombatCalculator : MonoBehaviour
 			}
 
 			target.unitHealth.TakeDirectDamage(Mathf.CeilToInt(damage), DamageType.Direct, unit);
-			unit.unitConditions.CheckAndApplyAbilityConditions(ability, target);
 			unit.unitInventory.HandleItemTriggers(ItemTriggerType.OnHit, unit, target);
+			unit.unitConditions.CheckAndApplyAbilityConditions(ability, target);
 			return true;
 		}
 

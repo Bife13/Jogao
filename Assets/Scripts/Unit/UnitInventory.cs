@@ -58,6 +58,7 @@ public class UnitInventory : MonoBehaviour
 				}
 			}
 		}
+
 		return finalValue;
 	}
 
@@ -75,21 +76,25 @@ public class UnitInventory : MonoBehaviour
 
 	public void ApplyItemEffect(ItemEffect itemEffect, Unit self, Unit target)
 	{
+		Unit actualTarget = itemEffect.targetType switch
+		{
+			TargetType.Self => self,
+			TargetType.Enemy => target ?? self,
+			_ => self
+		};
+
 		switch (itemEffect.itemEffectType)
 		{
 			case ItemEffectType.ApplyStatus:
 			case ItemEffectType.ApplyDebuff:
 			case ItemEffectType.ApplyBuff:
-				if (itemEffect.targetType == TargetType.Self)
-					target.unitConditions.CheckAndApplyItemCondition(itemEffect, self);
-				if (itemEffect.targetType == TargetType.Enemy)
-					target.unitConditions.CheckAndApplyItemCondition(itemEffect, target);
+				actualTarget.unitConditions.CheckAndApplyItemCondition(itemEffect, actualTarget);
 				break;
 			case ItemEffectType.Heal:
-				target.unitHealth.Heal(itemEffect.healingAmount);
+				self.unitHealth.Heal(itemEffect.healingAmount);
 				break;
 			case ItemEffectType.Cleanse:
-				target.unitConditions.Cleanse(itemEffect.cleanseAmount, itemEffect.conditionToCleanse,
+				self.unitConditions.Cleanse(itemEffect.cleanseAmount, itemEffect.conditionToCleanse,
 					itemEffect.statusTypeToCleanse);
 				break;
 		}

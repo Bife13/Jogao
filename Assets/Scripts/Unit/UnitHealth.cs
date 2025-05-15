@@ -6,6 +6,7 @@ public class UnitHealth : MonoBehaviour
 {
 	private Unit unit;
 	public int currentHP;
+	public float lowHpThreshold = 0.3f;
 
 
 	public void Initialize(Unit owner)
@@ -20,7 +21,7 @@ public class UnitHealth : MonoBehaviour
 		{
 			case DamageType.DoT:
 				finalDamage = damage;
-				currentHP = Math.Max(currentHP - finalDamage, 0);
+				ReduceHealth(finalDamage);
 				Debug.Log($"{unit.unitName} took {finalDamage} DoT damage! Remaining HP: {currentHP}");
 				//Move this to UI
 				unit.unitUI.ShowFloatingText(finalDamage.ToString(), Color.black);
@@ -42,7 +43,8 @@ public class UnitHealth : MonoBehaviour
 				                      (unit.unitStatCalculator.GetTotalModifiedStat(StatType.Defense) /
 				                       100f);
 				finalDamage = Mathf.Max(0, damage - Mathf.CeilToInt(reducedDamage));
-				currentHP = Math.Max(currentHP - finalDamage, 0);
+				ReduceHealth(finalDamage);
+				unit.unitInventory.HandleItemTriggers(ItemTriggerType.OnGetHit, unit, originTarget);
 				Debug.Log($"{unit.unitName} took {finalDamage} damage! Remaining HP: {currentHP}");
 				unit.unitUI.ShowFloatingText(finalDamage.ToString(), Color.black);
 
@@ -58,10 +60,16 @@ public class UnitHealth : MonoBehaviour
 		CheckDeath();
 	}
 
+	public void ReduceHealth(int damage)
+	{
+		currentHP = Math.Max(currentHP - damage, 0);
+		if (currentHP > 0 && currentHP / unit.maxHP <= lowHpThreshold)
+			unit.unitInventory.HandleItemTriggers(ItemTriggerType.OnLowHealth, unit);
+	}
+
 	public void Heal(int amount)
 	{
 		currentHP = Math.Min(currentHP + amount, unit.maxHP);
-
 		unit.unitUI.ShowFloatingText(amount.ToString(), Color.black);
 		unit.unitUI.UpdateHealthBar(currentHP, unit.maxHP);
 	}
