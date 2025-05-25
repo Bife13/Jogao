@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 public class CombatUIManager : MonoBehaviour
 {
@@ -13,19 +14,33 @@ public class CombatUIManager : MonoBehaviour
 	private GameObject skillPanel;
 
 	[SerializeField]
+	private GameObject playerStats;
+
+	[SerializeField]
 	private List<TMP_Text> playerStatsTexts;
+
+	[SerializeField]
+	private List<TMP_Text> playerTenacityTexts;
+
+	[SerializeField]
+	private GameObject enemyStats;
 
 	[SerializeField]
 	private List<TMP_Text> enemyStatsTexts;
 
 	[SerializeField]
+	private List<TMP_Text> enemyTenacityTexts;
+
+	[SerializeField]
 	private List<ButtonHandler> _buttonHandlers = new List<ButtonHandler>();
 
-	[SerializeField]
-	private GameObject playerStats;
 
 	[SerializeField]
-	private GameObject enemyStats;
+	private GameObject playerItems;
+
+	[SerializeField]
+	private List<Image> itemImages;
+
 
 	public void Initialize()
 	{
@@ -79,6 +94,7 @@ public class CombatUIManager : MonoBehaviour
 			}
 
 			ShowPlayerUnitStats(unitManager.currentUnit);
+			ShowPlayerUnitItems(unitManager.currentUnit);
 		}
 		else
 		{
@@ -102,6 +118,25 @@ public class CombatUIManager : MonoBehaviour
 		playerStatsTexts[4].text = selectedUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Crit) + " %";
 		playerStatsTexts[5].text = selectedUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Accuracy) + " %";
 		playerStatsTexts[6].text = selectedUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Dodge) + " %";
+
+		playerTenacityTexts[0].text = (selectedUnit.unitTenacy.wound).ToString();
+		playerTenacityTexts[1].text = (selectedUnit.unitTenacy.toxin).ToString();
+		playerTenacityTexts[2].text = (selectedUnit.unitTenacy.ignite).ToString();
+		playerTenacityTexts[3].text = (selectedUnit.unitTenacy.shock).ToString();
+		playerTenacityTexts[4].text = (selectedUnit.unitTenacy.shock).ToString();
+		playerTenacityTexts[5].text = (selectedUnit.unitTenacy.jinx).ToString();
+	}
+
+	public void ShowPlayerUnitItems(Unit selectedUnit)
+	{
+		playerItems.SetActive(true);
+		int counter = 0;
+		foreach (EquippableItem item in selectedUnit.unitInventory.equippedItems)
+		{
+			if (!item) continue;
+			itemImages[counter].sprite = item.icon;
+			counter++;
+		}
 	}
 
 	public void ShowEnemyUnitStats(Unit selectedUnit)
@@ -115,6 +150,13 @@ public class CombatUIManager : MonoBehaviour
 		enemyStatsTexts[4].text = selectedUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Crit) + " %";
 		enemyStatsTexts[5].text = selectedUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Accuracy) + " %";
 		enemyStatsTexts[6].text = selectedUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Dodge) + " %";
+
+		enemyTenacityTexts[0].text = (selectedUnit.unitTenacy.wound).ToString();
+		enemyTenacityTexts[1].text = (selectedUnit.unitTenacy.toxin).ToString();
+		enemyTenacityTexts[2].text = (selectedUnit.unitTenacy.ignite).ToString();
+		enemyTenacityTexts[3].text = (selectedUnit.unitTenacy.shock).ToString();
+		enemyTenacityTexts[4].text = (selectedUnit.unitTenacy.shock).ToString();
+		enemyTenacityTexts[5].text = (selectedUnit.unitTenacy.jinx).ToString();
 	}
 
 	public void HidePlayerUnitStats()

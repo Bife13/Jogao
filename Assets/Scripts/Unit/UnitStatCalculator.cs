@@ -44,7 +44,6 @@ public class UnitStatCalculator : MonoBehaviour
 		            unit.unitStance.CalculateStanceBonusAttackAmount();
 
 		return modifier;
-		
 	}
 
 	public float CalculateStatValue(StatType statType, float modifier)
@@ -53,16 +52,17 @@ public class UnitStatCalculator : MonoBehaviour
 		switch (statType)
 		{
 			case StatType.Health:
-				resultValue = unit.unitHealth.currentHP;
+				resultValue = MathF.Max(0f, unit.unitHealth.currentHP);
 				break;
 			case StatType.Speed:
-				resultValue = unit.speed + modifier;
+				resultValue = MathF.Max(0f, unit.speed + modifier);
 				break;
 			case StatType.Accuracy:
-				resultValue = unit.accuracy + modifier;
+				resultValue = MathF.Max(0f, unit.accuracy + modifier);
 				break;
 			case StatType.Defense:
-				resultValue = unit.baseDefense + modifier + unit.unitStance.CalculateStanceBonusDefense();
+				resultValue = MathF.Max(0f,
+					unit.baseDefense + modifier + unit.unitStance.CalculateStanceBonusDefense());
 				break;
 			case StatType.Crit:
 				resultValue = Mathf.Max(0f, unit.critChance + modifier);

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Speed Debuffing item
   description: 
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: e8a58f85c6b9a64408fbe2e994c9a55f, type: 3}
   baseStatBonuses:
   - statType: 3
     amount: -5

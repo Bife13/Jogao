@@ -41,7 +41,11 @@ public class TargetableUnit : MonoBehaviour
 	private void OnMouseEnter()
 	{
 		if (unit.unitType == UnitType.PLAYER)
+		{
 			GameManager.Instance.combatUIManager.ShowPlayerUnitStats(unit);
+			GameManager.Instance.combatUIManager.ShowPlayerUnitItems(unit);
+		}
+
 		if (unit.unitType == UnitType.ENEMY)
 			GameManager.Instance.combatUIManager.ShowEnemyUnitStats(unit);
 
@@ -54,7 +58,11 @@ public class TargetableUnit : MonoBehaviour
 	{
 		Unit currentUnit = GameManager.Instance.unitManager.currentUnit;
 		if (unit.unitType == UnitType.PLAYER && currentUnit != null)
+		{
 			GameManager.Instance.combatUIManager.ShowPlayerUnitStats(currentUnit);
+			GameManager.Instance.combatUIManager.ShowPlayerUnitItems(currentUnit);
+		}
+
 		if (!enabled) return;
 		if (!TargetSelectionUI.Instance.isSelecting) return;
 		EnableInitialSelectionHighlight(true);

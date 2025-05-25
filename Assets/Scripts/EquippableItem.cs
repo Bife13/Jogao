@@ -8,6 +8,6 @@ public class EquippableItem : ScriptableObject
 	public string description;
 	public Sprite icon;
 
-	public List<PassiveStatModifier> baseStatBonuses;
-	public List<ItemEffect> itemEffects;
+	public List<PassiveStatModifier> baseStatBonuses = new();
+	public List<ItemEffect> itemEffects = new();
 }

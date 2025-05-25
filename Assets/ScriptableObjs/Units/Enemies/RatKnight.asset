@@ -21,6 +21,13 @@ MonoBehaviour:
   critChance: 5
   accuracy: 5
   dodge: 0
+  tenacity:
+    wound: 5
+    toxin: 5
+    ignite: 5
+    shock: 5
+    stun: 5
+    jinx: 5
   unitType: 1
   abilities:
   - {fileID: 11400000, guid: fbfd3081ebb8f6742b7c78d03aa40bc3, type: 2}
