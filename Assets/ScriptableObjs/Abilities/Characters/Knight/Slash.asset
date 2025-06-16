@@ -13,29 +13,11 @@ MonoBehaviour:
   m_Name: Slash
   m_EditorClassIdentifier: 
   abilityName: Slash
-  description: Quickly slashes the target dealing direct damage
   icon: {fileID: 21300000, guid: 2b273ea772e9a6040bf1557408d6bb3f, type: 3}
+  description: Quickly slash the target
   targetType: 0
-  abilityEffectType: 0
-  basePower: 0
-  maxPower: 0
   cooldown: 0
-  accuracy: 85
-  bonusCritical: 0
-  isWeaponAttack: 1
-  isStatusBoosted: 0
-  statusBoost: 0
-  boostingEffects: []
-  hasEffects: 0
-  applyAllEffects: 0
-  effects: []
-  effectChances: 
-  canCleanse: 0
-  cleanseAmount: 1
-  effectTypeToCleanse: 0
-  statusTypeToCleanse: 0
-  canCoat: 0
-  coating: {fileID: 0}
-  canSwap: 0
-  abilityIndexes: 
-  selfDamage: 0
+  modules: []
+  references:
+    version: 2
+    RefIds: []

@@ -1,82 +1,178 @@
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Linq;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 
-
-
-
-[CreateAssetMenu(fileName = "NewAbility", menuName = "Game/Abilities/Ability")]
+[CreateAssetMenu(fileName = "NewAbility", menuName = "Game/Abilities/NewAbility")]
 public class Ability : ScriptableObject
 {
 	public string abilityName;
+	public Sprite icon;
 
 	[TextArea]
 	public string description;
 
-	public Sprite icon;
-
 	public TargetType targetType;
-	public AbilityEffectType abilityEffectType;
-
-	public int
-		basePower; // for damage its % of damage, for healing its either a flat value or %hp, for defense its %of defense, for buff its %of buff
-
-	public int maxPower;
 	public int cooldown;
-	public int accuracy; // % to hit
-	public int bonusCritical;
+
+	[SerializeReference]
+	public List<AbilityModule> modules = new List<AbilityModule>();
+}
+
+public interface IOnlyOnHit
+{
+}
+
+[Serializable]
+public abstract class AbilityModule
+{
+	public virtual void BeforeExecute(Unit abilityUser, List<Unit> targets)
+	{
+	}
+
+	public virtual bool Execute(Unit abilityUser, Unit abilityTarget)
+	{
+		return true;
+	}
+
+	public virtual void AfterExecute(Unit abilityUser, Ability ability)
+	{
+	}
+}
+
+[Serializable]
+public class DamageModule : AbilityModule
+{
+	[Header("Damage Variables")]
+	public int basePower;
+
+	public int accuracy;
+	public int bonusCriticalChance;
 	public bool isWeaponAttack;
-
-	[Header("Status Boosts")]
-	public bool isStatusBoosted;
-
-	[ShowIf("isStatusBoosted")]
 	public int statusBoost;
-
-	[ShowIf("isStatusBoosted")]
 	public List<Condition> boostingConditions;
 
-	[Header("Conditions")]
-	public bool hasConditions;
+	public override bool Execute(Unit abilityUser, Unit abilityTarget)
+	{
+		if (isWeaponAttack)
+			abilityUser.unitConditions.HandleWeaponCoating();
 
-	[ShowIf("hasConditions")]
+		bool hit;
+		float damage = abilityUser.unitCombatCalculator.CalculateDamage(basePower, bonusCriticalChance,
+			boostingConditions, statusBoost, abilityTarget);
+		hit = abilityUser.unitCombatCalculator.ApplyDamageOrMiss(accuracy, isWeaponAttack, abilityTarget, damage);
+		return hit;
+	}
+}
+
+[Serializable]
+public class ConditionModule : AbilityModule, IOnlyOnHit
+{
+	[Header("Conditions Variables")]
 	public bool applyAllConditions;
 
-	[ShowIf("hasConditions")]
 	public List<Condition> conditions;
-
-	[ShowIf("hasConditions")]
 	public List<int> conditionChances;
 
-	[Header("Cleanse")]
-	public bool canCleanse;
+	public override bool Execute(Unit abilityUser, Unit abilityTarget)
+	{
+		abilityUser.unitConditions.CheckAndApplyAbilityConditions(conditions, applyAllConditions, conditionChances,
+			abilityTarget);
+		return true;
+	}
 
-	[ShowIf("canCleanse")]
-	public int cleanseAmount = 1;
+	public void ExecuteOnSelf(Unit abilityUser)
+	{
+		abilityUser.unitConditions.ApplyAbilityConditions(conditions, applyAllConditions, abilityUser);
+	}
+}
 
-	[ShowIf("canCleanse")]
+[Serializable]
+public class HealModule : AbilityModule
+{
+	public int minHealAmount;
+	public int maxHealAmount;
+	public int bonusCriticalChance;
+
+	public override bool Execute(Unit abilityUser, Unit abilityTarget)
+	{
+		abilityUser.unitCombatCalculator.ApplyHealing(minHealAmount, maxHealAmount, bonusCriticalChance, abilityTarget);
+		return true;
+	}
+}
+
+
+[Serializable]
+public class CleanseModule : AbilityModule
+{
+	public int cleanseAmount;
 	public ConditionType conditionTypeToCleanse;
-
-	[ShowIf("canCleanse")]
 	public StatusType statusTypeToCleanse;
 
-	[Header("Coating")]
-	public bool canCoat;
+	public override bool Execute(Unit abilityUser, Unit abilityTarget)
+	{
+		abilityUser.unitConditions.CleanseTarget(cleanseAmount, conditionTypeToCleanse, statusTypeToCleanse,
+			abilityTarget);
+		return true;
+	}
+}
 
-	[ShowIf("canCoat")]
+[Serializable]
+public class CoatModule : AbilityModule
+{
 	public WeaponCoating coating;
 
+	public override void BeforeExecute(Unit abilityUser, List<Unit> targets)
+	{
+		abilityUser.unitConditions.ApplyWeaponCoating(coating);
+		abilityUser.unitUI.RefreshCoatingUI(true);
+	}
 
-	[Header("Swapping")]
-	public bool canSwap;
+	public override bool Execute(Unit abilityUser, Unit abilityTarget)
+	{
+		return true;
+	}
+}
 
-	[ShowIf("canSwap")]
+[Serializable]
+public class SwapModule : AbilityModule
+{
 	public List<int> abilityIndexes;
+
+	public override bool Execute(Unit abilityUser, Unit abilityTarget)
+	{
+		foreach (int index in abilityIndexes)
+		{
+			abilityUser.unitAbilityManager.SwapAbilities(index, 4 + index);
+		}
+
+		return true;
+	}
+}
+
+[Serializable]
+public class SelfHitModule : AbilityModule
+{
+	public bool damageSelf;
+	public bool applyConditionSelf;
 	
-	[Header("Hits Self")]
-	public bool hitsSelf;
-	public bool debuffSelf;
-	
+	[Range(0f, 1f)]
+	public float damagePercentage;
+
+	public override void AfterExecute(Unit abilityUser, Ability ability)
+	{
+		if (damageSelf)
+		{
+			abilityUser.unitHealth.TakeDirectDamage(Mathf.CeilToInt(abilityUser.maxHP * damagePercentage),
+				DamageType.Direct,
+				abilityUser);
+		}
+
+		if (applyConditionSelf)
+		{
+			ConditionModule conditionModule = ability.modules.OfType<ConditionModule>().FirstOrDefault();
+			conditionModule.ExecuteOnSelf(abilityUser);
+		}
+	}
 }

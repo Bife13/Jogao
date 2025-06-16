@@ -13,32 +13,12 @@ MonoBehaviour:
   m_Name: Rejuvenating Brew
   m_EditorClassIdentifier: 
   abilityName: Rejuvenating Brew
+  icon: {fileID: 21300000, guid: e529b5bc65f57ae448886a605c392993, type: 3}
   description: Heals the target by 3 - 12 gives a 10% defense boost for 2 turns and
     applies Poison for 3 turns
-  icon: {fileID: 21300000, guid: e529b5bc65f57ae448886a605c392993, type: 3}
   targetType: 1
-  abilityEffectType: 1
-  basePower: 3
-  maxPower: 13
   cooldown: 5
-  accuracy: 100
-  bonusCritical: 0
-  isWeaponAttack: 0
-  isStatusBoosted: 0
-  statusBoost: 0
-  boostingEffects: []
-  hasEffects: 1
-  applyAllEffects: 1
-  effects:
-  - {fileID: 11400000, guid: 911df7f41540e054086476386d862a5c, type: 2}
-  - {fileID: 11400000, guid: 2a7c373d0b03df94ca7af0e8dcd02f2e, type: 2}
-  effectChances: 6400000064000000
-  canCleanse: 0
-  cleanseAmount: 1
-  effectTypeToCleanse: 0
-  statusTypeToCleanse: 0
-  canCoat: 0
-  coating: {fileID: 0}
-  canSwap: 0
-  abilityIndexes: 
-  selfDamage: 0
+  modules: []
+  references:
+    version: 2
+    RefIds: []

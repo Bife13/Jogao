@@ -30,5 +30,4 @@ MonoBehaviour:
     jinx: 5
   unitType: 1
   abilities:
-  - {fileID: 11400000, guid: 8d6d5c296bdc3c9479740c1de23d1915, type: 2}
-  - {fileID: 11400000, guid: e1af39116717b3a4589a10f337f37349, type: 2}
+  - {fileID: 11400000, guid: 647ed62d9bfcc9e4780c24722e60de22, type: 2}

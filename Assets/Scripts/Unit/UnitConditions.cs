@@ -55,20 +55,37 @@ public class UnitConditions : MonoBehaviour
 		}
 	}
 
-	public void CheckAndApplyAbilityConditions(Ability ability, Unit target)
+	public void CheckAndApplyAbilityConditions(List<Condition> conditions, bool applyAllConditions, List<int> chances,
+		Unit target)
 	{
-		if (ability.conditions.Count > 0)
-			if (ability.applyAllConditions)
-				for (int i = 0; i < ability.conditions.Count; i++)
+		if (conditions.Count > 0)
+			if (applyAllConditions)
+				for (int i = 0; i < conditions.Count; i++)
 				{
-					TryApplyCondition(ability, target, i);
+					TryApplyCondition(conditions[i], chances[i], target);
 				}
 			else
 			{
-				int randomIndex = Random.Range(0, ability.conditions.Count);
-				TryApplyCondition(ability, target, randomIndex);
+				int randomIndex = Random.Range(0, conditions.Count);
+				TryApplyCondition(conditions[randomIndex], chances[randomIndex], target);
 			}
 	}
+	
+	public void ApplyAbilityConditions(List<Condition> conditions, bool applyAllConditions, Unit target)
+	{
+		if (conditions.Count > 0)
+			if (applyAllConditions)
+				for (int i = 0; i < conditions.Count; i++)
+				{
+					target.unitConditions.ApplyCondition(conditions[i]);
+				}
+			else
+			{
+				int randomIndex = Random.Range(0, conditions.Count);
+				target.unitConditions.ApplyCondition(conditions[randomIndex]);
+			}
+	}
+
 
 	public void CheckAndApplyItemCondition(ItemEffect itemEffect, Unit target)
 	{
@@ -81,13 +98,12 @@ public class UnitConditions : MonoBehaviour
 			target.unitConditions.ApplyCondition(condition);
 	}
 
-	private void TryApplyCondition(Ability ability, Unit target, int index)
+	private void TryApplyCondition(Condition condition, int chance, Unit target)
 	{
-		Condition condition = ability.conditions[index];
 		if (condition == null) return;
 
 		int conditionRoll = Random.Range(1, 101);
-		int finalChance = CalculateFinalChance(condition, ability.conditionChances[index], target);
+		int finalChance = CalculateFinalChance(condition, chance, target);
 
 		if (conditionRoll <= finalChance)
 		{
@@ -187,22 +203,23 @@ public class UnitConditions : MonoBehaviour
 		}
 	}
 
-	public virtual bool PerformConditionApplication(Ability ability, Unit target)
-	{
-		if (ability.abilityEffectType == AbilityEffectType.Debuff && target != this)
-		{
-			if (!unit.unitCombatCalculator.PerformAccuracyDodgeCheck(ability.accuracy, target))
-				return false;
-		}
+	// public virtual bool PerformConditionApplication(Ability ability, Unit target)
+	// {
+	// 	if (ability.abilityEffectType == AbilityEffectType.Debuff && target != this)
+	// 	{
+	// 		if (!unit.unitCombatCalculator.PerformAccuracyDodgeCheck(ability.accuracy, target))
+	// 			return false;
+	// 	}
+	//
+	// 	CheckAndApplyAbilityConditions(ability, target);
+	// 	return true;
+	// }
 
-		CheckAndApplyAbilityConditions(ability, target);
-		return true;
-	}
-
-	public virtual void CleanseTarget(Unit target, Ability ability)
+	public virtual void CleanseTarget(int cleanseAmount, ConditionType conditionType, StatusType statusType,
+		Unit target)
 	{
-		int amount = ability.cleanseAmount <= 0 ? int.MaxValue : ability.cleanseAmount;
-		target.unitConditions.Cleanse(amount, ability.conditionTypeToCleanse, ability.statusTypeToCleanse);
+		int amount = cleanseAmount <= 0 ? int.MaxValue : cleanseAmount;
+		target.unitConditions.Cleanse(amount, conditionType, statusType);
 		Debug.Log($"{target.unitName} is cleansed of {amount} debuffs!");
 	}
 
@@ -307,27 +324,19 @@ public class UnitConditions : MonoBehaviour
 		return activeConditions.FirstOrDefault(e => e.grantsCounter);
 	}
 
-	public virtual void HandleWeaponCoating(Ability ability)
+	public virtual void HandleWeaponCoating()
 	{
-		if (activeCoating != null && ability.isWeaponAttack)
-		{
-			coatingDuration--;
-			unit.unitUI.RefreshCoatingUI(true);
-			Debug.Log($"{unit.unitName}'s {activeCoating.coatingName}  has: " + coatingDuration);
+		if (activeCoating == null) return;
 
-			if (coatingDuration <= 0)
-			{
-				Debug.Log($"{unit.unitName}'s {activeCoating.coatingName} coating has worn off.");
-				activeCoating = null;
-				unit.unitUI.RefreshCoatingUI(false);
-			}
-		}
+		coatingDuration--;
+		unit.unitUI.RefreshCoatingUI(true);
+		Debug.Log($"{unit.unitName}'s {activeCoating.coatingName}  has: " + coatingDuration);
 
-		if (ability.canCoat)
-		{
-			ApplyWeaponCoating(ability.coating);
-			unit.unitUI.RefreshCoatingUI(true);
-		}
+		if (coatingDuration > 0) return;
+
+		Debug.Log($"{unit.unitName}'s {activeCoating.coatingName} coating has worn off.");
+		activeCoating = null;
+		unit.unitUI.RefreshCoatingUI(false);
 	}
 
 	public void ApplyWeaponCoating(WeaponCoating coating)

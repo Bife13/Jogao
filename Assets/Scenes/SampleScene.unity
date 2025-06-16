@@ -11224,7 +11224,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2627640108635163918, guid: 8fc84dcca1b30fb4194e2282773f6a2b, type: 3}
       propertyPath: equippedItems.Array.size
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2627640108635163918, guid: 8fc84dcca1b30fb4194e2282773f6a2b, type: 3}
       propertyPath: 'equippedItems.Array.data[0]'
@@ -11317,7 +11317,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1152792691818317898, guid: cc2bcbf6e7fd0064ebf49f6858bc2f12, type: 3}
       propertyPath: equippedItems.Array.size
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1152792691818317898, guid: cc2bcbf6e7fd0064ebf49f6858bc2f12, type: 3}
       propertyPath: 'equippedItems.Array.data[0]'
@@ -11331,6 +11331,10 @@ PrefabInstance:
       propertyPath: 'equippedItems.Array.data[2]'
       value: 
       objectReference: {fileID: 11400000, guid: 6edbe48920913114b8ceadc472cb7989, type: 2}
+    - target: {fileID: 2752190120865359356, guid: cc2bcbf6e7fd0064ebf49f6858bc2f12, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6751299254431060749, guid: cc2bcbf6e7fd0064ebf49f6858bc2f12, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -115

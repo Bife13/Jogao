@@ -17,13 +17,13 @@ public class UnitCombatCalculator : MonoBehaviour
 		unit = GetComponent<Unit>();
 	}
 
-	public virtual float CalculateDamage(Ability ability, Unit target)
+	public virtual float CalculateDamage(int basePower, int bonusCritical, List<Condition> boostingConditions,
+		float statusBoost, Unit target)
 	{
 		float damage = Random.Range(unit.unitStatCalculator.GetTotalModifiedAttackStat()[0],
 			unit.unitStatCalculator.GetTotalModifiedAttackStat()[1] + 1);
 
-		if (PerformCriticalHitCheck((int)unit.unitStatCalculator.GetTotalModifiedStat(StatType.Crit) +
-		                            ability.bonusCritical))
+		if (PerformCriticalHitCheck((int)unit.unitStatCalculator.GetTotalModifiedStat(StatType.Crit) + bonusCritical))
 		{
 			damage = (1.5f * unit.unitStatCalculator.GetTotalModifiedAttackStat()[1]);
 			unit.unitInventory.HandleItemTriggers(ItemTriggerType.OnCrit, unit, target);
@@ -31,10 +31,10 @@ public class UnitCombatCalculator : MonoBehaviour
 		}
 
 		float baseDamage = damage;
-		damage += damage * (ability.basePower / 100f);
+		damage += damage * (basePower / 100f);
 
-		if (target.unitConditions.CheckForActiveConditions(target, ability.boostingConditions))
-			damage += baseDamage * (ability.statusBoost / 100f);
+		if (target.unitConditions.CheckForActiveConditions(target, boostingConditions))
+			damage += baseDamage * (statusBoost / 100f);
 
 		if (target.unitConditions.HasShockedDebuff())
 		{
@@ -67,11 +67,11 @@ public class UnitCombatCalculator : MonoBehaviour
 		return false; //NORMAL HIT
 	}
 
-	public virtual bool ApplyDamageOrMiss(Ability ability, Unit target, float damage)
+	public virtual bool ApplyDamageOrMiss(int accuracy, bool isWeaponAttack, Unit target, float damage)
 	{
-		if (PerformAccuracyDodgeCheck(ability.accuracy, target) || target == this)
+		if (PerformAccuracyDodgeCheck(accuracy, target) || target == this)
 		{
-			if (unit.unitConditions.activeCoating != null && ability.isWeaponAttack)
+			if (unit.unitConditions.activeCoating != null && isWeaponAttack)
 			{
 				int coatDamage = unit.unitConditions.activeCoating.bonusDamage;
 				if (unit.unitConditions.HasCoatingBuff())
@@ -85,7 +85,6 @@ public class UnitCombatCalculator : MonoBehaviour
 
 			target.unitHealth.TakeDirectDamage(Mathf.CeilToInt(damage), DamageType.Direct, unit);
 			unit.unitInventory.HandleItemTriggers(ItemTriggerType.OnHit, unit, target);
-			unit.unitConditions.CheckAndApplyAbilityConditions(ability, target);
 			return true;
 		}
 
@@ -93,14 +92,13 @@ public class UnitCombatCalculator : MonoBehaviour
 		return false;
 	}
 
-	public virtual void ApplyHealing(Ability ability, Unit target)
+	public virtual void ApplyHealing(int minAmount, int maxAmount, int bonusCriticalChance, Unit target)
 	{
-		float healAmount = Random.Range(ability.basePower, ability.maxPower + 1);
-		if (PerformCriticalHitCheck(15 + ability.bonusCritical))
+		float healAmount = Random.Range(minAmount, maxAmount + 1);
+		if (PerformCriticalHitCheck(15 + bonusCriticalChance))
 			healAmount *= 2;
 
 		target.unitHealth.Heal(Mathf.CeilToInt(healAmount));
-		unit.unitConditions.CheckAndApplyAbilityConditions(ability, target);
 	}
 
 	public IEnumerator ExecuteCounterAttack(Unit originTarget)

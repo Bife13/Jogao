@@ -22,7 +22,9 @@ public enum ConditionType
 {
 	Boon,
 	Jinx,
-	Status
+	Status,
+	None,
+	Any
 }
 
 public enum StatusType

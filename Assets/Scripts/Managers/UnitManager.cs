@@ -106,10 +106,7 @@ public class UnitManager : MonoBehaviour
 				Debug.LogWarning("Unknown AbilityTargetType!");
 				break;
 		}
-
-		if (ability.hitsSelf)
-			validTargets.Add(currentUnit);
-
+		
 		return validTargets;
 	}
 
@@ -153,11 +150,7 @@ public class UnitManager : MonoBehaviour
 				Debug.LogWarning("Unknown AbilityTargetType!");
 				break;
 		}
-
-
-		if (ability.hitsSelf)
-			validTargets.Add(currentUnit);
-
+		
 		return validTargets;
 	}
 }

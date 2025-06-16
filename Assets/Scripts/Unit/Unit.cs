@@ -120,20 +120,24 @@ public class Unit : MonoBehaviour
 
 	public virtual void AfterAbilityUse(Ability ability, bool hit)
 	{
-		if (ability.debuffSelf && hit)
-		{
-			unitConditions.CheckAndApplyAbilityConditions(ability, this);
-		}
+		// TODO REVER AQUI 
+		// if (ability.debuffSelf && hit)
+		// {
+		// 	unitConditions.CheckAndApplyAbilityConditions(ability, this);
+		// }
 	}
 
 	public void AttackAnimation(float direction)
 	{
-		Vector3 originalPosition = unitUI.transform.position;
-		DOVirtual.DelayedCall(0.1f,
-			() =>
-			{
-				unitUI.transform.DOMoveX(unitUI.transform.position.x + 0.85f * direction, 0.25f)
-					.OnComplete(() => { unitUI.transform.DOMoveX(originalPosition.x, 0.25f); });
-			});
+		if (unitUI)
+		{
+			Vector3 originalPosition = unitUI.transform.position;
+			DOVirtual.DelayedCall(0.1f,
+				() =>
+				{
+					unitUI.transform.DOMoveX(unitUI.transform.position.x + 0.85f * direction, 0.25f)
+						.OnComplete(() => { unitUI.transform.DOMoveX(originalPosition.x, 0.25f); });
+				});
+		}
 	}
 }

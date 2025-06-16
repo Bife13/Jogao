@@ -18,10 +18,12 @@ public class UnitAbilityManager : MonoBehaviour
 	public void UseAbility(Ability ability, List<Unit> targets)
 	{
 		unit.BeforeAbility();
-
 		unit.PerformAttackAnimation();
 
-		bool hit = false;
+		bool anyHit = false;
+
+		foreach (var fx in ability.modules)
+			fx.BeforeExecute(unit, targets);
 
 		foreach (Unit target in targets)
 		{
@@ -32,42 +34,24 @@ public class UnitAbilityManager : MonoBehaviour
 				return;
 			}
 
-			unit.unitConditions.HandleWeaponCoating(ability);
-
-			switch (ability.abilityEffectType)
+			bool lastHit = false;
+			
+			foreach (var fx in ability.modules)
 			{
-				case AbilityEffectType.Damage:
+				// if this effect should only run on a previous hit…
+				if (fx is IOnlyOnHit && !lastHit)
+					continue;
 
-					float damage = unit.unitCombatCalculator.CalculateDamage(ability, target);
-					hit = unit.unitCombatCalculator.ApplyDamageOrMiss(ability, target, damage);
-					break;
-
-				case AbilityEffectType.Heal:
-					unit.unitCombatCalculator.ApplyHealing(ability, target);
-					break;
-				case AbilityEffectType.Buff:
-				case AbilityEffectType.Debuff:
-				case AbilityEffectType.Status:
-					hit = unit.unitConditions.PerformConditionApplication(ability, target);
-					break;
-			}
-
-			if (ability.canCleanse)
-			{
-				unit.unitConditions.CleanseTarget(target, ability);
-			}
-
-			if (ability.canSwap)
-			{
-				foreach (int index in ability.abilityIndexes)
-				{
-					SwapAbilities(index, 4 + index);
-				}
+				lastHit = fx.Execute(unit, target);
+				anyHit |= lastHit;
 			}
 		}
 
+		foreach (var fx in ability.modules)
+			fx.AfterExecute(unit, ability);
+
 		ApplyAbilityCooldown(ability);
-		unit.AfterAbilityUse(ability, hit);
+		unit.AfterAbilityUse(ability, anyHit);
 	}
 
 	private void ApplyAbilityCooldown(Ability ability)
@@ -106,8 +90,7 @@ public class UnitAbilityManager : MonoBehaviour
 					break;
 				case TargetType.AllEnemies:
 					if (target.unitType != UnitType.ENEMY)
-						if (!ability.hitsSelf)
-							return false;
+						return false;
 					break;
 				case TargetType.AllAllies:
 					if (target.unitType != UnitType.PLAYER)
@@ -134,8 +117,7 @@ public class UnitAbilityManager : MonoBehaviour
 					break;
 				case TargetType.AllEnemies:
 					if (target.unitType != UnitType.PLAYER)
-						if (!ability.hitsSelf)
-							return false;
+						return false;
 					break;
 				case TargetType.AllAllies:
 					if (target.unitType != UnitType.ENEMY)

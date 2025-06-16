@@ -23,7 +23,6 @@ public class UnitStatCalculator : MonoBehaviour
 		List<int> finalValues = new List<int>();
 		float modifier = CalculateModifier(StatType.Attack) + 100;
 		modifier /= 100;
-		Debug.Log("MODIFIER IS:" + modifier);
 		finalValues.Add(Mathf.CeilToInt(unit.minDamage * modifier));
 		finalValues.Add(Mathf.CeilToInt(unit.maxDamage * modifier));
 		return finalValues;
@@ -45,7 +44,6 @@ public class UnitStatCalculator : MonoBehaviour
 
 		return modifier;
 	}
-
 	public float CalculateStatValue(StatType statType, float modifier)
 	{
 		float resultValue = 0;

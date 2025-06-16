@@ -13,31 +13,12 @@ MonoBehaviour:
   m_Name: Coating Overload
   m_EditorClassIdentifier: 
   abilityName: Coating Overload
+  icon: {fileID: 21300000, guid: 692769954d859954b9b49dc0bd5ce7d5, type: 3}
   description: If no coating is applied grants a Weak Poison Coating, but if a coating
     is applied it doubles its potency for 2 turns, and reduces its duration by 1
-  icon: {fileID: 21300000, guid: 692769954d859954b9b49dc0bd5ce7d5, type: 3}
   targetType: 2
-  abilityEffectType: 2
-  basePower: 0
-  maxPower: 0
   cooldown: 0
-  accuracy: 100
-  bonusCritical: 0
-  isWeaponAttack: 0
-  isStatusBoosted: 0
-  statusBoost: 0
-  boostingConditions: []
-  hasConditions: 0
-  applyAllConditions: 0
-  conditions: []
-  conditionChances: 
-  canCleanse: 0
-  cleanseAmount: 1
-  conditionTypeToCleanse: 0
-  statusTypeToCleanse: 0
-  canCoat: 0
-  coating: {fileID: 0}
-  canSwap: 0
-  abilityIndexes: 
-  hitsSelf: 0
-  debuffSelf: 0
+  modules: []
+  references:
+    version: 2
+    RefIds: []
