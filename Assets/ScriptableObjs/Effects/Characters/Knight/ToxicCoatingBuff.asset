@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ToxicCoatingBuff
   m_EditorClassIdentifier: 
   conditionName: Toxic Coating Buff
-  conditionType: 3
+  conditionType: 0
   statAffected: 7
   conditionTiming: 0
   amount: 2
