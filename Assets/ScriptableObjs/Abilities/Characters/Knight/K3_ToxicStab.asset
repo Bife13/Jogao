@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 562d7febfae63174cb24c3c9bdd1c991, type: 3}
+  m_Name: K3_ToxicStab
+  m_EditorClassIdentifier: 
+  abilityName: Toxic Stab
+  icon: {fileID: 21300000, guid: 03729992380659f4fbe0e14b360598a3, type: 3}
+  description: Stab the target dealing +25% damage if target has Toxin but -25% damage
+    if it doesn't
+  targetType: 0
+  cooldown: 0
+  modules:
+  - rid: 7650837696978616396
+  references:
+    version: 2
+    RefIds:
+    - rid: 7650837696978616396
+      type: {class: DamageModule, ns: , asm: Assembly-CSharp}
+      data:
+        basePower: -25
+        accuracy: 1000
+        bonusCriticalChance: 0
+        isWeaponAttack: 1
+        statusBoost: 50
+        boostingConditions:
+        - {fileID: 11400000, guid: 64ff75ab65076d946bf338966057b7ca, type: 2}

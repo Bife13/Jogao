@@ -10,14 +10,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 562d7febfae63174cb24c3c9bdd1c991, type: 3}
-  m_Name: Slash
+  m_Name: K1_Slash
   m_EditorClassIdentifier: 
   abilityName: Slash
   icon: {fileID: 21300000, guid: 2b273ea772e9a6040bf1557408d6bb3f, type: 3}
   description: Quickly slash the target
   targetType: 0
   cooldown: 0
-  modules: []
+  modules:
+  - rid: 7650837696978616394
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 7650837696978616394
+      type: {class: DamageModule, ns: , asm: Assembly-CSharp}
+      data:
+        basePower: 0
+        accuracy: 1000
+        bonusCriticalChance: 0
+        isWeaponAttack: 1
+        statusBoost: 0
+        boostingConditions: []

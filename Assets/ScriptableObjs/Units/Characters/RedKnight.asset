@@ -31,3 +31,7 @@ MonoBehaviour:
   unitType: 0
   abilities:
   - {fileID: 11400000, guid: 647ed62d9bfcc9e4780c24722e60de22, type: 2}
+  - {fileID: 11400000, guid: 2901b0cac4ec5fd49a5886ee96a7abad, type: 2}
+  - {fileID: 11400000, guid: 047291b494ee3c54fbae4b7cd574055b, type: 2}
+  - {fileID: 11400000, guid: c0a194246ca57c7448e9731cd47eb4c1, type: 2}
+  - {fileID: 11400000, guid: aada3a80406fbde4d91e80a768aa1987, type: 2}

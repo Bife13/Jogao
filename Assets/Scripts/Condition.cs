@@ -17,22 +17,16 @@ public class Condition : ScriptableObject
 
 	[Header("Status")]
 	public bool isStatus;
-
-	[ShowIf("isStatus")]
 	public StatusType status;
-
-	[ShowIf("isStatus")]
 	public int statusDamagePerTurn;
 
 	[Header("Counterattack")]
 	public bool grantsCounter;
 
-	[ShowIf("grantsCounter")]
 	public Ability counterAbility;
 
 	[Header("Coating")]
 	public bool isCoatingBuff;
-	[ShowIf("isCoatingBuff")]
 	public WeaponCoating weaponCoating;
 }
 

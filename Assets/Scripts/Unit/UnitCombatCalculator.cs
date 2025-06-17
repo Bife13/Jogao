@@ -34,7 +34,10 @@ public class UnitCombatCalculator : MonoBehaviour
 		damage += damage * (basePower / 100f);
 
 		if (target.unitConditions.CheckForActiveConditions(target, boostingConditions))
+		{
+			Debug.Log("GOT HERE");
 			damage += baseDamage * (statusBoost / 100f);
+		}
 
 		if (target.unitConditions.HasShockedDebuff())
 		{

@@ -120,11 +120,7 @@ public class Unit : MonoBehaviour
 
 	public virtual void AfterAbilityUse(Ability ability, bool hit)
 	{
-		// TODO REVER AQUI 
-		// if (ability.debuffSelf && hit)
-		// {
-		// 	unitConditions.CheckAndApplyAbilityConditions(ability, this);
-		// }
+		
 	}
 
 	public void AttackAnimation(float direction)

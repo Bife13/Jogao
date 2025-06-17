@@ -42,13 +42,8 @@ public class UnitConditions : MonoBehaviour
 
 			if (condition.isCoatingBuff)
 			{
-				Debug.Log("TEST1");
-				coatingDuration--;
-				if (activeCoating == null)
-				{
-					ApplyWeaponCoating(condition.weaponCoating);
-					Debug.Log("Applied Coating");
-				}
+				Debug.Log("TEST GOT HERE");
+				ApplyWeaponCoating(condition.weaponCoating);
 			}
 
 			unit.unitUI.RefreshStatusIcons();
@@ -70,7 +65,7 @@ public class UnitConditions : MonoBehaviour
 				TryApplyCondition(conditions[randomIndex], chances[randomIndex], target);
 			}
 	}
-	
+
 	public void ApplyAbilityConditions(List<Condition> conditions, bool applyAllConditions, Unit target)
 	{
 		if (conditions.Count > 0)

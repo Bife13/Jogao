@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8b5f3821df157fd4782691262d3f2f65, type: 3}
-  m_Name: WeakPoisonCoating
+  m_Name: 3x5_ToxicCoating
   m_EditorClassIdentifier: 
-  coatingName: Weak Poison Coating
-  effect: {fileID: 11400000, guid: b931a9bb80a81764d977e73d091adc42, type: 2}
-  bonusDamage: 3
-  coatDuration: 2
+  coatingName: Toxic Coating
+  condition: {fileID: 11400000, guid: 64ff75ab65076d946bf338966057b7ca, type: 2}
+  bonusDamage: 5
+  coatDuration: 3
   coatingSprite: {fileID: 21300000, guid: 157627ab1b4bec94498e28c4714c2ba6, type: 3}

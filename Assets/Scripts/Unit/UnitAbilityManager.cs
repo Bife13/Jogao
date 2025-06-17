@@ -19,9 +19,7 @@ public class UnitAbilityManager : MonoBehaviour
 	{
 		unit.BeforeAbility();
 		unit.PerformAttackAnimation();
-
-		bool anyHit = false;
-
+		
 		foreach (var fx in ability.modules)
 			fx.BeforeExecute(unit, targets);
 
@@ -34,16 +32,11 @@ public class UnitAbilityManager : MonoBehaviour
 				return;
 			}
 
-			bool lastHit = false;
-			
 			foreach (var fx in ability.modules)
 			{
-				// if this effect should only run on a previous hit…
-				if (fx is IOnlyOnHit && !lastHit)
-					continue;
-
-				lastHit = fx.Execute(unit, target);
-				anyHit |= lastHit;
+				bool lastHit = fx.Execute(unit, target);
+				if (!lastHit)
+					return;
 			}
 		}
 
@@ -51,7 +44,6 @@ public class UnitAbilityManager : MonoBehaviour
 			fx.AfterExecute(unit, ability);
 
 		ApplyAbilityCooldown(ability);
-		unit.AfterAbilityUse(ability, anyHit);
 	}
 
 	private void ApplyAbilityCooldown(Ability ability)

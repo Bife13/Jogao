@@ -174,6 +174,8 @@ public class CombatManager : MonoBehaviour
 		{
 			unit.unitHealth.Heal(100);
 			unit.unitConditions.activeConditions.Clear();
+			unit.unitConditions.activeCoating = null;
+			unit.unitConditions.coatingDuration = 0;
 			unit.unitAbilityManager.abilityCooldowns.Clear();
 			unit.unitUI.RefreshStatusIcons();
 			unit.unitUI.RefreshCoatingUI(false);

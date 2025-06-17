@@ -36,6 +36,12 @@ public abstract class AbilityModule
 		return true;
 	}
 
+	public virtual bool Execute(Unit abilityUser, Unit abilityTarget, bool hit)
+	{
+		return true;
+	}
+
+
 	public virtual void AfterExecute(Unit abilityUser, Ability ability)
 	{
 	}
@@ -156,7 +162,7 @@ public class SelfHitModule : AbilityModule
 {
 	public bool damageSelf;
 	public bool applyConditionSelf;
-	
+
 	[Range(0f, 1f)]
 	public float damagePercentage;
 

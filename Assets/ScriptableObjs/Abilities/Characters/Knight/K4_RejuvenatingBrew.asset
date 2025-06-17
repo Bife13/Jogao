@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 562d7febfae63174cb24c3c9bdd1c991, type: 3}
+  m_Name: K4_RejuvenatingBrew
+  m_EditorClassIdentifier: 
+  abilityName: Rejuvenating Brew
+  icon: {fileID: 21300000, guid: e529b5bc65f57ae448886a605c392993, type: 3}
+  description: Heals the target by 3 - 12 gives a 10% defense boost for 2 turns and
+    applies Poison for 3 turns
+  targetType: 1
+  cooldown: 0
+  modules:
+  - rid: 7650837696978616397
+  - rid: 7650837696978616398
+  references:
+    version: 2
+    RefIds:
+    - rid: 7650837696978616397
+      type: {class: HealModule, ns: , asm: Assembly-CSharp}
+      data:
+        minHealAmount: 3
+        maxHealAmount: 12
+        bonusCriticalChance: 0
+    - rid: 7650837696978616398
+      type: {class: ConditionModule, ns: , asm: Assembly-CSharp}
+      data:
+        applyAllConditions: 1
+        conditions:
+        - {fileID: 11400000, guid: 087838ffc05edaa46be94b2bb6d2fd55, type: 2}
+        - {fileID: 11400000, guid: 64ff75ab65076d946bf338966057b7ca, type: 2}
+        conditionChances: 6400000064000000

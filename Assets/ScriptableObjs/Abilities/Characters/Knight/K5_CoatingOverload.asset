@@ -10,15 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 562d7febfae63174cb24c3c9bdd1c991, type: 3}
-  m_Name: Coating Overload
+  m_Name: K5_CoatingOverload
   m_EditorClassIdentifier: 
   abilityName: Coating Overload
   icon: {fileID: 21300000, guid: 692769954d859954b9b49dc0bd5ce7d5, type: 3}
-  description: If no coating is applied grants a Weak Poison Coating, but if a coating
-    is applied it doubles its potency for 2 turns, and reduces its duration by 1
+  description: Applies a Toxic Coating, and improves their effect
   targetType: 2
   cooldown: 0
-  modules: []
+  modules:
+  - rid: 7650837696978616400
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 7650837696978616400
+      type: {class: ConditionModule, ns: , asm: Assembly-CSharp}
+      data:
+        applyAllConditions: 1
+        conditions:
+        - {fileID: 11400000, guid: faef7c3b81e53ea438d37df20933b3b9, type: 2}
+        conditionChances: 64000000

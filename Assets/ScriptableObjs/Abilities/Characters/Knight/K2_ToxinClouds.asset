@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 562d7febfae63174cb24c3c9bdd1c991, type: 3}
+  m_Name: K2_ToxinClouds
+  m_EditorClassIdentifier: 
+  abilityName: Toxin Clouds
+  icon: {fileID: 21300000, guid: 67a8d08ab06f62348b4f85c570f06305, type: 3}
+  description: Throws a toxic concoction applying 2 Toxin and coating your weapon
+    with a Toxin Coating
+  targetType: 3
+  cooldown: 0
+  modules:
+  - rid: 7650837696978616392
+  - rid: 7650837696978616393
+  - rid: 7650837696978616395
+  references:
+    version: 2
+    RefIds:
+    - rid: 7650837696978616392
+      type: {class: DamageModule, ns: , asm: Assembly-CSharp}
+      data:
+        basePower: -50
+        accuracy: 1000
+        bonusCriticalChance: 0
+        isWeaponAttack: 0
+        statusBoost: 0
+        boostingConditions: []
+    - rid: 7650837696978616393
+      type: {class: ConditionModule, ns: , asm: Assembly-CSharp}
+      data:
+        applyAllConditions: 1
+        conditions:
+        - {fileID: 11400000, guid: 64ff75ab65076d946bf338966057b7ca, type: 2}
+        conditionChances: 64000000
+    - rid: 7650837696978616395
+      type: {class: CoatModule, ns: , asm: Assembly-CSharp}
+      data:
+        coating: {fileID: 11400000, guid: 16e10672258e7314599c9f18985fbf4a, type: 2}
