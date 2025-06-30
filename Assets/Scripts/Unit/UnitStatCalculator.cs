@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class UnitStatCalculator : MonoBehaviour
@@ -33,9 +34,13 @@ public class UnitStatCalculator : MonoBehaviour
 		float modifier = 0;
 		foreach (ActiveCondition activeCondition in unit.unitConditions.activeConditions)
 		{
-			if (activeCondition.condition.statAffected == statType)
+			StatModifyEffect statAffected =
+				activeCondition.condition.effects.OfType<StatModifyEffect>().FirstOrDefault();
+
+			if (statAffected == null) break;
+			if (statAffected.statAffected == statType)
 			{
-				modifier += activeCondition.condition.amount;
+				modifier += statAffected.amount;
 			}
 		}
 
@@ -44,6 +49,7 @@ public class UnitStatCalculator : MonoBehaviour
 
 		return modifier;
 	}
+
 	public float CalculateStatValue(StatType statType, float modifier)
 	{
 		float resultValue = 0;

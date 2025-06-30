@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 
 public class ActiveCondition
@@ -5,8 +6,8 @@ public class ActiveCondition
 	public Condition condition;
 	public int remainingDuration;
 
-	public bool grantsCounter => condition.grantsCounter;
-	public bool isCoatingBuff => condition.isCoatingBuff; // New property!
+	public bool grantsCounter => condition.effects.OfType<CounterattackEffect>().FirstOrDefault() != null;
+	public bool isCoatingBuff => condition.effects.OfType<CoatingEffect>().FirstOrDefault() != null; // New property!
 
 	public int turnCounter = 0;
 

@@ -13,17 +13,18 @@ MonoBehaviour:
   m_Name: ToxicCoatingBuff
   m_EditorClassIdentifier: 
   conditionName: Toxic Coating Buff
+  conditionIcon: {fileID: 0}
   conditionType: 0
-  statAffected: 7
-  conditionTiming: 0
-  amount: 2
   turnDuration: 2
   isStackable: 1
-  conditionIcon: {fileID: 0}
-  isStatus: 0
-  status: 5
-  statusDamagePerTurn: 0
-  grantsCounter: 0
-  counterAbility: {fileID: 0}
-  isCoatingBuff: 1
-  weaponCoating: {fileID: 11400000, guid: 16e10672258e7314599c9f18985fbf4a, type: 2}
+  conditionTiming: 0
+  effects:
+  - rid: 7650838007488184416
+  references:
+    version: 2
+    RefIds:
+    - rid: 7650838007488184416
+      type: {class: CoatingEffect, ns: , asm: Assembly-CSharp}
+      data:
+        weaponCoating: {fileID: 11400000, guid: 16e10672258e7314599c9f18985fbf4a, type: 2}
+        coatingBuffAmount: 2

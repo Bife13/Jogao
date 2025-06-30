@@ -22,7 +22,9 @@ public class UnitConditions : MonoBehaviour
 		{
 			Debug.Log($"{unit.unitName} gains {condition.conditionName}");
 
-			ActiveCondition existing = activeConditions.Find(e => e.condition.status == condition.status);
+			ActiveCondition existing = activeConditions.Find(e =>
+				e.condition.effects.OfType<StatusEffect>().FirstOrDefault() ==
+				condition.effects.OfType<StatusEffect>().FirstOrDefault());
 			if (existing != null)
 			{
 				if (condition.isStackable)
@@ -40,11 +42,8 @@ public class UnitConditions : MonoBehaviour
 
 			activeConditions.Add(new ActiveCondition(condition, GameManager.Instance.turnManager.turnCounter));
 
-			if (condition.isCoatingBuff)
-			{
-				Debug.Log("TEST GOT HERE");
-				ApplyWeaponCoating(condition.weaponCoating);
-			}
+			foreach (var fx in condition.effects)
+				fx.OnApply(unit);
 
 			unit.unitUI.RefreshStatusIcons();
 		}
@@ -116,7 +115,8 @@ public class UnitConditions : MonoBehaviour
 			case ConditionType.Jinx:
 				return Mathf.Max(0, baseChance + unit.unitInventory.HandleJinxPassiveItem() - target.unitTenacy.jinx);
 			case ConditionType.Status:
-				int targetTenacity = condition.status switch
+				StatusType statusType = condition.effects.OfType<StatusEffect>().FirstOrDefault().status;
+				int targetTenacity = statusType switch
 				{
 					StatusType.Wound => unit.unitTenacy.wound,
 					StatusType.Toxin => unit.unitTenacy.toxin,
@@ -126,7 +126,7 @@ public class UnitConditions : MonoBehaviour
 					_ => 0
 				};
 				return Mathf.Max(0,
-					baseChance + unit.unitInventory.HandleStatusPassiveItem(condition.status) - targetTenacity);
+					baseChance + unit.unitInventory.HandleStatusPassiveItem(statusType) - targetTenacity);
 			default:
 				return 0;
 		}
@@ -140,7 +140,9 @@ public class UnitConditions : MonoBehaviour
 			foreach (Condition condition in conditions)
 			{
 				ActiveCondition existing =
-					target.unitConditions.activeConditions.Find(e => e.condition.status == condition.status);
+					target.unitConditions.activeConditions.Find(e =>
+						e.condition.effects.OfType<StatusEffect>().FirstOrDefault().status ==
+						condition.effects.OfType<StatusEffect>().FirstOrDefault().status);
 				if (existing == null)
 					return false;
 			}
@@ -161,34 +163,17 @@ public class UnitConditions : MonoBehaviour
 
 				if (appliedCondition.condition.conditionTiming == conditionTiming)
 				{
-					switch (appliedCondition.condition.status)
-					{
-						case StatusType.Toxin:
-
-							unit.unitHealth.TakeDoTDamage(appliedCondition.remainingDuration, DamageType.DoT);
-							Debug.Log(
-								$"{unit.unitName} takes {appliedCondition.remainingDuration} damage from {appliedCondition.condition.conditionName}");
-							break;
-						case StatusType.Wound:
-							unit.unitHealth.TakeDoTDamage(appliedCondition.remainingDuration, DamageType.DoT);
-							Debug.Log(
-								$"{unit.unitName} takes {appliedCondition.remainingDuration} damage from {appliedCondition.condition.conditionName}");
-							break;
-						case StatusType.Ignite:
-							unit.unitHealth.TakeDoTDamage(
-								Mathf.CeilToInt(unit.maxHP * (appliedCondition.condition.statusDamagePerTurn / 100f)),
-								DamageType.DoT);
-							Debug.Log(
-								$"{unit.unitName} takes {Mathf.CeilToInt(unit.maxHP * (appliedCondition.condition.statusDamagePerTurn / 100f))} damage from {appliedCondition.condition.conditionName}");
-							break;
-					}
-
+					foreach (var fx in appliedCondition.condition.effects)
+						fx.OnTick(unit, appliedCondition.remainingDuration);
 
 					appliedCondition.TickCondition(currentTurn);
+
 					unit.unitUI.RefreshStatusIcons();
 
 					if (appliedCondition.IsExpired())
 					{
+						foreach (var fx in appliedCondition.condition.effects)
+							fx.OnRemove(unit);
 						Debug.Log($"{appliedCondition.condition.conditionName} expired on {unit.unitName}");
 						activeConditions.Remove(appliedCondition);
 						unit.unitUI.RefreshStatusIcons();
@@ -236,7 +221,8 @@ public class UnitConditions : MonoBehaviour
 							removed++;
 							break;
 						case ConditionType.Status:
-							if (activeConditions[i].condition.status == statusTypeToCleanse)
+							if (activeConditions[i].condition.effects.OfType<StatusEffect>().FirstOrDefault().status ==
+							    statusTypeToCleanse)
 							{
 								Debug.Log($"{unit.unitName} had {activeConditions[i].condition.name} cleansed!");
 								activeConditions.RemoveAt(i);
@@ -285,8 +271,10 @@ public class UnitConditions : MonoBehaviour
 	{
 		foreach (var activeCondition in activeConditions)
 		{
-			if (activeCondition.condition.status == StatusType.Shock)
-				return true;
+			StatusEffect statusEffect = activeCondition.condition.effects.OfType<StatusEffect>().FirstOrDefault();
+			if (statusEffect != null)
+				if (statusEffect.status == StatusType.Shock)
+					return true;
 		}
 
 		return false;
@@ -296,8 +284,10 @@ public class UnitConditions : MonoBehaviour
 	{
 		foreach (var activeCondition in activeConditions)
 		{
-			if (activeCondition.condition.status == StatusType.Stun)
-				return true;
+			StatusEffect statusEffect = activeCondition.condition.effects.OfType<StatusEffect>().FirstOrDefault();
+			if (statusEffect != null)
+				if (statusEffect.status == StatusType.Stun)
+					return true;
 		}
 
 		return false;
@@ -308,7 +298,7 @@ public class UnitConditions : MonoBehaviour
 		foreach (var activeCondition in activeConditions)
 		{
 			if (activeCondition.isCoatingBuff)
-				return activeCondition.condition.amount;
+				return activeCondition.condition.effects.OfType<CoatingEffect>().FirstOrDefault().coatingBuffAmount;
 		}
 
 		return 1;

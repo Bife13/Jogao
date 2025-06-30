@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -108,7 +109,8 @@ public class UnitCombatCalculator : MonoBehaviour
 	{
 		yield return new WaitForSeconds(0.15f);
 
-		Ability counterAbility = unit.unitConditions.GetCounterBuff().condition.counterAbility;
+		Ability counterAbility = unit.unitConditions.GetCounterBuff().condition.effects.OfType<CounterattackEffect>()
+			.FirstOrDefault().counterAbility;
 		List<Unit> originTargets = new List<Unit>();
 		originTargets.Add(originTarget);
 		unit.unitAbilityManager.UseAbility(counterAbility, originTargets);

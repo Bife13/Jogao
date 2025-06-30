@@ -13,17 +13,18 @@ MonoBehaviour:
   m_Name: 2x10_DefenseBoon
   m_EditorClassIdentifier: 
   conditionName: 
+  conditionIcon: {fileID: 0}
   conditionType: 0
-  statAffected: 2
-  conditionTiming: 0
-  amount: 10
   turnDuration: 2
   isStackable: 0
-  conditionIcon: {fileID: 0}
-  isStatus: 0
-  status: 5
-  statusDamagePerTurn: 0
-  grantsCounter: 0
-  counterAbility: {fileID: 0}
-  isCoatingBuff: 0
-  weaponCoating: {fileID: 0}
+  conditionTiming: 0
+  effects:
+  - rid: 7650838007488184406
+  references:
+    version: 2
+    RefIds:
+    - rid: 7650838007488184406
+      type: {class: StatModifyEffect, ns: , asm: Assembly-CSharp}
+      data:
+        statAffected: 2
+        amount: 10
