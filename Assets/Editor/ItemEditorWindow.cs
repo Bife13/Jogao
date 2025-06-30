@@ -1,108 +1,200 @@
 using System;
-using UnityEngine;
-using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
+using UnityEditorInternal;
+using UnityEngine;
 
 public class ItemEditorWindow : EditorWindow
 {
-	private EquippableItem newItem;
+    private EquippableItem currentItem;
+    private SerializedObject serializedItem;
+    private ReorderableList moduleList;
+    private ReorderableList statBonusList;
 
-	[MenuItem("Tools/Item Creator")]
-	public static void ShowWindow()
-	{
-		GetWindow<ItemEditorWindow>("Item Creator");
-	}
+    [MenuItem("Tools/Item Creator & Editor")]
+    public static void ShowWindow() =>
+        GetWindow<ItemEditorWindow>("Item Creator & Editor");
 
-	void OnGUI()
-	{
-		if (newItem == null)
-			newItem = CreateInstance<EquippableItem>();
+    void OnEnable()
+    {
+        SetupLists();
+    }
 
-		newItem.itemName = EditorGUILayout.TextField("Item Name", newItem.itemName);
-		newItem.description = EditorGUILayout.TextField("Item Description", newItem.itemName);
-		newItem.icon = (Sprite)EditorGUILayout.ObjectField("Item Icon", newItem.icon, typeof(Sprite), false);
+    void OnSelectionChange()
+    {
+        var sel = Selection.activeObject as EquippableItem;
+        if (sel != null)
+        {
+            LoadItem(sel);
+            Repaint();
+        }
+    }
 
-		if (GUILayout.Button("Add Effect"))
-		{
-			newItem.itemEffects.Add(new ItemEffect());
-		}
+    void SetupLists()
+    {
+        if (serializedItem == null)
+            return;
 
-		for (int i = 0; i < newItem.itemEffects.Count; i++)
-		{
-			EditorGUILayout.Space();
-			EditorGUILayout.LabelField($"Effect {i + 1}", EditorStyles.boldLabel);
-			var effect = newItem.itemEffects[i];
+        // Modules list
+        moduleList = new ReorderableList(
+            serializedItem,
+            serializedItem.FindProperty(nameof(EquippableItem.itemEffectModules)),
+            true, true, true, true
+        );
+        moduleList.drawHeaderCallback = rect =>
+            EditorGUI.LabelField(rect, "Effect Modules");
+        moduleList.onAddDropdownCallback = (buttonRect, _) =>
+        {
+            var menu = new GenericMenu();
+            var types = new Type[] {
+                typeof(ItemConditionModule),
+                typeof(ItemHealModule),
+                typeof(ItemCleanseModule)
+            };
+            foreach (var t in types)
+                menu.AddItem(new GUIContent(t.Name), false, () => AddModule(t));
+            menu.DropDown(buttonRect);
+        };
+        moduleList.drawElementCallback = (rect, index, active, focused) =>
+        {
+            var prop = serializedItem.FindProperty(nameof(EquippableItem.itemEffectModules))
+                .GetArrayElementAtIndex(index);
+            prop.isExpanded = true;
+            string fullName = prop.managedReferenceFullTypename;
+            string label = !string.IsNullOrEmpty(fullName)
+                ? fullName.Split(' ')[1]
+                : $"Module {index}";
+            float h = EditorGUI.GetPropertyHeight(prop, true);
+            var r = new Rect(rect.x, rect.y, rect.width, h);
+            EditorGUI.PropertyField(r, prop, new GUIContent(label), true);
+        };
+        moduleList.elementHeightCallback = index =>
+        {
+            var prop = serializedItem.FindProperty(nameof(EquippableItem.itemEffectModules))
+                .GetArrayElementAtIndex(index);
+            return EditorGUI.GetPropertyHeight(prop, true)
+                 + EditorGUIUtility.standardVerticalSpacing;
+        };
 
-			effect.itemTriggerType = (ItemTriggerType)EditorGUILayout.EnumPopup("Item Trigger", effect.itemTriggerType);
-			effect.itemEffectType = (ItemEffectType)EditorGUILayout.EnumPopup("Item Effect", effect.itemEffectType);
+        // Stat Bonuses list
+        statBonusList = new ReorderableList(
+            serializedItem,
+            serializedItem.FindProperty(nameof(EquippableItem.baseStatBonuses)),
+            true, true, true, true
+        );
+        statBonusList.drawHeaderCallback = rect =>
+            EditorGUI.LabelField(rect, "Stat Modifiers");
+        statBonusList.drawElementCallback = (rect, index, active, focused) =>
+        {
+            var prop = serializedItem.FindProperty(nameof(EquippableItem.baseStatBonuses))
+                .GetArrayElementAtIndex(index);
+            prop.isExpanded = true;
+            float h = EditorGUI.GetPropertyHeight(prop, true);
+            var r = new Rect(rect.x, rect.y, rect.width, h);
+            EditorGUI.PropertyField(r, prop, new GUIContent($"Modifier {index+1}"), true);
+        };
+        statBonusList.elementHeightCallback = i =>
+            EditorGUI.GetPropertyHeight(
+                serializedItem.FindProperty(nameof(EquippableItem.baseStatBonuses))
+                    .GetArrayElementAtIndex(i), true)
+            + EditorGUIUtility.standardVerticalSpacing;
+    }
 
-			switch (effect.itemEffectType)
-			{
-				case ItemEffectType.ApplyStatus:
-				case ItemEffectType.ApplyBuff:
-				case ItemEffectType.ApplyDebuff:
-					effect.conditionToApply =
-						(Condition)EditorGUILayout.ObjectField("Condition", effect.conditionToApply, typeof(Condition),
-							false);
-					effect.conditionChance = EditorGUILayout.IntField("Condition Chance", effect.conditionChance);
-					effect.targetType = (TargetType)EditorGUILayout.EnumPopup("Target Type", effect.targetType);
-					break;
-				case ItemEffectType.Heal:
-					effect.healingAmount = EditorGUILayout.IntField("Healing Amount", effect.healingAmount);
-					break;
-				case ItemEffectType.Cleanse:
-					effect.conditionToCleanse =
-						(ConditionType)EditorGUILayout.EnumPopup("Condition to Cleanse", effect.conditionToCleanse);
-					effect.statusTypeToCleanse =
-						(StatusType)EditorGUILayout.EnumPopup("Status to Cleanse", effect.statusTypeToCleanse);
-					effect.cleanseAmount = EditorGUILayout.IntField("Cleanse Amount", effect.cleanseAmount);
-					break;
-			}
+    void AddModule(Type moduleType)
+    {
+        var listProp = serializedItem.FindProperty(nameof(EquippableItem.itemEffectModules));
+        listProp.arraySize++;
+        var elem = listProp.GetArrayElementAtIndex(listProp.arraySize - 1);
+        elem.managedReferenceValue = Activator.CreateInstance(moduleType);
+        serializedItem.ApplyModifiedProperties();
+    }
 
-			if (GUILayout.Button("Remove"))
-			{
-				newItem.itemEffects.RemoveAt(i);
-				break;
-			}
-		}
-		
-		EditorGUILayout.Space();
+    void LoadItem(EquippableItem item)
+    {
+        currentItem = item;
+        serializedItem = new SerializedObject(currentItem);
+        SetupLists();
+    }
 
+    void OnGUI()
+    {
+        EditorGUILayout.Space();
+        // Selection or New
+        EditorGUILayout.BeginHorizontal();
+        EditorGUILayout.LabelField("Equippable Item", GUILayout.Width(120));
+        EditorGUI.BeginChangeCheck();
+        var sel = (EquippableItem)EditorGUILayout.ObjectField(
+            currentItem, typeof(EquippableItem), false);
+        if (EditorGUI.EndChangeCheck())
+        {
+            if (sel != null) LoadItem(sel);
+            else { currentItem = null; serializedItem = null; }
+        }
+        if (currentItem == null)
+        {
+            if (GUILayout.Button("New", GUILayout.Width(40)))
+            {
+                var inst = CreateInstance<EquippableItem>();
+                inst.itemName = "New Item";
+                LoadItem(inst);
+            }
+        }
+        EditorGUILayout.EndHorizontal();
 
-		if (GUILayout.Button("Add Passive Stat Modifier"))
-		{
-			newItem.baseStatBonuses.Add(new PassiveStatModifier());
-		}
+        if (serializedItem == null)
+        {
+            EditorGUILayout.HelpBox("Select or create an EquippableItem to begin.", MessageType.Info);
+            return;
+        }
 
-		for (int i = 0; i < newItem.baseStatBonuses.Count; i++)
-		{
-			EditorGUILayout.Space();
-			EditorGUILayout.LabelField($"Effect {i + 1}", EditorStyles.boldLabel);
-			var effect = newItem.baseStatBonuses[i];
+        serializedItem.Update();
 
-			effect.statType = (StatType)EditorGUILayout.EnumPopup("Stat Type", effect.statType);
-			effect.amount = EditorGUILayout.IntField("Stat Amount", effect.amount);
+        // Basic fields
+        EditorGUILayout.PropertyField(
+            serializedItem.FindProperty(nameof(EquippableItem.itemName)),
+            new GUIContent("Item Name")
+        );
+        EditorGUILayout.PropertyField(
+            serializedItem.FindProperty(nameof(EquippableItem.description)),
+            new GUIContent("Description")
+        );
+        EditorGUILayout.PropertyField(
+            serializedItem.FindProperty(nameof(EquippableItem.icon)),
+            new GUIContent("Icon")
+        );
 
-			if (GUILayout.Button("Remove"))
-			{
-				newItem.baseStatBonuses.RemoveAt(i);
-				break;
-			}
-		}
+        EditorGUILayout.Space();
+        moduleList.DoLayoutList();
+        EditorGUILayout.Space();
+        statBonusList.DoLayoutList();
 
-		EditorGUILayout.Space();
-
-		if (GUILayout.Button("Save Item"))
-		{
-			string path =
-				EditorUtility.SaveFilePanelInProject("Save Item", newItem.itemName, "asset", "Save item to folder");
-			if (!string.IsNullOrEmpty(path))
-			{
-				AssetDatabase.CreateAsset(newItem, path);
-				AssetDatabase.SaveAssets();
-				newItem = null;
-				EditorUtility.DisplayDialog("Saved", "Item created!", "OK");
-			}
-		}
-	}
+        EditorGUILayout.Space();
+        // Save or Save As
+        var path = AssetDatabase.GetAssetPath(currentItem);
+        if (string.IsNullOrEmpty(path))
+        {
+            if (GUILayout.Button("Save As New Asset"))
+            {
+                var savePath = EditorUtility.SaveFilePanelInProject(
+                    "Save Item", currentItem.itemName, "asset", "Choose save location");
+                if (!string.IsNullOrEmpty(savePath))
+                {
+                    AssetDatabase.CreateAsset(currentItem, savePath);
+                    serializedItem.Update();
+                    AssetDatabase.SaveAssets();
+                    EditorUtility.DisplayDialog("Saved", "Item created!", "OK");
+                }
+            }
+        }
+        else
+        {
+            if (GUILayout.Button("Save Changes"))
+            {
+                serializedItem.ApplyModifiedProperties();
+                EditorUtility.SetDirty(currentItem);
+                AssetDatabase.SaveAssets();
+                EditorUtility.DisplayDialog("Saved", "Item updated!", "OK");
+            }
+        }
+    }
 }

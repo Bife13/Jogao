@@ -1,41 +1,53 @@
-using System.Collections.Generic;
+using System;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-[System.Serializable]
-public class ItemEffect
+
+[Serializable]
+public abstract class ItemEffectModule
 {
 	public ItemTriggerType itemTriggerType;
+	public TargetType targetType;
+	public abstract void Apply(Unit target);
+}
 
-	public ItemEffectType itemEffectType;
-
-	[Header("Conditions")]
-	public bool applyCondition = false;
-
-	[ShowIf("applyCondition")]
+[Serializable]
+public class ItemConditionModule : ItemEffectModule
+{
 	public Condition conditionToApply;
 
-	[ShowIf("applyCondition")]
+	[Range(0, 100)]
 	public int conditionChance;
 
-	[ShowIf("applyCondition")]
-	public TargetType targetType;
 
-	[Header("Healing")]
-	public bool isHealing = false;
+	public override void Apply(Unit target)
+	{
+		target.unitConditions.CheckAndApplyItemCondition(this, target);
+	}
+}
 
-	[ShowIf("isHealing")]
-	public int healingAmount;
-
-	[Header("Cleanse")]
-	public bool isCleanse = false;
-
-	[ShowIf("isCleanse")]
+[Serializable]
+public class ItemCleanseModule : ItemEffectModule
+{
 	public ConditionType conditionToCleanse;
 
-	[ShowIf("isCleanse")]
 	public StatusType statusTypeToCleanse;
 
-	[ShowIf("isCleanse")]
 	public int cleanseAmount;
+
+	public override void Apply(Unit target)
+	{
+		target.unitConditions.Cleanse(cleanseAmount, conditionToCleanse,
+			statusTypeToCleanse);
+	}
+}
+
+[Serializable]
+public class ItemHealModule : ItemEffectModule
+{
+	public int healingAmount;
+
+	public override void Apply(Unit target)
+	{
+		target.unitHealth.Heal(healingAmount);
+	}
 }

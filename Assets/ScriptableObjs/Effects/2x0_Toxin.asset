@@ -19,11 +19,11 @@ MonoBehaviour:
   isStackable: 1
   conditionTiming: 0
   effects:
-  - rid: 7650838007488184405
+  - rid: 7650838007488184425
   references:
     version: 2
     RefIds:
-    - rid: 7650838007488184405
+    - rid: 7650838007488184425
       type: {class: StatusEffect, ns: , asm: Assembly-CSharp}
       data:
         status: 1

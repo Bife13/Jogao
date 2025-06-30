@@ -66,37 +66,23 @@ public class UnitInventory : MonoBehaviour
 	{
 		foreach (EquippableItem item in equippedItems)
 		{
-			foreach (ItemEffect itemEffect in item.itemEffects)
+			foreach (ItemEffectModule itemEffectModule in item.itemEffectModules)
 			{
-				if (itemTriggerType == itemEffect.itemTriggerType)
-					ApplyItemEffect(itemEffect, self, target);
+				if (itemTriggerType == itemEffectModule.itemTriggerType)
+					ApplyItemEffect(itemEffectModule, self, target);
 			}
 		}
 	}
 
-	public void ApplyItemEffect(ItemEffect itemEffect, Unit self, Unit target)
+	public void ApplyItemEffect(ItemEffectModule itemEffectModule, Unit self, Unit target)
 	{
-		Unit actualTarget = itemEffect.targetType switch
+		Unit actualTarget = itemEffectModule.targetType switch
 		{
 			TargetType.Self => self,
 			TargetType.Enemy => target ?? self,
 			_ => self
 		};
 
-		switch (itemEffect.itemEffectType)
-		{
-			case ItemEffectType.ApplyStatus:
-			case ItemEffectType.ApplyDebuff:
-			case ItemEffectType.ApplyBuff:
-				actualTarget.unitConditions.CheckAndApplyItemCondition(itemEffect, actualTarget);
-				break;
-			case ItemEffectType.Heal:
-				self.unitHealth.Heal(itemEffect.healingAmount);
-				break;
-			case ItemEffectType.Cleanse:
-				self.unitConditions.Cleanse(itemEffect.cleanseAmount, itemEffect.conditionToCleanse,
-					itemEffect.statusTypeToCleanse);
-				break;
-		}
+		itemEffectModule.Apply(actualTarget);
 	}
 }

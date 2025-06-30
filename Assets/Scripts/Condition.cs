@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 [CreateAssetMenu(fileName = "NewCondition", menuName = "Game/Conditions/Condition")]
 public class Condition : ScriptableObject

@@ -20,4 +20,7 @@ MonoBehaviour:
     amount: 15
   - statType: 3
     amount: -2
-  itemEffects: []
+  itemEffectModules: []
+  references:
+    version: 2
+    RefIds: []

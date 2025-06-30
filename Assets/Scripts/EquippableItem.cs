@@ -9,5 +9,7 @@ public class EquippableItem : ScriptableObject
 	public Sprite icon;
 
 	public List<PassiveStatModifier> baseStatBonuses = new();
-	public List<ItemEffect> itemEffects = new();
+
+	[SerializeReference]
+	public List<ItemEffectModule> itemEffectModules = new();
 }

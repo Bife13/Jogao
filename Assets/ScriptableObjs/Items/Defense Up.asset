@@ -18,4 +18,7 @@ MonoBehaviour:
   baseStatBonuses:
   - statType: 2
     amount: 10
-  itemEffects: []
+  itemEffectModules: []
+  references:
+    version: 2
+    RefIds: []

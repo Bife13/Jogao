@@ -81,14 +81,14 @@ public class UnitConditions : MonoBehaviour
 	}
 
 
-	public void CheckAndApplyItemCondition(ItemEffect itemEffect, Unit target)
+	public void CheckAndApplyItemCondition(ItemConditionModule itemCondition, Unit target)
 	{
-		Condition condition = itemEffect.conditionToApply;
+		Condition condition = itemCondition.conditionToApply;
 		if (condition == null) return;
 
 		int conditionRoll = Random.Range(1, 101);
 
-		if (conditionRoll <= itemEffect.conditionChance)
+		if (conditionRoll <= itemCondition.conditionChance)
 			target.unitConditions.ApplyCondition(condition);
 	}
 
