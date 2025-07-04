@@ -30,8 +30,10 @@ MonoBehaviour:
     jinx: 10
   unitType: 0
   abilities:
-  - {fileID: 11400000, guid: 647ed62d9bfcc9e4780c24722e60de22, type: 2}
-  - {fileID: 11400000, guid: 2901b0cac4ec5fd49a5886ee96a7abad, type: 2}
-  - {fileID: 11400000, guid: 047291b494ee3c54fbae4b7cd574055b, type: 2}
-  - {fileID: 11400000, guid: c0a194246ca57c7448e9731cd47eb4c1, type: 2}
-  - {fileID: 11400000, guid: aada3a80406fbde4d91e80a768aa1987, type: 2}
+  - {fileID: 11400000, guid: 244e03fdfbec73f4ab31985335d8e3b1, type: 2}
+  - {fileID: 11400000, guid: 1d2bcbbdab325cd42b09b79a890330c6, type: 2}
+  - {fileID: 11400000, guid: 87c14a25e40c86c459a255f92bc298c6, type: 2}
+  - {fileID: 11400000, guid: ca44cc39feb4a504ca64d02e665adab8, type: 2}
+  - {fileID: 11400000, guid: 715f57b67a994404491a893369bc7dd6, type: 2}
+  - {fileID: 11400000, guid: a40e68003ffcdc347bd5381cc343b4b5, type: 2}
+  - {fileID: 11400000, guid: e3acf84ce1a80d7419017de9b4ff7ba9, type: 2}

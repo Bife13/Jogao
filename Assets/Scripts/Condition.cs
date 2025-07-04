@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewCondition", menuName = "Game/Conditions/Condition")]
+[CreateAssetMenu(fileName = "NewCondition", menuName = "Game/Condition")]
 public class Condition : ScriptableObject
 {
 	public string conditionName;
