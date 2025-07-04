@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 562d7febfae63174cb24c3c9bdd1c991, type: 3}
+  m_Name: MR2_VolatileTome
+  m_EditorClassIdentifier: 
+  abilityName: Volatile Tome
+  icon: {fileID: 0}
+  description: Explode violently dealing damage to all enemies and taking 10% max
+    health damage
+  targetType: 3
+  cooldown: 0
+  modules:
+  - rid: 2953099220834058344
+  - rid: 2953099220834058345
+  references:
+    version: 2
+    RefIds:
+    - rid: 2953099220834058344
+      type: {class: DamageModule, ns: , asm: Assembly-CSharp}
+      data:
+        basePower: 15
+        accuracy: 85
+        bonusCriticalChance: 0
+        isWeaponAttack: 0
+        statusBoost: 0
+        boostingConditions: []
+    - rid: 2953099220834058345
+      type: {class: SelfHitModule, ns: , asm: Assembly-CSharp}
+      data:
+        damageSelf: 1
+        applyConditionSelf: 0
+        damagePercentage: 0.1

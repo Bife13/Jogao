@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 562d7febfae63174cb24c3c9bdd1c991, type: 3}
+  m_Name: RK2_CausticSpit
+  m_EditorClassIdentifier: 
+  abilityName: Caustic Spit
+  icon: {fileID: 0}
+  description: Spits at the enemies, dealing damage and applying Poison for 4 turns
+  targetType: 3
+  cooldown: 0
+  modules:
+  - rid: 2953099220834058348
+  - rid: 2953099220834058349
+  references:
+    version: 2
+    RefIds:
+    - rid: 2953099220834058348
+      type: {class: DamageModule, ns: , asm: Assembly-CSharp}
+      data:
+        basePower: -25
+        accuracy: 85
+        bonusCriticalChance: 0
+        isWeaponAttack: 0
+        statusBoost: 0
+        boostingStatusTypes: 
+    - rid: 2953099220834058349
+      type: {class: ConditionModule, ns: , asm: Assembly-CSharp}
+      data:
+        applyAllConditions: 0
+        conditions:
+        - {fileID: 11400000, guid: 511edb5e9489ea947b328823e881411e, type: 2}
+        conditionChances: 64000000

@@ -133,16 +133,16 @@ public class UnitConditions : MonoBehaviour
 	}
 
 
-	public bool CheckForActiveConditions(Unit target, List<Condition> conditions)
+	public bool CheckForActiveConditions(Unit target, List<StatusType> boostingStatus)
 	{
 		if (target.unitConditions.activeConditions.Count > 0)
 		{
-			foreach (Condition condition in conditions)
+			foreach (StatusType condition in boostingStatus)
 			{
 				ActiveCondition existing =
 					target.unitConditions.activeConditions.Find(e =>
 						e.condition.effects.OfType<StatusEffect>().FirstOrDefault().status ==
-						condition.effects.OfType<StatusEffect>().FirstOrDefault().status);
+						condition);
 				if (existing == null)
 					return false;
 			}

@@ -18,7 +18,7 @@ public class UnitCombatCalculator : MonoBehaviour
 		unit = GetComponent<Unit>();
 	}
 
-	public virtual float CalculateDamage(int basePower, int bonusCritical, List<Condition> boostingConditions,
+	public virtual float CalculateDamage(int basePower, int bonusCritical, List<StatusType> boostingStatus,
 		float statusBoost, Unit target)
 	{
 		float damage = Random.Range(unit.unitStatCalculator.GetTotalModifiedAttackStat()[0],
@@ -34,7 +34,7 @@ public class UnitCombatCalculator : MonoBehaviour
 		float baseDamage = damage;
 		damage += damage * (basePower / 100f);
 
-		if (target.unitConditions.CheckForActiveConditions(target, boostingConditions))
+		if (target.unitConditions.CheckForActiveConditions(target, boostingStatus))
 		{
 			Debug.Log("GOT HERE");
 			damage += baseDamage * (statusBoost / 100f);

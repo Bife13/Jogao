@@ -106,7 +106,7 @@ public class Unit : MonoBehaviour
 		critChance = unitData.critChance;
 		unitTenacy = unitData.tenacity;
 		unitType = unitData.unitType;
-		unitAbilityManager._abilities = unitData.abilities;
+		unitAbilityManager._abilities = unitData.abilities.ToList();
 	}
 
 	public virtual void BeforeAbility()
@@ -120,7 +120,6 @@ public class Unit : MonoBehaviour
 
 	public virtual void AfterAbilityUse(Ability ability, bool hit)
 	{
-		
 	}
 
 	public void AttackAnimation(float direction)

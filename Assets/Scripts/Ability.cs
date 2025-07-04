@@ -57,7 +57,7 @@ public class DamageModule : AbilityModule
 	public int bonusCriticalChance;
 	public bool isWeaponAttack;
 	public int statusBoost;
-	public List<Condition> boostingConditions;
+	public List<StatusType> boostingStatusTypes;
 
 	public override bool Execute(Unit abilityUser, Unit abilityTarget)
 	{
@@ -66,7 +66,7 @@ public class DamageModule : AbilityModule
 
 		bool hit;
 		float damage = abilityUser.unitCombatCalculator.CalculateDamage(basePower, bonusCriticalChance,
-			boostingConditions, statusBoost, abilityTarget);
+			boostingStatusTypes, statusBoost, abilityTarget);
 		hit = abilityUser.unitCombatCalculator.ApplyDamageOrMiss(accuracy, isWeaponAttack, abilityTarget, damage);
 		return hit;
 	}
