@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a1d018fc56d3c740a1a8d7e0b55aa86, type: 3}
+  m_Name: 12_Feathered Cloak
+  m_EditorClassIdentifier: 
+  itemName: Feathered Cloak
+  description: Gain a Dodge Boon at low Health
+  icon: {fileID: 2668023682778372478, guid: cd46adc9f6b6e3e48ae3ca1258350c54, type: 3}
+  baseStatBonuses:
+  - statType: 4
+    amount: 5
+  itemEffectModules:
+  - rid: 2953099454930485333
+  references:
+    version: 2
+    RefIds:
+    - rid: 2953099454930485333
+      type: {class: ItemConditionModule, ns: , asm: Assembly-CSharp}
+      data:
+        itemTriggerType: 5
+        targetType: 2
+        conditionToApply: {fileID: 11400000, guid: 5600fa420873892458eece47a97fc44d, type: 2}
+        conditionChance: 100

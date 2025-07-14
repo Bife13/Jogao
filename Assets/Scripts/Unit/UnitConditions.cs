@@ -221,11 +221,20 @@ public class UnitConditions : MonoBehaviour
 							removed++;
 							break;
 						case ConditionType.Status:
+							if (statusTypeToCleanse == StatusType.Any)
+							{
+								int index = Random.Range(0, activeConditions.Count);
+								activeConditions.RemoveAt(index);
+								Debug.Log($"{unit.unitName} had {activeConditions[index].condition.name} cleansed!");
+								unit.unitUI.RefreshStatusIcons();
+								removed++;
+							}
+
 							if (activeConditions[i].condition.effects.OfType<StatusEffect>().FirstOrDefault().status ==
 							    statusTypeToCleanse)
 							{
-								Debug.Log($"{unit.unitName} had {activeConditions[i].condition.name} cleansed!");
 								activeConditions.RemoveAt(i);
+								Debug.Log($"{unit.unitName} had {activeConditions[i].condition.name} cleansed!");
 								unit.unitUI.RefreshStatusIcons();
 								removed++;
 							}

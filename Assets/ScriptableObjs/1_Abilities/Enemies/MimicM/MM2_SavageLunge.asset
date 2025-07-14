@@ -30,11 +30,11 @@ MonoBehaviour:
       type: {class: DamageModule, ns: , asm: Assembly-CSharp}
       data:
         basePower: 15
-        accuracy: 85
+        accuracy: 200
         bonusCriticalChance: 0
         isWeaponAttack: 1
         statusBoost: 0
-        boostingConditions: []
+        boostingStatusTypes: 
     - rid: 2953099220834058337
       type: {class: ConditionModule, ns: , asm: Assembly-CSharp}
       data:

@@ -32,7 +32,7 @@ MonoBehaviour:
         bonusCriticalChance: 0
         isWeaponAttack: 0
         statusBoost: 0
-        boostingConditions: []
+        boostingStatusTypes: 
     - rid: 2953099220834058319
       type: {class: ConditionModule, ns: , asm: Assembly-CSharp}
       data:
@@ -41,5 +41,5 @@ MonoBehaviour:
         - {fileID: 11400000, guid: 8e56efff5912da746a88369433d5d18f, type: 2}
         - {fileID: 11400000, guid: 1d34a032dc059014b9891a2939c98c4e, type: 2}
         - {fileID: 11400000, guid: 7566643af29364743944ea979512db54, type: 2}
-        - {fileID: 11400000, guid: 3da972e8d94c23a428ab8e64c11bc977, type: 2}
+        - {fileID: 11400000, guid: f8d5a8cabd94851488ff6f70b1450b92, type: 2}
         conditionChances: 64000000640000006400000064000000

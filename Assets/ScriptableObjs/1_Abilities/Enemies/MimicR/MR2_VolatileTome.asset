@@ -28,11 +28,11 @@ MonoBehaviour:
       type: {class: DamageModule, ns: , asm: Assembly-CSharp}
       data:
         basePower: 15
-        accuracy: 85
+        accuracy: 200
         bonusCriticalChance: 0
         isWeaponAttack: 0
         statusBoost: 0
-        boostingConditions: []
+        boostingStatusTypes: 
     - rid: 2953099220834058345
       type: {class: SelfHitModule, ns: , asm: Assembly-CSharp}
       data:

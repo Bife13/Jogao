@@ -10,22 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1a1d018fc56d3c740a1a8d7e0b55aa86, type: 3}
-  m_Name: Herbal Vial
+  m_Name: 4_Lucky Fang
   m_EditorClassIdentifier: 
-  itemName: Herbal Vial
-  description: Heal at the end of the turn
-  icon: {fileID: 2924864154069530319, guid: c3634d21d5557c64ebf9235eff9ff4e5, type: 3}
+  itemName: Lucky Fang
+  description: Heal on Crit
+  icon: {fileID: -8410268666660221530, guid: 9cd1c8ce0046b23419b112fd6b148cee, type: 3}
   baseStatBonuses:
-  - statType: 2
-    amount: 5
+  - statType: 5
+    amount: 10
   itemEffectModules:
-  - rid: 2953099220834058357
+  - rid: 2953099454930485248
   references:
     version: 2
     RefIds:
-    - rid: 2953099220834058357
+    - rid: 2953099454930485248
       type: {class: ItemHealModule, ns: , asm: Assembly-CSharp}
       data:
-        itemTriggerType: 4
+        itemTriggerType: 1
         targetType: 2
-        healingAmount: 4
+        healingAmount: 5

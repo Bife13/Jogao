@@ -26,8 +26,8 @@ MonoBehaviour:
       type: {class: DamageModule, ns: , asm: Assembly-CSharp}
       data:
         basePower: 25
-        accuracy: 85
+        accuracy: 200
         bonusCriticalChance: 0
         isWeaponAttack: 1
         statusBoost: 0
-        boostingConditions: []
+        boostingStatusTypes: 

@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a1d018fc56d3c740a1a8d7e0b55aa86, type: 3}
+  m_Name: 1_Flaming Sword
+  m_EditorClassIdentifier: 
+  itemName: Flaming Sword
+  description: Applies Ignite when hitting enemies
+  icon: {fileID: -8233540865093018964, guid: 87c468f962a1e6240bbef951acd2d7f7, type: 3}
+  baseStatBonuses: []
+  itemEffectModules:
+  - rid: 2953099220834058356
+  references:
+    version: 2
+    RefIds:
+    - rid: 2953099220834058356
+      type: {class: ItemConditionModule, ns: , asm: Assembly-CSharp}
+      data:
+        itemTriggerType: 0
+        targetType: 0
+        conditionToApply: {fileID: 11400000, guid: 7566643af29364743944ea979512db54, type: 2}
+        conditionChance: 100

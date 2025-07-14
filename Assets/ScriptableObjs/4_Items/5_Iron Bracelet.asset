@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a1d018fc56d3c740a1a8d7e0b55aa86, type: 3}
+  m_Name: 5_Iron Bracelet
+  m_EditorClassIdentifier: 
+  itemName: Iron Bracelet
+  description: Apply Defense Buff when at low HP
+  icon: {fileID: -4712590011871460709, guid: 9cdc35bc6acfc994eb6ccfac8fa4a0c0, type: 3}
+  baseStatBonuses:
+  - statType: 2
+    amount: 5
+  itemEffectModules:
+  - rid: 2953099454930485249
+  references:
+    version: 2
+    RefIds:
+    - rid: 2953099454930485249
+      type: {class: ItemConditionModule, ns: , asm: Assembly-CSharp}
+      data:
+        itemTriggerType: 5
+        targetType: 2
+        conditionToApply: {fileID: 11400000, guid: 087838ffc05edaa46be94b2bb6d2fd55, type: 2}
+        conditionChance: 100

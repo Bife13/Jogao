@@ -10,21 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1a1d018fc56d3c740a1a8d7e0b55aa86, type: 3}
-  m_Name: Flaming Sword
+  m_Name: 11_Skull Ring
   m_EditorClassIdentifier: 
-  itemName: Flaming Sword
-  description: Applies Ignite when hitting enemies
-  icon: {fileID: -8233540865093018964, guid: 87c468f962a1e6240bbef951acd2d7f7, type: 3}
-  baseStatBonuses: []
+  itemName: Skull Ring
+  description: 'Gain Damage but suffer Toxin at the end of the turn '
+  icon: {fileID: -3033258819496007060, guid: 542e2278127535340ab85d4442c1389c, type: 3}
+  baseStatBonuses:
+  - statType: 1
+    amount: 5
   itemEffectModules:
-  - rid: 2953099220834058356
+  - rid: 2953099454930485332
   references:
     version: 2
     RefIds:
-    - rid: 2953099220834058356
+    - rid: 2953099454930485332
       type: {class: ItemConditionModule, ns: , asm: Assembly-CSharp}
       data:
-        itemTriggerType: 0
-        targetType: 0
-        conditionToApply: {fileID: 11400000, guid: 7566643af29364743944ea979512db54, type: 2}
+        itemTriggerType: 4
+        targetType: 2
+        conditionToApply: {fileID: 11400000, guid: 64ff75ab65076d946bf338966057b7ca, type: 2}
         conditionChance: 100
