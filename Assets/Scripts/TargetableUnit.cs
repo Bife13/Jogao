@@ -10,6 +10,8 @@ public class TargetableUnit : MonoBehaviour
 	public Color highlightColor = Color.yellow;
 	public Color initialHighlightColor = Color.yellow;
 
+	public Ability currentAbility { get; set; }
+
 	private void Awake()
 	{
 		rend = GetComponentInChildren<Renderer>();
@@ -52,6 +54,8 @@ public class TargetableUnit : MonoBehaviour
 		if (!enabled) return;
 		if (!TargetSelectionUI.Instance.isSelecting) return;
 		EnableSelectionHighlight(true);
+
+		GameManager.Instance.combatUIManager.UpdateAbilityTooltip(currentAbility, unit);
 	}
 
 	private void OnMouseExit()
@@ -66,5 +70,7 @@ public class TargetableUnit : MonoBehaviour
 		if (!enabled) return;
 		if (!TargetSelectionUI.Instance.isSelecting) return;
 		EnableInitialSelectionHighlight(true);
+
+		GameManager.Instance.combatUIManager.ResetAbilityTooltip();
 	}
 }

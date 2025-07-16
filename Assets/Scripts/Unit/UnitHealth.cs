@@ -39,10 +39,7 @@ public class UnitHealth : MonoBehaviour
 		switch (damageType)
 		{
 			case DamageType.Direct:
-				float reducedDamage = damage *
-				                      (unit.unitStatCalculator.GetTotalModifiedStat(StatType.Defense) /
-				                       100f);
-				finalDamage = Mathf.Max(0, damage - Mathf.CeilToInt(reducedDamage));
+				finalDamage = CalculateReducedDamage(damage);
 				ReduceHealth(finalDamage);
 				unit.unitInventory.HandleItemTriggers(ItemTriggerType.OnGetHit, unit, originTarget);
 				Debug.Log($"{unit.unitName} took {finalDamage} damage! Remaining HP: {currentHP}");
@@ -58,6 +55,14 @@ public class UnitHealth : MonoBehaviour
 
 		unit.unitUI.UpdateHealthBar(currentHP, unit.maxHP);
 		CheckDeath();
+	}
+
+	public int CalculateReducedDamage(int damage)
+	{
+		float reducedDamage = damage *
+		                      (unit.unitStatCalculator.GetTotalModifiedStat(StatType.Defense) /
+		                       100f);
+		return Mathf.Max(0, damage - Mathf.CeilToInt(reducedDamage));
 	}
 
 	public void ReduceHealth(int damage)

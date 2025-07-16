@@ -13,6 +13,7 @@ public class UnitData : ScriptableObject
 	public int minDamage;
 	public int maxDamage;
 	public int critChance;
+	public int healCritChance;
 	public int accuracy;
 	public int dodge;
 

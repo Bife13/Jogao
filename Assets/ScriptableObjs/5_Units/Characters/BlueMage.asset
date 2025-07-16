@@ -19,6 +19,7 @@ MonoBehaviour:
   minDamage: 4
   maxDamage: 12
   critChance: 6
+  healCritChance: 15
   accuracy: 5
   dodge: 5
   tenacity:

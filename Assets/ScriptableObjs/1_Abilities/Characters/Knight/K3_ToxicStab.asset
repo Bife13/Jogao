@@ -31,5 +31,4 @@ MonoBehaviour:
         bonusCriticalChance: 0
         isWeaponAttack: 1
         statusBoost: 50
-        boostingConditions:
-        - {fileID: 11400000, guid: 64ff75ab65076d946bf338966057b7ca, type: 2}
+        boostingStatusTypes: 01000000

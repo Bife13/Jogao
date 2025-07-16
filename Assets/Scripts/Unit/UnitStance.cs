@@ -23,11 +23,11 @@ public class UnitStance : MonoBehaviour
 			Debug.Log($"Stance committed: {currentStance}");
 		}
 	}
-
+	// TODO MAYBE CHECK THIS LATER
 	public float CalculateStanceBonusAttackAmount()
 	{
 		float modifier = 0f;
-		switch (currentStance)
+		switch (previewStance)
 		{
 			case StanceType.Offensive:
 				modifier += stanceBonus; // + Bonus % damage
@@ -43,7 +43,7 @@ public class UnitStance : MonoBehaviour
 	public float CalculateStanceBonusDefense()
 	{
 		float finalBonusDefense = 0;
-		switch (currentStance)
+		switch (previewStance)
 		{
 			case StanceType.Offensive:
 				finalBonusDefense -= stanceReduction; // - Bonus defense

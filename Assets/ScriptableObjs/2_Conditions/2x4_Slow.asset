@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   conditionName: Slow
   conditionIcon: {fileID: 21300000, guid: ba4c68ae4adceca4589b0a1683b84c1c, type: 3}
-  conditionType: 0
+  conditionType: 1
   turnDuration: 2
   isStackable: 1
   conditionTiming: 0

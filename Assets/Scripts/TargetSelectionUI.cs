@@ -26,8 +26,9 @@ public class TargetSelectionUI : MonoBehaviour
 
 		foreach (Unit u in allUnits)
 		{
-			u.GetComponent<TargetableUnit>().EnableInitialSelectionHighlight(false);
-			u.GetComponent<TargetableUnit>().enabled = false;
+			TargetableUnit targetableUnit = u.GetComponent<TargetableUnit>();
+			targetableUnit.EnableInitialSelectionHighlight(false);
+			targetableUnit.enabled = false;
 		}
 
 		validTargets = GameManager.Instance.unitManager.GetValidTargets(ability);
@@ -35,8 +36,10 @@ public class TargetSelectionUI : MonoBehaviour
 		Debug.Log($"Select target(s) for: {ability.abilityName}");
 		foreach (Unit u in validTargets)
 		{
-			u.GetComponent<TargetableUnit>().enabled = true;
-			u.GetComponent<TargetableUnit>().EnableInitialSelectionHighlight(true);
+			TargetableUnit targetableUnit = u.GetComponent<TargetableUnit>();
+			targetableUnit.enabled = true;
+			targetableUnit.EnableInitialSelectionHighlight(true);
+			targetableUnit.currentAbility = currentAbility;
 		}
 	}
 
@@ -100,6 +103,8 @@ public class TargetSelectionUI : MonoBehaviour
 
 				break;
 		}
+
+		GameManager.Instance.combatUIManager.ResetAbilityTooltip();
 	}
 
 	public void EndTargetSelection()

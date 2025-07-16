@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   conditionName: Defense Down
   conditionIcon: {fileID: 21300000, guid: 7595f2a26bc4c0c4ba23d420a4ab6a66, type: 3}
-  conditionType: 0
+  conditionType: 1
   turnDuration: 2
   isStackable: 1
   conditionTiming: 1

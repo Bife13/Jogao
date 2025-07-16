@@ -27,7 +27,7 @@ public interface IOnlyOnHit
 [Serializable]
 public abstract class AbilityModule
 {
-	public virtual void BeforeExecute(Unit abilityUser, List<Unit> targets)
+	public virtual void BeforeExecute(Unit abilityUser)
 	{
 	}
 
@@ -40,7 +40,6 @@ public abstract class AbilityModule
 	{
 		return true;
 	}
-
 
 	public virtual void AfterExecute(Unit abilityUser, Ability ability)
 	{
@@ -65,10 +64,31 @@ public class DamageModule : AbilityModule
 			abilityUser.unitConditions.HandleWeaponCoating();
 
 		bool hit;
-		float damage = abilityUser.unitCombatCalculator.CalculateDamage(basePower, bonusCriticalChance,
-			boostingStatusTypes, statusBoost, abilityTarget);
+		int damage = Mathf.CeilToInt(abilityUser.unitCombatCalculator.CalculateDamage(basePower, bonusCriticalChance,
+			boostingStatusTypes, statusBoost, abilityTarget));
 		hit = abilityUser.unitCombatCalculator.ApplyDamageOrMiss(accuracy, isWeaponAttack, abilityTarget, damage);
 		return hit;
+	}
+
+	public List<int> CalculateDamage(Unit currentUnit, Unit abilityTarget)
+	{
+		List<int> damageWindow = new List<int>();
+		int minDamage = Mathf.CeilToInt(currentUnit.unitCombatCalculator.CalculateDamage(basePower, bonusCriticalChance,
+			boostingStatusTypes, statusBoost, abilityTarget, DamageWindow.Minimum));
+
+		damageWindow.Add(abilityTarget.unitHealth.CalculateReducedDamage(minDamage));
+
+		int maxDamage = Mathf.CeilToInt(currentUnit.unitCombatCalculator.CalculateDamage(basePower, bonusCriticalChance,
+			boostingStatusTypes, statusBoost, abilityTarget, DamageWindow.Maximum));
+
+		damageWindow.Add(abilityTarget.unitHealth.CalculateReducedDamage(maxDamage));
+
+		return damageWindow;
+	}
+
+	public int CalculateAccuracy(Unit currentUnit, Unit abilityTarget)
+	{
+		return currentUnit.unitCombatCalculator.CalculateAccuracy(accuracy, abilityTarget);
 	}
 }
 
@@ -129,7 +149,7 @@ public class CoatModule : AbilityModule
 {
 	public WeaponCoating coating;
 
-	public override void BeforeExecute(Unit abilityUser, List<Unit> targets)
+	public override void BeforeExecute(Unit abilityUser)
 	{
 		abilityUser.unitConditions.ApplyWeaponCoating(coating);
 		abilityUser.unitUI.RefreshCoatingUI(true);

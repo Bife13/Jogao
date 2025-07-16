@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   conditionName: Ignite
   conditionIcon: {fileID: 21300000, guid: bd83c8d5ddeeca54abb8ef2a80d7c612, type: 3}
-  conditionType: 0
+  conditionType: 2
   turnDuration: 2
   isStackable: 1
   conditionTiming: 1

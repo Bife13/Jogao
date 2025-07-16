@@ -48,6 +48,7 @@ public class ButtonHandler : MonoBehaviour
 			Debug.Log($"Clicked ability: {assignedAbility.abilityName}");
 			// Pass the selected ability to the TargetSelection system
 			TargetSelectionUI.Instance.StartTargetSelection(assignedAbility);
+			GameManager.Instance.combatUIManager.ResetAbilityTooltip();
 		}
 	}
 }

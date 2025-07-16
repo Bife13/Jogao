@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   conditionName: Stun
   conditionIcon: {fileID: 21300000, guid: 2993e4358d3cc67489ee6f148b4cd2ef, type: 3}
-  conditionType: 0
+  conditionType: 2
   turnDuration: 1
   isStackable: 0
   conditionTiming: 3

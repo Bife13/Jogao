@@ -106,14 +106,18 @@ public class UnitConditions : MonoBehaviour
 		}
 	}
 
-	private int CalculateFinalChance(Condition condition, int baseChance, Unit target)
+	public int CalculateFinalChance(Condition condition, int baseChance, Unit target)
 	{
 		switch (condition.conditionType)
 		{
 			case ConditionType.Boon:
 				return baseChance;
 			case ConditionType.Jinx:
-				return Mathf.Max(0, baseChance + unit.unitInventory.HandleJinxPassiveItem() - target.unitTenacy.jinx);
+				if (target.unitType == UnitType.ENEMY)
+					return Mathf.Max(0,
+						baseChance + unit.unitInventory.HandleJinxPassiveItem() - target.unitTenacy.jinx);
+
+				return baseChance;
 			case ConditionType.Status:
 				StatusType statusType = condition.effects.OfType<StatusEffect>().FirstOrDefault().status;
 				int targetTenacity = statusType switch
@@ -125,8 +129,10 @@ public class UnitConditions : MonoBehaviour
 					StatusType.Stun => unit.unitTenacy.stun,
 					_ => 0
 				};
-				return Mathf.Max(0,
-					baseChance + unit.unitInventory.HandleStatusPassiveItem(statusType) - targetTenacity);
+				if (target.unitType == UnitType.ENEMY)
+					return Mathf.Max(0,
+						baseChance + unit.unitInventory.HandleStatusPassiveItem(statusType) - targetTenacity);
+				return baseChance;
 			default:
 				return 0;
 		}

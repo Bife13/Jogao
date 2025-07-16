@@ -92,6 +92,10 @@ public class ConditionEditor : Editor
 			new GUIContent("Icon")
 		);
 		EditorGUILayout.PropertyField(
+			serializedObject.FindProperty(nameof(Condition.conditionType)),
+			new GUIContent("Condition Type")
+		);
+		EditorGUILayout.PropertyField(
 			serializedObject.FindProperty(nameof(Condition.turnDuration)),
 			new GUIContent("Duration")
 		);

@@ -56,6 +56,7 @@ public class Unit : MonoBehaviour
 	public int minDamage { get; private set; }
 	public int maxDamage { get; private set; }
 	public int critChance { get; private set; }
+	public int healCritChance { get; private set; }
 	public Tenacity unitTenacy { get; private set; }
 	public UnitType unitType { get; private set; }
 
@@ -104,6 +105,7 @@ public class Unit : MonoBehaviour
 		minDamage = unitData.minDamage;
 		maxDamage = unitData.maxDamage;
 		critChance = unitData.critChance;
+		healCritChance = unitData.healCritChance;
 		unitTenacy = unitData.tenacity;
 		unitType = unitData.unitType;
 		unitAbilityManager._abilities = unitData.abilities.ToList();

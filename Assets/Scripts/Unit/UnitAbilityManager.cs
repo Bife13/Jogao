@@ -21,7 +21,7 @@ public class UnitAbilityManager : MonoBehaviour
 		unit.PerformAttackAnimation();
 		
 		foreach (var fx in ability.modules)
-			fx.BeforeExecute(unit, targets);
+			fx.BeforeExecute(unit);
 
 		foreach (Unit target in targets)
 		{
