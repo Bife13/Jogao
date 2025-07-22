@@ -1,9 +1,10 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ButtonHandler : MonoBehaviour
+public class ButtonHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
 	public Button button;
 	public TMP_Text text;
@@ -50,5 +51,15 @@ public class ButtonHandler : MonoBehaviour
 			TargetSelectionUI.Instance.StartTargetSelection(assignedAbility);
 			GameManager.Instance.combatUIManager.ResetAbilityTooltip();
 		}
+	}
+
+	public void OnPointerEnter(PointerEventData eventData)
+	{
+		Tooltip.ShowToolTip_Static(assignedAbility.description);
+	}
+
+	public void OnPointerExit(PointerEventData eventData)
+	{
+		Tooltip.HideTooltip_Static();
 	}
 }

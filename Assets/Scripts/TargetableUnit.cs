@@ -44,8 +44,8 @@ public class TargetableUnit : MonoBehaviour
 	{
 		if (unit.unitType == UnitType.PLAYER)
 		{
-			GameManager.Instance.combatUIManager.ShowPlayerUnitStats(unit);
-			GameManager.Instance.combatUIManager.ShowPlayerUnitItems(unit);
+			// GameManager.Instance.combatUIManager.ShowPlayerUnitStats(unit);
+			// GameManager.Instance.combatUIManager.ShowPlayerUnitItems(unit);
 		}
 
 		if (unit.unitType == UnitType.ENEMY)
@@ -55,7 +55,8 @@ public class TargetableUnit : MonoBehaviour
 		if (!TargetSelectionUI.Instance.isSelecting) return;
 		EnableSelectionHighlight(true);
 
-		GameManager.Instance.combatUIManager.UpdateAbilityTooltip(currentAbility, unit);
+		if (currentAbility != null)
+			GameManager.Instance.combatUIManager.UpdateAbilityTooltip(currentAbility, unit);
 	}
 
 	private void OnMouseExit()
@@ -63,9 +64,12 @@ public class TargetableUnit : MonoBehaviour
 		Unit currentUnit = GameManager.Instance.unitManager.currentUnit;
 		if (unit.unitType == UnitType.PLAYER && currentUnit != null)
 		{
-			GameManager.Instance.combatUIManager.ShowPlayerUnitStats(currentUnit);
-			GameManager.Instance.combatUIManager.ShowPlayerUnitItems(currentUnit);
+			// GameManager.Instance.combatUIManager.ShowPlayerUnitStats(currentUnit);
+			// GameManager.Instance.combatUIManager.ShowPlayerUnitItems(currentUnit);
 		}
+
+		if (unit.unitType == UnitType.ENEMY)
+			GameManager.Instance.combatUIManager.HideEnemyStats();
 
 		if (!enabled) return;
 		if (!TargetSelectionUI.Instance.isSelecting) return;

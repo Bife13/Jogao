@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitName: Red Knight
   maxHP: 35
-  speed: 3
+  speed: 15
   baseDefense: 15
   minDamage: 5
   maxDamage: 8

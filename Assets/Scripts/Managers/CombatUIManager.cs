@@ -55,17 +55,7 @@ public class CombatUIManager : MonoBehaviour
 	private List<GameObject> conditionsFromAbility;
 
 	[SerializeField]
-	private TMP_Text healText;
-
-	[SerializeField]
-	private TMP_Text healCritChanceText;
-
-	[SerializeField]
-	private GameObject coatingGameObject;
-
-	[SerializeField]
-	private TMP_Text selfdamageText;
-
+	private GameObject combatInfoPanel;
 
 	public void Initialize()
 	{
@@ -100,13 +90,13 @@ public class CombatUIManager : MonoBehaviour
 		}
 	}
 
-	public void HandlePanel(bool change)
+	public void HandlePanel(bool shouldShow)
 	{
-		List<Ability> playerAbilities = unitManager.currentUnit.unitAbilityManager.GetAbilities();
-		Dictionary<Ability, int> cooldowns = unitManager.currentUnit.unitAbilityManager.abilityCooldowns;
-
-		if (change)
+		if (shouldShow)
 		{
+			List<Ability> playerAbilities = unitManager.currentUnit.unitAbilityManager.GetAbilities();
+			Dictionary<Ability, int> cooldowns = unitManager.currentUnit.unitAbilityManager.abilityCooldowns;
+
 			skillPanel.SetActive(true);
 
 			int count = Math.Min(_buttonHandlers.Count, playerAbilities.Count);
@@ -129,27 +119,48 @@ public class CombatUIManager : MonoBehaviour
 			}
 
 			skillPanel.SetActive(false);
+			playerStats.SetActive(false);
+			playerItems.SetActive(false);
+			HideEnemyStats();
 		}
 	}
 
 	public void ShowPlayerUnitStats(Unit selectedUnit)
 	{
 		playerStats.SetActive(true);
-		playerStatsTexts[0].text = selectedUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Health).ToString();
-		playerStatsTexts[1].text = selectedUnit.unitStatCalculator.GetTotalModifiedAttackStat()[0] + "-" +
-		                           selectedUnit.unitStatCalculator.GetTotalModifiedAttackStat()[1];
-		playerStatsTexts[2].text = selectedUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Defense) + " %";
-		playerStatsTexts[3].text = selectedUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Speed).ToString();
-		playerStatsTexts[4].text = selectedUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Crit) + " %";
-		playerStatsTexts[5].text = selectedUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Accuracy) + " %";
-		playerStatsTexts[6].text = selectedUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Dodge) + " %";
+		var calc = selectedUnit.unitStatCalculator;
+		var attackRange = calc.GetTotalModifiedAttackStat();
 
-		playerTenacityTexts[0].text = (selectedUnit.unitTenacy.wound).ToString();
-		playerTenacityTexts[1].text = (selectedUnit.unitTenacy.toxin).ToString();
-		playerTenacityTexts[2].text = (selectedUnit.unitTenacy.ignite).ToString();
-		playerTenacityTexts[3].text = (selectedUnit.unitTenacy.shock).ToString();
-		playerTenacityTexts[4].text = (selectedUnit.unitTenacy.shock).ToString();
-		playerTenacityTexts[5].text = (selectedUnit.unitTenacy.jinx).ToString();
+		playerStatsTexts[(int)PlayerStatTextIndex.Attack].text =
+			$"{attackRange[0]}-{attackRange[1]}";
+		playerStatsTexts[(int)PlayerStatTextIndex.Accuracy].text =
+			$"{calc.GetTotalModifiedStat(StatType.Accuracy)} %";
+		playerStatsTexts[(int)PlayerStatTextIndex.Crit].text =
+			$"{calc.GetTotalModifiedStat(StatType.Crit)} %";
+		playerStatsTexts[(int)PlayerStatTextIndex.Speed].text =
+			$"{calc.GetTotalModifiedStat(StatType.Speed)}";
+		playerStatsTexts[(int)PlayerStatTextIndex.Defense].text =
+			$"{calc.GetTotalModifiedStat(StatType.Defense)} %";
+		playerStatsTexts[(int)PlayerStatTextIndex.Dodge].text =
+			$"{calc.GetTotalModifiedStat(StatType.Dodge)} %";
+
+
+		var tenacity = selectedUnit.unitTenacy;
+		int[] tenacityValues =
+		{
+			tenacity.wound,
+			tenacity.toxin,
+			tenacity.ignite,
+			tenacity.shock,
+			tenacity.stun,
+			tenacity.jinx
+		};
+
+
+		for (int i = 0; i < playerTenacityTexts.Count && i < tenacityValues.Length; i++)
+		{
+			playerTenacityTexts[i].text = $"{tenacityValues[i]}%";
+		}
 	}
 
 	public void ShowPlayerUnitItems(Unit selectedUnit)
@@ -167,21 +178,35 @@ public class CombatUIManager : MonoBehaviour
 	public void ShowEnemyUnitStats(Unit selectedUnit)
 	{
 		enemyStats.SetActive(true);
-		enemyStatsTexts[0].text = selectedUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Health).ToString();
-		enemyStatsTexts[1].text = selectedUnit.unitStatCalculator.GetTotalModifiedAttackStat()[0] + "-" +
-		                          selectedUnit.unitStatCalculator.GetTotalModifiedAttackStat()[1];
-		enemyStatsTexts[2].text = selectedUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Defense) + " %";
-		enemyStatsTexts[3].text = selectedUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Speed).ToString();
-		enemyStatsTexts[4].text = selectedUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Crit) + " %";
-		enemyStatsTexts[5].text = selectedUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Accuracy) + " %";
-		enemyStatsTexts[6].text = selectedUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Dodge) + " %";
 
-		enemyTenacityTexts[0].text = (selectedUnit.unitTenacy.wound).ToString();
-		enemyTenacityTexts[1].text = (selectedUnit.unitTenacy.toxin).ToString();
-		enemyTenacityTexts[2].text = (selectedUnit.unitTenacy.ignite).ToString();
-		enemyTenacityTexts[3].text = (selectedUnit.unitTenacy.shock).ToString();
-		enemyTenacityTexts[4].text = (selectedUnit.unitTenacy.shock).ToString();
-		enemyTenacityTexts[5].text = (selectedUnit.unitTenacy.jinx).ToString();
+		enemyStatsTexts[(int)EnemyStatTextIndex.Defense].text =
+			$"DEF: {selectedUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Defense)}%";
+		enemyStatsTexts[(int)EnemyStatTextIndex.Dodge].text =
+			$"DGE: {selectedUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Dodge)}%";
+		enemyStatsTexts[(int)EnemyStatTextIndex.Speed].text =
+			$"SPD: {selectedUnit.unitStatCalculator.GetTotalModifiedStat(StatType.Speed)}";
+
+		var tenacity = selectedUnit.unitTenacy;
+		int[] tenacityValues =
+		{
+			tenacity.wound,
+			tenacity.toxin,
+			tenacity.ignite,
+			tenacity.shock,
+			tenacity.stun,
+			tenacity.jinx
+		};
+
+
+		for (int i = 0; i < enemyTenacityTexts.Count && i < tenacityValues.Length; i++)
+		{
+			enemyTenacityTexts[i].text = $"{tenacityValues[i]}%";
+		}
+	}
+
+	public void HideEnemyStats()
+	{
+		enemyStats.SetActive(false);
 	}
 
 	public void UpdateAbilityTooltip(Ability assignedAbility, Unit target)
@@ -220,32 +245,9 @@ public class CombatUIManager : MonoBehaviour
 					conditionsFromAbility[i].GetComponentInChildren<TMP_Text>().text = $"{finalChance}%";
 				}
 			}
-
-			HealModule healModule = assignedAbility.modules.OfType<HealModule>().FirstOrDefault();
-			if (healModule != null)
-			{
-				int minHeal = healModule.minHealAmount;
-				int maxHeal = healModule.maxHealAmount;
-				int critChance = currentUnit.healCritChance + healModule.bonusCriticalChance;
-
-				if (healText != null) healText.text = $"{minHeal}-{maxHeal}";
-				if (healCritChanceText != null) healCritChanceText.text = $"{critChance}";
-			}
-
-			CoatModule coatModule = assignedAbility.modules.OfType<CoatModule>().FirstOrDefault();
-			if (coatModule != null)
-			{
-				coatingGameObject.SetActive(true);
-				coatingGameObject.GetComponentInChildren<Image>().sprite = coatModule.coating.coatingSprite;
-				coatingGameObject.GetComponentInChildren<TMP_Text>().text = coatModule.coating.coatDuration.ToString();
-			}
-
-			SelfHitModule selfHitModule = assignedAbility.modules.OfType<SelfHitModule>().FirstOrDefault();
-			if (selfHitModule != null)
-			{
-				if (selfdamageText != null) selfdamageText.text = $"{selfHitModule.damagePercentage}";
-			}
 		}
+
+		combatInfoPanel.SetActive(true);
 	}
 
 	public void ResetAbilityTooltip()
@@ -258,10 +260,7 @@ public class CombatUIManager : MonoBehaviour
 			gameObject.SetActive(false);
 		}
 
-		if (healText != null) healText.text = "";
-		if (healCritChanceText != null) healCritChanceText.text = "";
-		coatingGameObject.SetActive(false);
-		if (selfdamageText != null) selfdamageText.text = "";
+		combatInfoPanel.SetActive(false);
 	}
 
 	public void HidePlayerUnitStats()
@@ -283,5 +282,32 @@ public class CombatUIManager : MonoBehaviour
 
 		Debug.Log(
 			$"{unitManager.currentUnit.unitName} switched to {unitManager.currentUnit.unitStance.previewStance} stance!");
+	}
+
+	private enum EnemyStatTextIndex
+	{
+		Defense = 0,
+		Dodge = 1,
+		Speed = 2
+	}
+
+	private enum TenacityTextIndex
+	{
+		Wound = 0,
+		Toxin = 1,
+		Ignite = 2,
+		Shock = 3,
+		Stun = 4,
+		Jinx = 5
+	}
+
+	private enum PlayerStatTextIndex
+	{
+		Attack = 0,
+		Accuracy = 1,
+		Crit = 2,
+		Speed = 3,
+		Defense = 4,
+		Dodge = 5
 	}
 }
