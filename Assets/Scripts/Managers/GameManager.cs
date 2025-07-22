@@ -48,7 +48,7 @@ public class GameManager : MonoBehaviour
 		unitManager = GetComponent<UnitManager>();
 	}
 
-	private void Start()
+	private void InitializeGameManager()
 	{
 		combatManager.Initialize();
 		combatUIManager.Initialize();

@@ -10,7 +10,7 @@ public class Ability : ScriptableObject
 	public string abilityName;
 	public Sprite icon;
 
-	[TextArea]
+	[TextArea(15,20)]
 	public string description;
 
 	public TargetType targetType;

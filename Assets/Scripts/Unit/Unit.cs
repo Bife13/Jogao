@@ -60,7 +60,14 @@ public class Unit : MonoBehaviour
 	public Tenacity unitTenacy { get; private set; }
 	public UnitType unitType { get; private set; }
 
+#if UNITY_EDITOR
 	public void Awake()
+	{
+		InitializeUnit();
+	}
+#endif
+	
+	public void InitializeUnit()
 	{
 		unitAbilityManager = GetComponent<UnitAbilityManager>();
 		unitCombatCalculator = GetComponent<UnitCombatCalculator>();

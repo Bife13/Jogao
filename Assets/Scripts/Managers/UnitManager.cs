@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class UnitManager : MonoBehaviour
@@ -21,6 +22,23 @@ public class UnitManager : MonoBehaviour
 	public float unitSpacing = 2.5f;
 	public float yOffset = 0.25f;
 
+	[Header("Player Characters")]
+	[SerializeField]
+	private List<GameObject> availableCharacters;
+
+	[SerializeField]
+	private List<Transform> characterSpawnLocations;
+
+
+	public void SpawnPlayerCharacter(int characterIndex)
+	{
+		GameObject newCharacter = Instantiate(availableCharacters[characterIndex],
+			characterSpawnLocations[characterIndex].position, Quaternion.identity);
+		Unit unit = newCharacter.GetComponent<Unit>();
+		unit.InitializeUnit();
+		allUnits.Add(unit);
+	}
+
 	public void SpawnEnemies()
 	{
 		int count = _waves[GameManager.Instance.turnManager.roundCounter].waveUnits.Count;
@@ -37,7 +55,9 @@ public class UnitManager : MonoBehaviour
 
 			GameObject newEnemy = Instantiate(_waves[GameManager.Instance.turnManager.roundCounter].waveUnits[i],
 				spawnPos, Quaternion.identity);
-			allUnits.Add(newEnemy.GetComponent<Unit>());
+			Unit unit = newEnemy.GetComponent<Unit>();
+			unit.InitializeUnit();
+			allUnits.Add(unit);
 		}
 	}
 
@@ -79,7 +99,7 @@ public class UnitManager : MonoBehaviour
 		// However you track the active unit in turn order
 		return currentUnit as PlayerUnit;
 	}
-	
+
 	public List<Unit> GetValidTargets(Ability ability)
 	{
 		List<Unit> validTargets = new List<Unit>();
@@ -106,7 +126,7 @@ public class UnitManager : MonoBehaviour
 				Debug.LogWarning("Unknown AbilityTargetType!");
 				break;
 		}
-		
+
 		return validTargets;
 	}
 
@@ -150,7 +170,7 @@ public class UnitManager : MonoBehaviour
 				Debug.LogWarning("Unknown AbilityTargetType!");
 				break;
 		}
-		
+
 		return validTargets;
 	}
 }
