@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
 	public CombatUIManager combatUIManager;
 	public TurnManager turnManager;
 	public UnitManager unitManager;
+	public ItemSelection itemSelection;
 
 	public static GameManager Instance
 	{
@@ -46,12 +47,14 @@ public class GameManager : MonoBehaviour
 		combatUIManager = GetComponent<CombatUIManager>();
 		turnManager = GetComponent<TurnManager>();
 		unitManager = GetComponent<UnitManager>();
+		itemSelection = GetComponent<ItemSelection>();
 	}
 
-	private void InitializeGameManager()
+	public void InitializeGameManager()
 	{
 		combatManager.Initialize();
 		combatUIManager.Initialize();
 		turnManager.Initialize();
+		itemSelection.Initialize();
 	}
 }

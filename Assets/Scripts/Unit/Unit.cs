@@ -48,6 +48,7 @@ public class Unit : MonoBehaviour
 	private UnitData unitData;
 
 	public string unitName { get; private set; }
+	public Sprite unitSprite { get; private set; }
 	public int maxHP { get; private set; }
 	public int baseDefense { get; private set; }
 	public int dodge { get; private set; }
@@ -66,7 +67,7 @@ public class Unit : MonoBehaviour
 		InitializeUnit();
 	}
 #endif
-	
+
 	public void InitializeUnit()
 	{
 		unitAbilityManager = GetComponent<UnitAbilityManager>();
@@ -102,7 +103,8 @@ public class Unit : MonoBehaviour
 
 	private void LoadFromData()
 	{
-		unitName = unitData.name;
+		unitName = unitData.unitName;
+		unitSprite = unitData.unitIcon;
 		maxHP = unitData.maxHP;
 		unitHealth.currentHP = maxHP;
 		baseDefense = unitData.baseDefense;

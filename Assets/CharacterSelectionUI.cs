@@ -12,6 +12,9 @@ public class CharacterSelectionUI : MonoBehaviour
 
 	private List<UnityAction> unityActions;
 
+	[SerializeField]
+	private GameObject characterButtonsHolder;
+
 	public void Awake()
 	{
 		Initialize();
@@ -19,7 +22,7 @@ public class CharacterSelectionUI : MonoBehaviour
 
 	public void Initialize()
 	{
-		characterButtons = gameObject.GetComponentsInChildren<Button>();
+		characterButtons = characterButtonsHolder.GetComponentsInChildren<Button>();
 		for (int i = 0; i < characterButtons.Length; i++)
 		{
 			int index = i;
@@ -31,5 +34,14 @@ public class CharacterSelectionUI : MonoBehaviour
 	public void SwapButtonSkill(int index)
 	{
 		characterButtons[index].onClick.RemoveAllListeners();
+	}
+
+	public void HideCharacterSelect()
+	{
+		if (GameManager.Instance.unitManager.allUnits.Count == 2)
+		{
+			gameObject.SetActive(false);
+			GameManager.Instance.InitializeGameManager();
+		}
 	}
 }

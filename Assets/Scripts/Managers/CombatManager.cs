@@ -130,17 +130,18 @@ public class CombatManager : MonoBehaviour
 	IEnumerator EnemyTurn(EnemyUnit enemyUnit)
 	{
 		yield return new WaitForSeconds(1.0f);
-		if (!enemyUnit.unitConditions.HasStunDebuff())
-		{
-			enemyUnit.PerformIntent();
-			unitManager.currentUnit.unitUI.SetHighlight(false);
-		}
-		else
-		{
-			enemyUnit.unitConditions.ProcessConditionsPerTurn(ConditionTiming.SkipAction,
-				gameManager.turnManager.turnCounter);
-			Debug.Log($"{enemyUnit.unitName} is stunned");
-		}
+		if (enemyUnit != null)
+			if (!enemyUnit.unitConditions.HasStunDebuff())
+			{
+				enemyUnit.PerformIntent();
+				unitManager.currentUnit.unitUI.SetHighlight(false);
+			}
+			else
+			{
+				enemyUnit.unitConditions.ProcessConditionsPerTurn(ConditionTiming.SkipAction,
+					gameManager.turnManager.turnCounter);
+				Debug.Log($"{enemyUnit.unitName} is stunned");
+			}
 
 		yield return new WaitForSeconds(1.0f); // Simulate the attack animation/delay
 	}
@@ -153,7 +154,7 @@ public class CombatManager : MonoBehaviour
 		Debug.Log("Players:" + alivePlayers);
 		Debug.Log("Enemies:" + aliveEnemies);
 
-		if ((alivePlayers <= 0 || aliveEnemies <= 0) && inCombat)
+		if ((alivePlayers <= 1 || aliveEnemies <= 0) && inCombat)
 		{
 			inCombat = false;
 			gameManager.turnManager.roundCounter++;
@@ -187,9 +188,15 @@ public class CombatManager : MonoBehaviour
 
 	IEnumerator ShowEndFightScreen(string winner)
 	{
+		// NEED TO WORK ON THE ITEM SELECTION SCREEN
 		Debug.Log(winner);
 		yield return new WaitForSeconds(3f);
 		if (winner == "Player")
-			StartCoroutine(StartCombat());
+			GameManager.Instance.itemSelection.ActivateItemSelection();
+	}
+
+	public void ContinueCombat()
+	{
+		StartCoroutine(StartCombat());
 	}
 }

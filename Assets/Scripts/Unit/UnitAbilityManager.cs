@@ -19,7 +19,7 @@ public class UnitAbilityManager : MonoBehaviour
 	{
 		unit.BeforeAbility();
 		unit.PerformAttackAnimation();
-		
+
 		foreach (var fx in ability.modules)
 			fx.BeforeExecute(unit);
 
@@ -32,11 +32,12 @@ public class UnitAbilityManager : MonoBehaviour
 				return;
 			}
 
+			//TODO THIS HAS ISSUES FOR SAME TARGET ABILITIES 
 			foreach (var fx in ability.modules)
 			{
 				bool lastHit = fx.Execute(unit, target);
 				if (!lastHit)
-					return;
+					break;
 			}
 		}
 

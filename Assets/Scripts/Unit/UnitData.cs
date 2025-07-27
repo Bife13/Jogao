@@ -6,6 +6,7 @@ using UnityEngine;
 public class UnitData : ScriptableObject
 {
 	public string unitName;
+	public Sprite unitIcon;
 
 	public int maxHP;
 	public int speed;

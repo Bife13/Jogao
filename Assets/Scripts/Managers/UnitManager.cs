@@ -69,11 +69,13 @@ public class UnitManager : MonoBehaviour
 			switch (unit.unitType)
 			{
 				case UnitType.PLAYER:
-					playerUnits.Add(unit);
+					if (!playerUnits.Contains(unit))
+						playerUnits.Add(unit);
 					unit.unitStance.hasComittedStance = false;
 					break;
 				case UnitType.ENEMY:
-					enemyUnits.Add(unit);
+					if (!enemyUnits.Contains(unit))
+						enemyUnits.Add(unit);
 					break;
 			}
 		}
