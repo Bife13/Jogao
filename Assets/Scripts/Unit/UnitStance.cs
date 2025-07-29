@@ -21,8 +21,10 @@ public class UnitStance : MonoBehaviour
 			currentStance = previewStance;
 			hasComittedStance = true;
 			Debug.Log($"Stance committed: {currentStance}");
+			GameManager.Instance.combatUIManager.AddLog($"Stance committed: {currentStance}");
 		}
 	}
+
 	// TODO MAYBE CHECK THIS LATER
 	public float CalculateStanceBonusAttackAmount()
 	{

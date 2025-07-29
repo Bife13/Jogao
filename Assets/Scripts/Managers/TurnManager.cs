@@ -8,7 +8,7 @@ public class TurnManager : MonoBehaviour
 {
 	public GameManager gameManager;
 	public UnitManager unitManager;
-	
+
 	public List<Unit> turnOrder = new List<Unit>();
 
 	public int roundCounter = 0;
@@ -19,32 +19,36 @@ public class TurnManager : MonoBehaviour
 		gameManager = GameManager.Instance;
 		unitManager = gameManager.unitManager;
 	}
-	
-	public void CalculateInitiative()
+
+	public void CalculatePace()
 	{
 		int randomMax = unitManager.allUnits.Count;
 
-		List<(Unit unit, int initiativeRoll)> unitInitiatives = new List<(Unit, int)>();
+		List<(Unit unit, int paceRoll)> unitPaces = new List<(Unit, int)>();
 
 		foreach (Unit unit in unitManager.allUnits)
 		{
 			int randomRoll = Random.Range(1, 6);
-			int initiative = (int)unit.unitStatCalculator.GetTotalModifiedStat(StatType.Speed) + randomRoll;
+			int pace = (int)unit.unitStatCalculator.GetTotalModifiedStat(StatType.Speed) + randomRoll;
 
-			unitInitiatives.Add((unit, initiative));
+			unitPaces.Add((unit, pace));
 
 			Debug.Log(
-				$"{unit.unitName} has speed {(int)unit.unitStatCalculator.GetTotalModifiedStat(StatType.Speed)} + roll {randomRoll} = initiative {initiative}");
+				$"{unit.unitName} has speed {(int)unit.unitStatCalculator.GetTotalModifiedStat(StatType.Speed)} + roll {randomRoll} = pace {pace}");
 		}
 
-		unitInitiatives.Sort((a, b) => b.initiativeRoll.CompareTo(a.initiativeRoll));
+		unitPaces.Sort((a, b) => b.paceRoll.CompareTo(a.paceRoll));
+		turnOrder = unitPaces.Select(t => t.unit).ToList();
 
-		turnOrder = unitInitiatives.Select(t => t.unit).ToList();
+		string logString = null;
 
-		Debug.Log("Turn Order:");
-		foreach (Unit u in turnOrder)
+		for (int i = 0; i < unitPaces.Count; i++)
 		{
-			Debug.Log(u.unitName);
+			logString += $"{unitPaces[i].unit.unitName}";
+			if (i < unitPaces.Count - 1)
+				logString += " | ";
 		}
+
+		GameManager.Instance.combatUIManager.AddLog($"{logString}");
 	}
 }

@@ -23,6 +23,8 @@ public class UnitHealth : MonoBehaviour
 				finalDamage = damage;
 				ReduceHealth(finalDamage);
 				Debug.Log($"{unit.unitName} took {finalDamage} DoT damage! Remaining HP: {currentHP}");
+				// GameManager.Instance.combatUIManager.AddLog(
+				// 	$"{unit.unitName} took {finalDamage} DoT damage!");
 				//Move this to UI
 				unit.unitUI.ShowFloatingText(finalDamage.ToString(), Color.black);
 				break;
@@ -42,7 +44,11 @@ public class UnitHealth : MonoBehaviour
 				finalDamage = CalculateReducedDamage(damage);
 				ReduceHealth(finalDamage);
 				unit.unitInventory.HandleItemTriggers(ItemTriggerType.OnGetHit, unit, originTarget);
+
 				Debug.Log($"{unit.unitName} took {finalDamage} damage! Remaining HP: {currentHP}");
+				GameManager.Instance.combatUIManager.AddLog(
+					$"{unit.unitName} took {finalDamage} damage!");
+
 				unit.unitUI.ShowFloatingText(finalDamage.ToString(), Color.black);
 
 				if (unit.unitConditions.HasCounterBuff() && isAlive() && originTarget != unit)

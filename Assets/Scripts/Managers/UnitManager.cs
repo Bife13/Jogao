@@ -20,7 +20,7 @@ public class UnitManager : MonoBehaviour
 
 	public Transform waveSpawningLocation;
 	public float unitSpacing = 2.5f;
-	public float yOffset = 0.25f;
+	public float yOffset = 0.5f;
 
 	[Header("Player Characters")]
 	[SerializeField]
@@ -48,8 +48,7 @@ public class UnitManager : MonoBehaviour
 		for (int i = 0; i < count; i++)
 		{
 			float x = startX + (i * unitSpacing);
-			int randomSign = (Random.value < 0.5f) ? -1 : 1;
-			float y = center.y + (i * yOffset * randomSign);
+			float y = center.y + (Random.Range(-yOffset,yOffset));
 
 			Vector2 spawnPos = new Vector2(x, y);
 

@@ -47,7 +47,8 @@ public class ButtonHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 		{
 			text.text = assignedAbility.abilityName;
 			Debug.Log($"Clicked ability: {assignedAbility.abilityName}");
-			// Pass the selected ability to the TargetSelection system
+			// GameManager.Instance.combatUIManager.AddLog($"Clicked ability: {assignedAbility.abilityName}");
+
 			TargetSelectionUI.Instance.StartTargetSelection(assignedAbility);
 			GameManager.Instance.combatUIManager.ResetAbilityTooltip();
 		}

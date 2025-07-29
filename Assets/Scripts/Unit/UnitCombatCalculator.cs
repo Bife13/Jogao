@@ -18,7 +18,8 @@ public class UnitCombatCalculator : MonoBehaviour
 		unit = GetComponent<Unit>();
 	}
 
-	public virtual float CalculateDamage(int basePower, int bonusCritical, List<StatusType> boostingStatus,
+	public virtual float CalculateDamage(int basePower, int bonusCritical, bool isWeaponAttack,
+		List<StatusType> boostingStatus,
 		float statusBoost, Unit target)
 	{
 		float damage = Random.Range(unit.unitStatCalculator.GetTotalModifiedAttackStat()[0],
@@ -28,7 +29,7 @@ public class UnitCombatCalculator : MonoBehaviour
 		{
 			damage = (1.5f * unit.unitStatCalculator.GetTotalModifiedAttackStat()[1]);
 			unit.unitInventory.HandleItemTriggers(ItemTriggerType.OnCrit, unit, target);
-			Debug.Log($"{unit.unitName} hit a Critical Strike");
+			GameManager.Instance.combatUIManager.AddLog($"{unit.unitName} hit a Critical Strike");
 		}
 
 		float baseDamage = damage;
@@ -36,7 +37,6 @@ public class UnitCombatCalculator : MonoBehaviour
 
 		if (target.unitConditions.CheckForActiveConditions(target, boostingStatus))
 		{
-			Debug.Log("GOT HERE");
 			damage += baseDamage * (statusBoost / 100f);
 		}
 
@@ -44,6 +44,12 @@ public class UnitCombatCalculator : MonoBehaviour
 		{
 			damage += baseDamage * (shockAmount / 100f);
 			target.unitConditions.ProcessConditionsPerTurn(ConditionTiming.OnHit, 500);
+		}
+
+		if (isWeaponAttack && unit.unitConditions.activeCoating != null)
+		{
+			damage += AddCoatingDamage();
+			target.unitConditions.ApplyCondition(unit.unitConditions.activeCoating.condition);
 		}
 
 		return damage;
@@ -111,22 +117,14 @@ public class UnitCombatCalculator : MonoBehaviour
 		return false; //NORMAL HIT
 	}
 
-	public virtual bool ApplyDamageOrMiss(int accuracy, bool isWeaponAttack, Unit target, int damage)
+	public virtual bool ApplyDamageOrMiss(int accuracy, Unit target)
 	{
 		if (PerformAccuracyDodgeCheck(accuracy, target) || target == this)
 		{
-			if (isWeaponAttack && unit.unitConditions.activeCoating != null)
-			{
-				damage += AddCoatingDamage();
-				target.unitConditions.ApplyCondition(unit.unitConditions.activeCoating.condition);
-			}
-
-			target.unitHealth.TakeDirectDamage(damage, DamageType.Direct, unit);
-			unit.unitInventory.HandleItemTriggers(ItemTriggerType.OnHit, unit, target);
 			return true;
 		}
 
-		GameManager.Instance.combatUIManager.ActionChosen("Miss");
+		GameManager.Instance.combatUIManager.AddLog($"{unit.unitName} missed");
 		return false;
 	}
 

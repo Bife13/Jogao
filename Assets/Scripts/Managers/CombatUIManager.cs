@@ -57,39 +57,15 @@ public class CombatUIManager : MonoBehaviour
 	[SerializeField]
 	private GameObject combatInfoPanel;
 
+	[SerializeField]
+	private TMP_Text combatLog;
+
 	public void Initialize()
 	{
 		gameManager = GameManager.Instance;
 		unitManager = gameManager.unitManager;
 	}
-
-	public void ActionChosen(string action)
-	{
-		// isPlayerTurnActive = false;
-
-		// Based on the player's action choice, you can handle the action here
-		if (action == "Attack")
-		{
-			Debug.Log("Unit chose to attack!");
-			// Perform attack logic here, like damage calculation, etc.
-		}
-		else if (action == "Defend")
-		{
-			Debug.Log("Unit chose to defend!");
-			// Perform defense logic here
-		}
-		else if (action == "Use Item")
-		{
-			Debug.Log("Unit chose to use an item!");
-			// Perform item usage logic here
-		}
-		else if (action == "Miss")
-		{
-			Debug.Log("Unit missed!");
-			// Perform item usage logic here
-		}
-	}
-
+	
 	public void HandlePanel(bool shouldShow)
 	{
 		if (shouldShow)
@@ -282,6 +258,11 @@ public class CombatUIManager : MonoBehaviour
 
 		Debug.Log(
 			$"{unitManager.currentUnit.unitName} switched to {unitManager.currentUnit.unitStance.previewStance} stance!");
+	}
+
+	public void AddLog(string newString)
+	{
+		combatLog.text += "◆ " + newString + "\n";
 	}
 
 	private enum EnemyStatTextIndex

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27abfccb2da32eb4e93ac60b17a4cf69, type: 3}
   m_Name: RedKnight
   m_EditorClassIdentifier: 
-  unitName: Red Knight
+  unitName: <color=red>Red Knight</color>
   unitIcon: {fileID: 21300000, guid: 173219c76f478e146874ec499b0f26f6, type: 3}
   maxHP: 35
   speed: 15

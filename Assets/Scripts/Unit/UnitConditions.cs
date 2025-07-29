@@ -21,6 +21,8 @@ public class UnitConditions : MonoBehaviour
 		if (condition != null)
 		{
 			Debug.Log($"{unit.unitName} gains {condition.conditionName}");
+			GameManager.Instance.combatUIManager.AddLog(
+				$"{unit.unitName} gains {condition.conditionName}");
 
 			ActiveCondition existing = activeConditions.Find(e =>
 				e.condition.effects.OfType<StatusEffect>().FirstOrDefault() ==
@@ -181,6 +183,8 @@ public class UnitConditions : MonoBehaviour
 						foreach (var fx in appliedCondition.condition.effects)
 							fx.OnRemove(unit);
 						Debug.Log($"{appliedCondition.condition.conditionName} expired on {unit.unitName}");
+						GameManager.Instance.combatUIManager.AddLog(
+							$"{appliedCondition.condition.conditionName} expired on {unit.unitName}");
 						activeConditions.Remove(appliedCondition);
 						unit.unitUI.RefreshStatusIcons();
 					}
@@ -207,6 +211,7 @@ public class UnitConditions : MonoBehaviour
 		int amount = cleanseAmount <= 0 ? int.MaxValue : cleanseAmount;
 		target.unitConditions.Cleanse(amount, conditionType, statusType);
 		Debug.Log($"{target.unitName} is cleansed of {amount} debuffs!");
+		GameManager.Instance.combatUIManager.AddLog(($"{target.unitName} is cleansed of {amount} debuffs!"));
 	}
 
 	public void Cleanse(int amount, ConditionType conditionTypeToCleanse, StatusType statusTypeToCleanse)
@@ -222,6 +227,9 @@ public class UnitConditions : MonoBehaviour
 						case ConditionType.Boon:
 						case ConditionType.Jinx:
 							Debug.Log($"{unit.unitName} had {activeConditions[i].condition.name} cleansed!");
+							GameManager.Instance.combatUIManager.AddLog(
+								$"{unit.unitName} had {activeConditions[i].condition.name} cleansed!");
+
 							activeConditions.RemoveAt(i);
 							unit.unitUI.RefreshStatusIcons();
 							removed++;
@@ -232,6 +240,8 @@ public class UnitConditions : MonoBehaviour
 								int index = Random.Range(0, activeConditions.Count);
 								activeConditions.RemoveAt(index);
 								Debug.Log($"{unit.unitName} had {activeConditions[index].condition.name} cleansed!");
+								GameManager.Instance.combatUIManager.AddLog(
+									$"{unit.unitName} had {activeConditions[i].condition.name} cleansed!");
 								unit.unitUI.RefreshStatusIcons();
 								removed++;
 							}
@@ -241,6 +251,8 @@ public class UnitConditions : MonoBehaviour
 							{
 								activeConditions.RemoveAt(i);
 								Debug.Log($"{unit.unitName} had {activeConditions[i].condition.name} cleansed!");
+								GameManager.Instance.combatUIManager.AddLog(
+									$"{unit.unitName} had {activeConditions[i].condition.name} cleansed!");
 								unit.unitUI.RefreshStatusIcons();
 								removed++;
 							}
@@ -331,10 +343,15 @@ public class UnitConditions : MonoBehaviour
 		coatingDuration--;
 		unit.unitUI.RefreshCoatingUI(true);
 		Debug.Log($"{unit.unitName}'s {activeCoating.coatingName}  has: " + coatingDuration);
+		GameManager.Instance.combatUIManager.AddLog($"{unit.unitName}'s {activeCoating.coatingName}  has: " +
+		                                            coatingDuration);
+
 
 		if (coatingDuration > 0) return;
 
 		Debug.Log($"{unit.unitName}'s {activeCoating.coatingName} coating has worn off.");
+		GameManager.Instance.combatUIManager.AddLog(
+			$"{unit.unitName}'s {activeCoating.coatingName} coating has worn off.");
 		activeCoating = null;
 		unit.unitUI.RefreshCoatingUI(false);
 	}
@@ -344,6 +361,8 @@ public class UnitConditions : MonoBehaviour
 		activeCoating = coating;
 		coatingDuration = activeCoating.coatDuration;
 		Debug.Log($"{unit.unitName} applied {coating.coatingName} coating to their weapon!");
+		GameManager.Instance.combatUIManager.AddLog(
+			$"{unit.unitName} applied {coating.coatingName} coating to their weapon!");
 		unit.unitUI.RefreshCoatingUI(true);
 	}
 }

@@ -25,12 +25,15 @@ public class UnitAbilityManager : MonoBehaviour
 
 		foreach (Unit target in targets)
 		{
-			Debug.Log($"{gameObject.name} uses {ability.abilityName} on {target.unitName}!");
 			if (!isTargetValid(ability, target))
 			{
 				Debug.LogWarning($"Invalid target for ability {ability.abilityName}");
 				return;
 			}
+
+			Debug.Log($"{unit.unitName} uses {ability.abilityName} on {target.unitName}!");
+			GameManager.Instance.combatUIManager.AddLog(
+				$"{unit.unitName} uses {ability.abilityName} on {target.unitName}!");
 
 			//TODO THIS HAS ISSUES FOR SAME TARGET ABILITIES 
 			foreach (var fx in ability.modules)

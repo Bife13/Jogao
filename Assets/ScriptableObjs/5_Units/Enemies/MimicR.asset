@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27abfccb2da32eb4e93ac60b17a4cf69, type: 3}
   m_Name: MimicR
   m_EditorClassIdentifier: 
-  unitName: Mimic Ranged
+  unitName: Ranged Mimic
+  unitIcon: {fileID: 0}
   maxHP: 15
   speed: 6
   baseDefense: 0

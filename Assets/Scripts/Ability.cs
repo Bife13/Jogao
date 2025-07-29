@@ -10,7 +10,7 @@ public class Ability : ScriptableObject
 	public string abilityName;
 	public Sprite icon;
 
-	[TextArea(15,20)]
+	[TextArea(15, 20)]
 	public string description;
 
 	public TargetType targetType;
@@ -64,9 +64,16 @@ public class DamageModule : AbilityModule
 			abilityUser.unitConditions.HandleWeaponCoating();
 
 		bool hit;
-		int damage = Mathf.CeilToInt(abilityUser.unitCombatCalculator.CalculateDamage(basePower, bonusCriticalChance,
-			boostingStatusTypes, statusBoost, abilityTarget));
-		hit = abilityUser.unitCombatCalculator.ApplyDamageOrMiss(accuracy, isWeaponAttack, abilityTarget, damage);
+		hit = abilityUser.unitCombatCalculator.ApplyDamageOrMiss(accuracy, abilityTarget);
+		if (hit)
+		{
+			int damage =
+				Mathf.CeilToInt(
+					abilityUser.unitCombatCalculator.CalculateDamage(basePower, bonusCriticalChance, isWeaponAttack,
+						boostingStatusTypes, statusBoost, abilityTarget));
+			abilityTarget.unitHealth.TakeDirectDamage(damage, DamageType.Direct, abilityUser);
+			abilityUser.unitInventory.HandleItemTriggers(ItemTriggerType.OnHit, abilityUser, abilityTarget);
+		}
 		return hit;
 	}
 

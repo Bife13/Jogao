@@ -20,15 +20,20 @@ public class CombatManager : MonoBehaviour
 		yield return new WaitForSeconds(1f);
 		if (gameManager.turnManager.roundCounter < unitManager._waves.Count)
 		{
+			GameManager.Instance.combatUIManager.AddLog($"Round {GameManager.Instance.turnManager.roundCounter + 1}");
 			inCombat = true;
 			unitManager.SpawnEnemies();
 			unitManager.OrganizeUnits();
 			yield return new WaitForSeconds(0.5f);
-			gameManager.turnManager.CalculateInitiative();
+			gameManager.turnManager.CalculatePace();
 			StartCoroutine(HandleTurnLoop());
+			// GameManager.Instance.combatUIManager.AddLog("<color=red>Combat Start!</color>");
 		}
 		else
+		{
 			Debug.Log("No more rounds!");
+			GameManager.Instance.combatUIManager.AddLog("No more rounds!");
+		}
 	}
 
 	IEnumerator HandleTurnLoop()
@@ -45,7 +50,8 @@ public class CombatManager : MonoBehaviour
 				gameManager.turnManager.turnOrder[unitManager.currentUnitIndex];
 			if (currentUnit.unitHealth.isAlive())
 			{
-				Debug.Log($"It's {currentUnit.unitName}'s turn!");
+				GameManager.Instance.combatUIManager.AddLog(
+					($"<color=yellow>It's {currentUnit.unitName}'s turn!</color>"));
 				foreach (Unit unit in unitManager.allUnits)
 				{
 					unit.unitUI.SetHighlight(false);
@@ -88,7 +94,7 @@ public class CombatManager : MonoBehaviour
 				Debug.Log("NEW TURN");
 
 				yield return new WaitForSeconds(2f);
-				gameManager.turnManager.CalculateInitiative();
+				gameManager.turnManager.CalculatePace();
 			}
 
 			yield return new WaitForSeconds(1f);
@@ -100,6 +106,7 @@ public class CombatManager : MonoBehaviour
 		if (!playerUnit.unitConditions.HasStunDebuff())
 		{
 			Debug.Log($"{unitManager.currentUnit.unitName} is choosing an action...");
+			GameManager.Instance.combatUIManager.AddLog($"{unitManager.currentUnit.unitName} is choosing an action...");
 
 			playerUnit.unitAbilityManager.StartTurn();
 
@@ -117,6 +124,7 @@ public class CombatManager : MonoBehaviour
 			playerUnit.unitConditions.ProcessConditionsPerTurn(ConditionTiming.SkipAction,
 				gameManager.turnManager.turnCounter);
 			Debug.Log($"{unitManager.currentUnit.unitName} is stunned");
+			GameManager.Instance.combatUIManager.AddLog($"{unitManager.currentUnit.unitName} is stunned");
 		}
 
 		gameManager.combatUIManager.HandlePanel(false);
@@ -133,14 +141,17 @@ public class CombatManager : MonoBehaviour
 		if (enemyUnit != null)
 			if (!enemyUnit.unitConditions.HasStunDebuff())
 			{
+				// GameManager.Instance.combatUIManager.AddLog($"{enemyUnit.unitName} attacked!");
 				enemyUnit.PerformIntent();
 				unitManager.currentUnit.unitUI.SetHighlight(false);
+
 			}
 			else
 			{
+				GameManager.Instance.combatUIManager.AddLog($"{enemyUnit.unitName} is stunned");
+				Debug.Log($"{enemyUnit.unitName} is stunned");
 				enemyUnit.unitConditions.ProcessConditionsPerTurn(ConditionTiming.SkipAction,
 					gameManager.turnManager.turnCounter);
-				Debug.Log($"{enemyUnit.unitName} is stunned");
 			}
 
 		yield return new WaitForSeconds(1.0f); // Simulate the attack animation/delay

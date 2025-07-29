@@ -56,6 +56,7 @@ public class UnitUI : MonoBehaviour
 
 		// Set the position near the unit in world space
 		Vector3 worldPosition = worldPositionForFloatingText;
+		// worldPosition.x += Random.Range(-0.5f, 0.5f);
 
 		// Convert the world position to local position on the canvas (if needed)
 		textObj.transform.position = worldPosition;

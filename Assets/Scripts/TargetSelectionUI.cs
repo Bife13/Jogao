@@ -52,6 +52,7 @@ public class TargetSelectionUI : MonoBehaviour
 		}
 
 		Debug.Log($"Target {unit.unitName} selected!");
+		
 
 		// Apply the ability now that the target is chosen
 		PlayerUnit actingPlayer = GameManager.Instance.unitManager.GetCurrentPlayerUnit();

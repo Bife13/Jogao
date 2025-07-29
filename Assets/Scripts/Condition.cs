@@ -75,20 +75,20 @@ public class StatusEffect : ConditionEffect
 			{
 				case StatusType.Toxin:
 					target.unitHealth.TakeDoTDamage(remainingDuration, DamageType.DoT);
-					Debug.Log(
-						$"{target.unitName} takes {remainingDuration} damage from {"Toxin"}");
+					GameManager.Instance.combatUIManager.AddLog(
+						$"{target.unitName} takes {remainingDuration} damage from Toxin");
 					break;
 				case StatusType.Wound:
 					target.unitHealth.TakeDoTDamage(remainingDuration, DamageType.DoT);
-					Debug.Log(
-						$"{target.unitName} takes {remainingDuration} damage from {"Wound"}");
+					GameManager.Instance.combatUIManager.AddLog(
+						$"{target.unitName} takes {remainingDuration} damage from Wound");
 					break;
 				case StatusType.Ignite:
 					target.unitHealth.TakeDoTDamage(
 						Mathf.CeilToInt(target.maxHP * (statusDamagePerTurn / 100f)),
 						DamageType.DoT);
-					Debug.Log(
-						$"{target.unitName} takes {Mathf.CeilToInt(target.maxHP * (statusDamagePerTurn / 100f))} damage from {"Ignite"}");
+					GameManager.Instance.combatUIManager.AddLog(
+						$"{target.unitName} takes {Mathf.CeilToInt(target.maxHP * (statusDamagePerTurn / 100f))} damage from Ignite");
 					break;
 			}
 	}
@@ -113,7 +113,6 @@ public class CoatingEffect : ConditionEffect
 
 	public override void OnApply(Unit target)
 	{
-		Debug.Log("TEST GOT HERE");
 		target.unitConditions.ApplyWeaponCoating(weaponCoating);
 	}
 }
