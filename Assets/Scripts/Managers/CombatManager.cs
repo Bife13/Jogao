@@ -191,7 +191,7 @@ public class CombatManager : MonoBehaviour
 		// NEED TO WORK ON THE ITEM SELECTION SCREEN
 		Debug.Log(winner);
 		yield return new WaitForSeconds(3f);
-		if (winner == "Player")
+		if (winner == "Player" && gameManager.turnManager.roundCounter < unitManager._waves.Count - 1)
 			GameManager.Instance.itemSelection.ActivateItemSelection();
 	}
 

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbd6f6582537b824d8acdbf2e2437d26, type: 3}
   m_Name: Boss Wave
   m_EditorClassIdentifier: 
-  waveName: Wave2
-  waveNumber: 2
+  waveName: Boss
+  waveNumber: 4
   waveUnits:
   - {fileID: 6778612240274535822, guid: 33389b168fb8fba46ad75229f134a322, type: 3}

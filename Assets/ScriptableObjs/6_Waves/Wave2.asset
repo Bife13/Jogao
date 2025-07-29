@@ -16,3 +16,5 @@ MonoBehaviour:
   waveNumber: 2
   waveUnits:
   - {fileID: 7208544873737354668, guid: 5b406f4d3cff7874f8e4641976568ccf, type: 3}
+  - {fileID: 7208544873737354668, guid: 5b406f4d3cff7874f8e4641976568ccf, type: 3}
+  - {fileID: 7208544873737354668, guid: 5b406f4d3cff7874f8e4641976568ccf, type: 3}

@@ -63,7 +63,7 @@ public class ItemSelection : MonoBehaviour
 		}
 
 		GameManager.Instance.unitManager.allUnits[unitIndex].unitInventory.equippedItems.Add(selectionItems[index]);
-		availableItems.Remove(selectionItems[unitIndex]);
+		availableItems.Remove(selectionItems[index]);
 		DeactivateItemSelection();
 	}
 

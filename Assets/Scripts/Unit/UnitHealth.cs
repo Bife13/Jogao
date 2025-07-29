@@ -86,14 +86,13 @@ public class UnitHealth : MonoBehaviour
 
 	protected virtual void CheckDeath()
 	{
-		if (gameObject != null)
-			if (!isAlive())
-			{
-				//UI STUFF
-				unit.unitUI.displayObject.SetActive(false);
-				unit.unitUI.unitSprite.SetActive(false);
-				// Destroy(gameObject, 2f);
-				GameManager.Instance.unitManager.RemoveUnit(unit);
-			}
+		//UI STUFF
+		if (!isAlive())
+		{
+			unit.unitUI.displayObject.SetActive(false);
+			unit.unitUI.unitSprite.SetActive(false);
+			Destroy(gameObject, 2f);
+			GameManager.Instance.unitManager.RemoveUnit(unit);
+		}
 	}
 }

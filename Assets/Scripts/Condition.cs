@@ -70,26 +70,27 @@ public class StatusEffect : ConditionEffect
 
 	public override void OnTick(Unit target, int remainingDuration)
 	{
-		switch (status)
-		{
-			case StatusType.Toxin:
-				target.unitHealth.TakeDoTDamage(remainingDuration, DamageType.DoT);
-				Debug.Log(
-					$"{target.unitName} takes {remainingDuration} damage from {"Toxin"}");
-				break;
-			case StatusType.Wound:
-				target.unitHealth.TakeDoTDamage(remainingDuration, DamageType.DoT);
-				Debug.Log(
-					$"{target.unitName} takes {remainingDuration} damage from {"Wound"}");
-				break;
-			case StatusType.Ignite:
-				target.unitHealth.TakeDoTDamage(
-					Mathf.CeilToInt(target.maxHP * (statusDamagePerTurn / 100f)),
-					DamageType.DoT);
-				Debug.Log(
-					$"{target.unitName} takes {Mathf.CeilToInt(target.maxHP * (statusDamagePerTurn / 100f))} damage from {"Ignite"}");
-				break;
-		}
+		if (target.unitHealth != null)
+			switch (status)
+			{
+				case StatusType.Toxin:
+					target.unitHealth.TakeDoTDamage(remainingDuration, DamageType.DoT);
+					Debug.Log(
+						$"{target.unitName} takes {remainingDuration} damage from {"Toxin"}");
+					break;
+				case StatusType.Wound:
+					target.unitHealth.TakeDoTDamage(remainingDuration, DamageType.DoT);
+					Debug.Log(
+						$"{target.unitName} takes {remainingDuration} damage from {"Wound"}");
+					break;
+				case StatusType.Ignite:
+					target.unitHealth.TakeDoTDamage(
+						Mathf.CeilToInt(target.maxHP * (statusDamagePerTurn / 100f)),
+						DamageType.DoT);
+					Debug.Log(
+						$"{target.unitName} takes {Mathf.CeilToInt(target.maxHP * (statusDamagePerTurn / 100f))} damage from {"Ignite"}");
+					break;
+			}
 	}
 }
 
